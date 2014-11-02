@@ -4,10 +4,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.SpigotSiteAPI;
-import be.maximvdw.spigotsite.api.user.User;
-import be.maximvdw.spigotsite.api.user.exceptions.AuthenticationFailureException;
+import be.maximvdw.spigotsite.api.resource.ResourceManager;
+import be.maximvdw.spigotsite.api.user.UserManager;
 
 public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
+	/* Spigot User Manager */
+	private UserManager userManager = null;
+	/* Spigot Resource Manager */
+	private ResourceManager resourceManager = null;
 
 	@Override
 	public void onEnable() {
@@ -17,15 +21,12 @@ public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
 		SpigotSite.setAPI(this);
 	}
 
-	public User authenticate(String username, String password)
-			throws AuthenticationFailureException {
-		// TODO Auto-generated method stub
-		return null;
+	public UserManager getUserManager() {
+		return userManager;
 	}
 
-	public void logOff(User user) {
-		// TODO Auto-generated method stub
-
+	public ResourceManager getResourceManager() {
+		return resourceManager;
 	}
 
 }
