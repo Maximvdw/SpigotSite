@@ -11,6 +11,14 @@ public final class SpigotResource implements Resource {
 	private User author = null;
 	private ResourceCategory category = null;
 
+	public SpigotResource() {
+
+	}
+
+	public SpigotResource(String name) {
+		setResourceName(name);
+	}
+
 	public int getResourceId() {
 		return id;
 	}

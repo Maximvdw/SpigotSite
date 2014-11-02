@@ -34,6 +34,26 @@
 					<finalName>SpigotSite</finalName>
 				</configuration>
 			</plugin>
+					<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<artifactSet>
+						<excludes>
+							<exclude>org.bukkit:bukkit</exclude>
+							<exclude>org.spigotmc:spigot</exclude>
+						</excludes>
+					</artifactSet>
+				</configuration>
+			</plugin>
 		</plugins>
 		<resources>
 			<resource>
