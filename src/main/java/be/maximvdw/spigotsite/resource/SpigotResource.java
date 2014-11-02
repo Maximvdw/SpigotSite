@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite.resource;
 
 import be.maximvdw.spigotsite.api.resource.Resource;
+import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.user.User;
 
 public final class SpigotResource implements Resource {
@@ -8,6 +9,7 @@ public final class SpigotResource implements Resource {
 	private String name = "";
 	private String version = "";
 	private User author = null;
+	private ResourceCategory category = null;
 
 	public int getResourceId() {
 		return id;
@@ -35,5 +37,9 @@ public final class SpigotResource implements Resource {
 
 	public void setLastVersion(String version) {
 		this.version = version;
+	}
+
+	public ResourceCategory getResourceCategory() {
+		return category;
 	}
 }

@@ -10,10 +10,22 @@ import be.maximvdw.spigotsite.ui.SendConsole;
 import be.maximvdw.spigotsite.utils.HttpResponse;
 import be.maximvdw.spigotsite.utils.HttpUtils;
 
-public class SpigotUserManager implements UserManager{
+public class SpigotUserManager implements UserManager {
 
 	public User getUserById(int userid) {
-		// TODO Auto-generated method stub
+		return getUserById(userid, null);
+	}
+
+	public User getUserById(int userid, User user) {
+		try {
+			String url = "http://www.spigotmc.org/members/" + userid;
+			Map<String, String> params = new HashMap<String, String>();
+			HttpResponse response = HttpUtils.sendPostRequest(url, params,
+					user == null ? null : ((SpigotUser) user).getCookies());
+		} catch (Exception ex) {
+
+		}
+
 		return null;
 	}
 
@@ -32,6 +44,8 @@ public class SpigotUserManager implements UserManager{
 			SpigotUser user = new SpigotUser(username);
 			user.setCookies(response.getCookies());
 			SendConsole.info(response.getSource());
+
+			return user;
 		} catch (Exception ex) {
 
 		}
@@ -41,7 +55,7 @@ public class SpigotUserManager implements UserManager{
 
 	public void logOff(User user) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
