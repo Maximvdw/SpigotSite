@@ -12,7 +12,6 @@ import org.jsoup.nodes.Document;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
-import be.maximvdw.spigotsite.ui.SendConsole;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotUserManager implements UserManager {

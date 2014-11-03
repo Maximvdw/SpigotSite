@@ -23,6 +23,10 @@ public final class SpigotResource implements Resource {
 		return id;
 	}
 
+	public void setResourceId(int id) {
+		this.id = id;
+	}
+
 	public String getResourceName() {
 		return name;
 	}

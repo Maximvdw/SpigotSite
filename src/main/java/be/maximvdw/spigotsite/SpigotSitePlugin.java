@@ -1,12 +1,18 @@
 package be.maximvdw.spigotsite;
 
+import java.util.List;
+
 import org.bukkit.plugin.java.JavaPlugin;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.SpigotSiteAPI;
+import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
+import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
+import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.resource.SpigotResourceManager;
+import be.maximvdw.spigotsite.ui.SendConsole;
 import be.maximvdw.spigotsite.user.SpigotUserManager;
 
 public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
@@ -24,6 +30,20 @@ public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
 
 		// Set Site API
 		SpigotSite.setAPI(this);
+
+		try {
+			User user = SpigotSite.getAPI().getUserManager()
+					.authenticate("MASEKD", "MASKED");
+			List<Resource> resources = SpigotSite.getAPI().getResourceManager()
+					.getBoughtResources(user);
+			for (Resource resource : resources) {
+				SendConsole.info(resource.getResourceName() + "  "
+						+ resource.getResourceId());
+			}
+		} catch (InvalidCredentialsException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public UserManager getUserManager() {
