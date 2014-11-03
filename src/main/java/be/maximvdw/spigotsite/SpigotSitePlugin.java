@@ -6,7 +6,6 @@ import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.SpigotSiteAPI;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.UserManager;
-import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.resource.SpigotResourceManager;
 import be.maximvdw.spigotsite.user.SpigotUserManager;
 
