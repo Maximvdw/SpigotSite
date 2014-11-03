@@ -9,8 +9,6 @@ import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.user.SpigotUser;
-import be.maximvdw.spigotsite.utils.HttpResponse;
-import be.maximvdw.spigotsite.utils.HttpUtils;
 
 public class SpigotResourceManager implements ResourceManager {
 
@@ -22,10 +20,8 @@ public class SpigotResourceManager implements ResourceManager {
 		try {
 			String url = "http://www.spigotmc.org/resources/" + resourceid;
 			Map<String, String> params = new HashMap<String, String>();
-			HttpResponse response = HttpUtils.sendPostRequest(url, params,
-					user == null ? null : ((SpigotUser) user).getCookies());
 			SpigotResource resource = new SpigotResource();
-			
+
 			return resource;
 		} catch (Exception ex) {
 

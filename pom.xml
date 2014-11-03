@@ -23,6 +23,11 @@
 			<artifactId>spigot</artifactId>
 			<version>1.7.10-R0.1</version>
 		</dependency>
+		<dependency>
+			<groupId>org.jsoup</groupId>
+			<artifactId>jsoup</artifactId>
+			<version>1.7.2</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -34,7 +39,7 @@
 					<finalName>SpigotSite</finalName>
 				</configuration>
 			</plugin>
-					<plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
 				<executions>

@@ -1,11 +1,14 @@
 package be.maximvdw.spigotsite.user;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import be.maximvdw.spigotsite.api.user.User;
 
 public class SpigotUser implements User {
 	private int id = 0;
 	private String username = "";
-	private String[] cookies = new String[] {};
+	private Map<String, String> cookies = new HashMap<String, String>();
 
 	public SpigotUser() {
 
@@ -19,6 +22,10 @@ public class SpigotUser implements User {
 		return id;
 	}
 
+	public void setUserId(int id) {
+		this.id = id;
+	}
+
 	public String getUsername() {
 		return username;
 	}
@@ -27,11 +34,11 @@ public class SpigotUser implements User {
 		this.username = username;
 	}
 
-	public String[] getCookies() {
+	public Map<String, String> getCookies() {
 		return cookies;
 	}
 
-	public void setCookies(String[] cookies) {
+	public void setCookies(Map<String, String> cookies) {
 		this.cookies = cookies;
 	}
 

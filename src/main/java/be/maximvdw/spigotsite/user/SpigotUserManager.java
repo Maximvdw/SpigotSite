@@ -3,12 +3,17 @@ package be.maximvdw.spigotsite.user;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jsoup.Connection;
+import org.jsoup.Connection.Method;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
-import be.maximvdw.spigotsite.api.user.exceptions.AuthenticationFailureException;
+import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.ui.SendConsole;
-import be.maximvdw.spigotsite.utils.HttpResponse;
-import be.maximvdw.spigotsite.utils.HttpUtils;
+import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotUserManager implements UserManager {
 
@@ -20,8 +25,7 @@ public class SpigotUserManager implements UserManager {
 		try {
 			String url = "http://www.spigotmc.org/members/" + userid;
 			Map<String, String> params = new HashMap<String, String>();
-			HttpResponse response = HttpUtils.sendPostRequest(url, params,
-					user == null ? null : ((SpigotUser) user).getCookies());
+
 		} catch (Exception ex) {
 
 		}
@@ -30,24 +34,45 @@ public class SpigotUserManager implements UserManager {
 	}
 
 	public User authenticate(String username, String password)
-			throws AuthenticationFailureException {
+			throws InvalidCredentialsException {
 		try {
 			String url = "http://www.spigotmc.org/login/login";
 			Map<String, String> params = new HashMap<String, String>();
 			// Login parameters
 			params.put("login", username);
 			params.put("password", password);
+			params.put("register", "0");
+			params.put("remember", "0"); // No need to remember
+			params.put("cookie_check", "0"); // Fix error Cookies required
+			params.put("_xfToken", "");
+			params.put("redirect", "/");
 
-			HttpResponse response = HttpUtils
-					.sendPostRequest(url, params, null);
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			if (res.body().contains("Incorrect password. Please try again.")) {
+				// Password incorrect
+
+			}
+			Document doc = res.parse();
 
 			SpigotUser user = new SpigotUser(username);
-			user.setCookies(response.getCookies());
-			SendConsole.info(response.getSource());
+			user.setCookies(res.cookies());
+
+			// Fetch data
+			user.setUsername(doc.select("a.username.NoOverlay").text());
+			user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+					res.body(), "member\\?user_id=(.*?)\">Your Content")));
 
 			return user;
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 
 		return null;
