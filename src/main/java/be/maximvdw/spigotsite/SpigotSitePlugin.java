@@ -9,9 +9,7 @@ import be.maximvdw.spigotsite.api.SpigotSiteAPI;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
-import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
-import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.resource.SpigotResourceManager;
 import be.maximvdw.spigotsite.ui.SendConsole;
 import be.maximvdw.spigotsite.user.SpigotUserManager;
@@ -40,9 +38,12 @@ public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
 			for (ResourceCategory category : categories) {
 				SendConsole.info(category.getCategoryName() + "   Count: "
 						+ category.getResourceCount());
-				List<Resource> resources = resourceManager.getResourcesByCategory(category);
-				for (Resource resource : resources){
-					SendConsole.info("\t" + resource.getResourceName());
+				List<Resource> resources = resourceManager
+						.getResourcesByCategory(category);
+				for (Resource resource : resources) {
+					SendConsole.info("\t" + resource.getResourceName()
+							+ "  Version: " + resource.getLastVersion()
+							+ "   By " + resource.getAuthor().getUsername());
 				}
 			}
 		} catch (Exception e) {

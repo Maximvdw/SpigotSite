@@ -143,6 +143,18 @@ public class SpigotResourceManager implements ResourceManager {
 					SpigotResource resource = new SpigotResource(
 							resourceLink.text());
 					resource.setResourceId(id);
+					Element username = resourceBlock.select("a.username")
+							.first();
+					Element version = resourceBlock.select("span.version")
+							.first();
+					resource.setLastVersion(version.text());
+					SpigotUser user = new SpigotUser();
+					user.setUsername(username.text());
+					user.setUserId(Integer.parseInt(StringUtils
+							.getStringBetween(username.attr("href"),
+									"\\.(.*?)/")));
+					resource.setAuthor(user);
+
 					resources.add(resource);
 				}
 			}
