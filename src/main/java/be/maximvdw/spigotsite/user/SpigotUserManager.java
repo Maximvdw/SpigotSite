@@ -24,9 +24,23 @@ public class SpigotUserManager implements UserManager {
 		try {
 			String url = "http://www.spigotmc.org/members/" + userid;
 			Map<String, String> params = new HashMap<String, String>();
-
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.cookies(
+							user == null ? new HashMap<String, String>()
+									: ((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+			SpigotUser reqUser = new SpigotUser();
+			reqUser.setUsername(doc.select("h1.username").get(0).text());
+			reqUser.setUserId(userid);
+			return reqUser;
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 
 		return null;
