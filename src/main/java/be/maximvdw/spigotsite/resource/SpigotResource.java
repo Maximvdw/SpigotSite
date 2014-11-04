@@ -1,5 +1,7 @@
 package be.maximvdw.spigotsite.resource;
 
+import java.io.File;
+
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.user.User;
