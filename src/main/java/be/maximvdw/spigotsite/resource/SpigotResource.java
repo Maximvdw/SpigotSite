@@ -10,6 +10,8 @@ public final class SpigotResource implements Resource {
 	private String version = "";
 	private User author = null;
 	private ResourceCategory category = null;
+	private boolean deleted = false;
+	private String downloadURL = "";
 
 	public SpigotResource() {
 
@@ -53,5 +55,26 @@ public final class SpigotResource implements Resource {
 
 	public ResourceCategory getResourceCategory() {
 		return category;
+	}
+	
+	public String getDownloadURL() {
+		return downloadURL;
+	}
+
+	public void setDownloadURL(String downloadURL) {
+		this.downloadURL = downloadURL;
+	}
+
+	public File downloadResource(File output) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public boolean isDeleted() {
+		return deleted;
+	}
+
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }
