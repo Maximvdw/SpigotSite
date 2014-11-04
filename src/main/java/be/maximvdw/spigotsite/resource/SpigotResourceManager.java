@@ -17,7 +17,9 @@ import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.ui.SendConsole;
 import be.maximvdw.spigotsite.user.SpigotUser;
+import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotResourceManager implements ResourceManager {
 
@@ -44,7 +46,7 @@ public class SpigotResourceManager implements ResourceManager {
 		return null;
 	}
 
-	public List<Resource> getBoughtResources(User user) {
+	public List<Resource> getPurchasedResources(User user) {
 		List<Resource> boughtResources = new ArrayList<Resource>();
 		try {
 			String url = "http://www.spigotmc.org/resources/purchased";
@@ -80,8 +82,38 @@ public class SpigotResourceManager implements ResourceManager {
 	}
 
 	public List<ResourceCategory> getResourceCategories() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ResourceCategory> resourceCategories = new ArrayList<ResourceCategory>();
+		try {
+			String url = "http://www.spigotmc.org/resources/";
+			Map<String, String> params = new HashMap<String, String>();
+
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.GET)
+					.data(params)
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+			Element categoryList = doc.select("div.categoryList").first();
+			Elements categories = categoryList.select("li");
+			for (Element category : categories) {
+				Element link = category.select("a").first();
+				Element count = category.select("span.count").first();
+				SpigotResourceCategory resourceCategory = new SpigotResourceCategory();
+				resourceCategory.setCategoryName(link.text());
+				resourceCategory
+						.setResourceCount(Integer.parseInt(count.text()));
+				resourceCategory.setCategoryId(Integer.parseInt(StringUtils
+						.getStringBetween(link.attr("href"), "\\.(.*?)/")));
+				resourceCategories.add(resourceCategory);
+			}
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return resourceCategories;
 	}
 
 }

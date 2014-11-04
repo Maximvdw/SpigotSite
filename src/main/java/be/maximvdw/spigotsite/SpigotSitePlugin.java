@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.SpigotSiteAPI;
 import be.maximvdw.spigotsite.api.resource.Resource;
+import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
@@ -32,15 +33,16 @@ public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
 		SpigotSite.setAPI(this);
 
 		try {
-			User user = SpigotSite.getAPI().getUserManager()
-					.authenticate("MASEKD", "MASKED");
-			List<Resource> resources = SpigotSite.getAPI().getResourceManager()
-					.getBoughtResources(user);
-			for (Resource resource : resources) {
-				SendConsole.info(resource.getResourceName() + "  "
-						+ resource.getResourceId());
+			ResourceManager resourceManager = SpigotSite.getAPI()
+					.getResourceManager();
+			List<ResourceCategory> categories = resourceManager
+					.getResourceCategories();
+			for (ResourceCategory category : categories) {
+				SendConsole.info(category.getCategoryName() + "  "
+						+ category.getCategoryId() + "   "
+						+ category.getResourceCount());
 			}
-		} catch (InvalidCredentialsException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
