@@ -17,7 +17,6 @@ import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.User;
-import be.maximvdw.spigotsite.ui.SendConsole;
 import be.maximvdw.spigotsite.user.SpigotUser;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
@@ -114,6 +113,45 @@ public class SpigotResourceManager implements ResourceManager {
 			ex.printStackTrace();
 		}
 		return resourceCategories;
+	}
+
+	public List<Resource> getResourcesByCategory(ResourceCategory category) {
+		List<Resource> resources = new ArrayList<Resource>();
+		try {
+			int lastPage = category.getResourceCount() / 20;
+			if (category.getResourceCount() % 20 != 0)
+				lastPage++;
+			for (int i = lastPage; i >= 1; i--) {
+				String url = "http://www.spigotmc.org/resources/categories/"
+						+ category.getCategoryId() + "/?page=" + i;
+				Map<String, String> params = new HashMap<String, String>();
+
+				Connection.Response res = Jsoup
+						.connect(url)
+						.method(Method.GET)
+						.data(params)
+						.userAgent(
+								"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+						.execute();
+				Document doc = res.parse();
+				Elements resourceBlocks = doc.select("li.resourceListItem");
+				for (Element resourceBlock : resourceBlocks) {
+					int id = Integer.parseInt(resourceBlock.id().replace(
+							"resource-", ""));
+					Element resourceLink = resourceBlock.select("h3.title")
+							.get(0).getElementsByTag("a").get(0);
+					SpigotResource resource = new SpigotResource(
+							resourceLink.text());
+					resource.setResourceId(id);
+					resources.add(resource);
+				}
+			}
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return resources;
 	}
 
 }

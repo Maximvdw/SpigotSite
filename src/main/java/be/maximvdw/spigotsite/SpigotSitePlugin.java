@@ -38,9 +38,12 @@ public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
 			List<ResourceCategory> categories = resourceManager
 					.getResourceCategories();
 			for (ResourceCategory category : categories) {
-				SendConsole.info(category.getCategoryName() + "  "
-						+ category.getCategoryId() + "   "
+				SendConsole.info(category.getCategoryName() + "   Count: "
 						+ category.getResourceCount());
+				List<Resource> resources = resourceManager.getResourcesByCategory(category);
+				for (Resource resource : resources){
+					SendConsole.info("\t" + resource.getResourceName());
+				}
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
