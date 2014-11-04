@@ -30,11 +30,36 @@ public class SpigotResourceManager implements ResourceManager {
 		try {
 			String url = "http://www.spigotmc.org/resources/" + resourceid;
 			Map<String, String> params = new HashMap<String, String>();
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.GET)
+					.data(params)
+					.cookies(
+							user == null ? new HashMap<String, String>()
+									: ((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+
 			SpigotResource resource = new SpigotResource();
+			String resourceName = doc.title().replace(
+					" | SpigotMC - High Performance Minecraft", "");
+			resource.setResourceName(resourceName);
+			resource.setResourceId(resourceid);
+
+			Element resourceInfo = doc.select("div.resourceInfo").get(0);
+			resource.setLastVersion(resourceInfo.select("span.muted").get(0)
+					.text());
+
+			Element downloadLink = doc.select("label.downloadButton").get(0)
+					.select("a.inner").get(0);
+			resource.setDownloadURL("http://www.spigotmc.org/"
+					+ downloadLink.attr("href"));
 
 			return resource;
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 
 		return null;
