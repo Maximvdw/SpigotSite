@@ -75,7 +75,11 @@ public class SpigotResourceManager implements ResourceManager {
 	}
 
 	public List<Resource> getResourcesByUser(User user) {
-		return getResourcesByUser(user.getUserId());
+		List<Resource> resources = getResourcesByUser(user.getUserId());
+		for (Resource resource : resources) {
+			((SpigotResource) resource).setAuthor(user);
+		}
+		return resources;
 	}
 
 	public List<Resource> getResourcesByUser(int userid) {
@@ -92,6 +96,12 @@ public class SpigotResourceManager implements ResourceManager {
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
 			Document doc = res.parse();
+			String username = StringUtils
+					.getStringBetween(doc.title(),
+							"Resources from (.*?) | SpigotMC - High Performance Minecraft");
+			SpigotUser user = new SpigotUser(username);
+			user.setUserId(userid);
+
 			Elements resourceBlocks = doc.select("li.resourceListItem");
 			for (Element resourceBlock : resourceBlocks) {
 				int id = Integer.parseInt(resourceBlock.id().replace(
@@ -100,6 +110,7 @@ public class SpigotResourceManager implements ResourceManager {
 						.getElementsByTag("a").get(0);
 				SpigotResource resource = new SpigotResource(
 						resourceLink.text());
+				resource.setAuthor(user);
 				resource.setResourceId(id);
 				createdResources.add(resource);
 			}
