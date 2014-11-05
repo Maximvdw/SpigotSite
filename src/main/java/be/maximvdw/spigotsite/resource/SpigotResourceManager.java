@@ -75,10 +75,13 @@ public class SpigotResourceManager implements ResourceManager {
 	}
 
 	public List<Resource> getResourcesByUser(User user) {
+		return getResourcesByUser(user.getUserId());
+	}
+
+	public List<Resource> getResourcesByUser(int userid) {
 		List<Resource> createdResources = new ArrayList<Resource>();
 		try {
-			String url = "http://www.spigotmc.org/resources/authors/"
-					+ user.getUserId();
+			String url = "http://www.spigotmc.org/resources/authors/" + userid;
 			Map<String, String> params = new HashMap<String, String>();
 
 			Connection.Response res = Jsoup

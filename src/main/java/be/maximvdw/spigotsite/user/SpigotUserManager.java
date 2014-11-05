@@ -92,8 +92,9 @@ public class SpigotUserManager implements UserManager {
 	}
 
 	public void logOff(User user) {
-		// TODO Auto-generated method stub
-
+		// Kill cookies
+		SpigotUser spigotUser = (SpigotUser) user;
+		spigotUser.getCookies().clear();
 	}
 
 }
