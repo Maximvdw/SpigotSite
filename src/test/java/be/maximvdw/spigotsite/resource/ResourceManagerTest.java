@@ -37,6 +37,8 @@ public class ResourceManagerTest {
 				+ resource.getAuthor().getUserId() + "]");
 		System.out.println("Resource version: " + resource.getLastVersion());
 		assertEquals("Tab", resource.getResourceName());
+		assertEquals(1448, resource.getResourceId());
+		assertEquals("Maximvdw", resource.getAuthor().getUsername());
 	}
 
 	@Test(timeout = 5000)

@@ -7,11 +7,13 @@ import java.util.Map;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.api.user.UserStatistics;
 
 public class SpigotUser implements User {
 	private int id = 0;
 	private String username = "";
 	private Map<String, String> cookies = new HashMap<String, String>();
+	private UserStatistics statistics = null;
 
 	public SpigotUser() {
 
@@ -53,6 +55,14 @@ public class SpigotUser implements User {
 	public List<Resource> getCreatedResources() {
 		return SpigotSite.getAPI().getResourceManager()
 				.getResourcesByUser(this);
+	}
+
+	public UserStatistics getUserStatistics() {
+		return statistics;
+	}
+
+	public void setUserStatistics(UserStatistics statistics) {
+		this.statistics = statistics;
 	}
 
 }
