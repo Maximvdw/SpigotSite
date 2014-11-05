@@ -60,6 +60,12 @@ public class SpigotResourceManager implements ResourceManager {
 
 			Element categoryLink = doc.select("a.crumb").last();
 
+			Element author = doc.select("dl.author").first();
+			SpigotUser authorUser = new SpigotUser();
+			authorUser.setUsername(author.select("a").first().text());
+			authorUser.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+					author.select("a").first().attr("href"), "\\.(.*?)/")));
+			resource.setAuthor(authorUser);
 			return resource;
 		} catch (Exception ex) {
 			ex.printStackTrace();

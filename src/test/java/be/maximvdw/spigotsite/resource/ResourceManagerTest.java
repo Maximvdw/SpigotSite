@@ -28,6 +28,7 @@ public class ResourceManagerTest {
 		// Test Tab plugin
 		Resource resource = resourceManager.getResourceById(1448);
 		assertNotNull(resource);
+		assertNotNull(resource.getAuthor());
 
 		System.out.println("Resource name: " + resource.getResourceName());
 		System.out.println("Resource id: " + resource.getResourceId());
