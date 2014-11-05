@@ -71,6 +71,12 @@ public class ResourceManagerTest {
 				.getResourcesByCategory(resourceManager
 						.getResourceCategoryById(2));
 		assertNotNull(resources);
+		for (Resource resource : resources) {
+			System.out.println(resource.getResourceName() + " ["
+					+ resource.getResourceId() + "]" + " "
+					+ resource.getLastVersion() + "\n\tBy "
+					+ resource.getAuthor().getUsername() + " ["
+					+ resource.getAuthor().getUserId() + "]");
+		}
 	}
-
 }
