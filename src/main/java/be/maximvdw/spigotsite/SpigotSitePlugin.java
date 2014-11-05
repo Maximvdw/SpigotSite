@@ -5,30 +5,16 @@ import java.util.List;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
-import be.maximvdw.spigotsite.api.SpigotSiteAPI;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
-import be.maximvdw.spigotsite.api.user.UserManager;
-import be.maximvdw.spigotsite.resource.SpigotResourceManager;
 import be.maximvdw.spigotsite.ui.SendConsole;
-import be.maximvdw.spigotsite.user.SpigotUserManager;
 
-public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
-	/* Spigot User Manager */
-	private UserManager userManager = null;
-	/* Spigot Resource Manager */
-	private ResourceManager resourceManager = null;
-
+public class SpigotSitePlugin extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		// Set managers
-		userManager = new SpigotUserManager();
-		resourceManager = new SpigotResourceManager();
-
-		// Set Site API
-		SpigotSite.setAPI(this);
+		new SpigotSiteCore();
 
 		try {
 			ResourceManager resourceManager = SpigotSite.getAPI()
@@ -51,13 +37,4 @@ public class SpigotSitePlugin extends JavaPlugin implements SpigotSiteAPI {
 			e.printStackTrace();
 		}
 	}
-
-	public UserManager getUserManager() {
-		return userManager;
-	}
-
-	public ResourceManager getResourceManager() {
-		return resourceManager;
-	}
-
 }
