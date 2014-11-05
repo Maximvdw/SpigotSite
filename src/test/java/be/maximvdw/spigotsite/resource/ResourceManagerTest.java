@@ -62,7 +62,7 @@ public class ResourceManagerTest {
 		assertNotNull(category);
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getResourcesByCategoryTest() {
 		System.out.println("Testing 'getResourcesByCategory 2' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
@@ -77,6 +77,7 @@ public class ResourceManagerTest {
 					+ resource.getLastVersion() + "\n\tBy "
 					+ resource.getAuthor().getUsername() + " ["
 					+ resource.getAuthor().getUserId() + "]");
+			assertNotNull(resource.getAuthor());
 		}
 	}
 }

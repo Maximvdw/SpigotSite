@@ -229,7 +229,12 @@ public class SpigotResourceManager implements ResourceManager {
 	}
 
 	public ResourceCategory getResourceCategoryById(int id) {
-		// TODO Auto-generated method stub
+		if (this.resourceCategories.size() == 0)
+			getResourceCategories();
+		for (ResourceCategory category : resourceCategories) {
+			if (category.getCategoryId() == id)
+				return category;
+		}
 		return null;
 	}
 
