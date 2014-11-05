@@ -21,6 +21,7 @@ import be.maximvdw.spigotsite.user.SpigotUser;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotResourceManager implements ResourceManager {
+	private List<ResourceCategory> resourceCategories = new ArrayList<ResourceCategory>();
 
 	public Resource getResourceById(int resourceid) {
 		return getResourceById(resourceid, null);
@@ -56,6 +57,8 @@ public class SpigotResourceManager implements ResourceManager {
 					.select("a.inner").get(0);
 			resource.setDownloadURL("http://www.spigotmc.org/"
 					+ downloadLink.attr("href"));
+
+			Element categoryLink = doc.select("a.crumb").last();
 
 			return resource;
 		} catch (Exception ex) {
@@ -137,6 +140,8 @@ public class SpigotResourceManager implements ResourceManager {
 
 	public List<ResourceCategory> getResourceCategories() {
 		List<ResourceCategory> resourceCategories = new ArrayList<ResourceCategory>();
+		if (this.resourceCategories.size() > 0)
+			return this.resourceCategories;
 		try {
 			String url = "http://www.spigotmc.org/resources/";
 			Map<String, String> params = new HashMap<String, String>();
@@ -162,6 +167,8 @@ public class SpigotResourceManager implements ResourceManager {
 						.getStringBetween(link.attr("href"), "\\.(.*?)/")));
 				resourceCategories.add(resourceCategory);
 			}
+
+			this.resourceCategories = resourceCategories;
 		} catch (HttpStatusException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
@@ -219,6 +226,11 @@ public class SpigotResourceManager implements ResourceManager {
 			ex.printStackTrace();
 		}
 		return resources;
+	}
+
+	public ResourceCategory getResourceCategoryById(int id) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

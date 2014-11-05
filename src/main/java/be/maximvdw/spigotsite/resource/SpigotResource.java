@@ -9,7 +9,7 @@ import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.user.User;
 
-public final class SpigotResource implements Resource {
+public class SpigotResource implements Resource {
 	private int id = 0;
 	private String name = "";
 	private String version = "";

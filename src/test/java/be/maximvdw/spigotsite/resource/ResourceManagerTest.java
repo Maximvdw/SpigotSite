@@ -22,21 +22,55 @@ public class ResourceManagerTest {
 
 	@Test(timeout = 5000)
 	public void getResourceByIdTest() {
+		System.out.println("Testing 'getResourceById 1448' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
 				.getResourceManager();
 		// Test Tab plugin
 		Resource resource = resourceManager.getResourceById(1448);
 		assertNotNull(resource);
+
+		System.out.println("Resource name: " + resource.getResourceName());
+		System.out.println("Resource id: " + resource.getResourceId());
+		System.out.println("Resource author: "
+				+ resource.getAuthor().getUsername() + " ["
+				+ resource.getAuthor().getUserId() + "]");
+		System.out.println("Resource version: " + resource.getLastVersion());
 		assertEquals("Tab", resource.getResourceName());
 	}
 
 	@Test(timeout = 5000)
-	public void getResourceCategories() {
+	public void getResourceCategoriesTest() {
+		System.out.println("Testing 'getResourceCategories' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
 				.getResourceManager();
 		List<ResourceCategory> categories = resourceManager
 				.getResourceCategories();
+		for (ResourceCategory category : categories) {
+			System.out.println(category.getCategoryName() + " ["
+					+ category.getCategoryId() + "] - Count: "
+					+ category.getResourceCount());
+		}
 		assertNotNull(categories);
+	}
+
+	@Test(timeout = 5000)
+	public void getResourceCategoryByIdTest() {
+		System.out.println("Testing 'getResourceCategoryById 2' ...");
+		ResourceManager resourceManager = SpigotSite.getAPI()
+				.getResourceManager();
+		ResourceCategory category = resourceManager.getResourceCategoryById(2);
+		assertNotNull(category);
+	}
+
+	@Test(timeout = 5000)
+	public void getResourcesByCategoryTest() {
+		System.out.println("Testing 'getResourcesByCategory 2' ...");
+		ResourceManager resourceManager = SpigotSite.getAPI()
+				.getResourceManager();
+		List<Resource> resources = resourceManager
+				.getResourcesByCategory(resourceManager
+						.getResourceCategoryById(2));
+		assertNotNull(resources);
 	}
 
 }
