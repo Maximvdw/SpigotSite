@@ -4,9 +4,12 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.util.List;
 
+import be.maximvdw.spigotsite.api.resource.Rating;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
+import be.maximvdw.spigotsite.api.resource.ResourceUpdate;
 import be.maximvdw.spigotsite.api.user.User;
 
 public class SpigotResource implements Resource {
@@ -114,5 +117,20 @@ public class SpigotResource implements Resource {
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public int getAverageRating() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public List<Rating> getRatings() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<ResourceUpdate> gerResourceUpdates() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
