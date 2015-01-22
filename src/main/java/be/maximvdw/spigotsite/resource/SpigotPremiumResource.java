@@ -60,4 +60,9 @@ public class SpigotPremiumResource extends SpigotResource implements
 				.addBuyers(this, user, usernames);
 	}
 
+	public void addBuyers(User user, String[] usernames) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

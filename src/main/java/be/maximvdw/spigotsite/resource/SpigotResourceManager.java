@@ -44,8 +44,11 @@ public class SpigotResourceManager implements ResourceManager {
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
 			Document doc = res.parse();
-
+			Element categoryLink = doc.select("a.crumb").last();
 			SpigotResource resource = new SpigotResource();
+			if (categoryLink.text().contains("premium"))
+				resource = new SpigotPremiumResource();
+
 			String resourceName = doc.title().replace(
 					" | SpigotMC - High Performance Minecraft", "");
 			resource.setResourceName(resourceName);
@@ -59,8 +62,6 @@ public class SpigotResourceManager implements ResourceManager {
 					.select("a.inner").get(0);
 			resource.setDownloadURL("http://www.spigotmc.org/"
 					+ downloadLink.attr("href"));
-
-			Element categoryLink = doc.select("a.crumb").last();
 
 			Element author = doc.select("dl.author").first();
 			SpigotUser authorUser = new SpigotUser();
