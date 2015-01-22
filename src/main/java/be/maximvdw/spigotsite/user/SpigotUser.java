@@ -71,4 +71,10 @@ public class SpigotUser implements User {
 		return authenticated;
 	}
 
+	public boolean equals(User user) {
+		if (user.getUserId() != getUserId())
+			return false;
+		return true;
+	}
+
 }

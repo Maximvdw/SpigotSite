@@ -46,7 +46,8 @@ public class SpigotResourceManager implements ResourceManager {
 			Document doc = res.parse();
 			Element categoryLink = doc.select("a.crumb").last();
 			SpigotResource resource = new SpigotResource();
-			if (categoryLink.text().contains("premium"))
+
+			if (categoryLink.text().toLowerCase().contains("premium"))
 				resource = new SpigotPremiumResource();
 
 			String resourceName = doc.title().replace(
@@ -111,8 +112,14 @@ public class SpigotResourceManager implements ResourceManager {
 						"resource-", ""));
 				Element resourceLink = resourceBlock.select("h3.title").get(0)
 						.getElementsByTag("a").get(0);
-				SpigotResource resource = new SpigotResource(
-						resourceLink.text());
+
+				Element categoryLink = resourceBlock
+						.select("div.resourceDetails").select("a").last();
+				SpigotResource resource = new SpigotResource();
+				if (categoryLink.text().toLowerCase().contains("premium"))
+					resource = new SpigotPremiumResource();
+
+				resource.setResourceName(resourceLink.text());
 				resource.setAuthor(user);
 				resource.setResourceId(id);
 				createdResources.add(resource);
@@ -270,6 +277,8 @@ public class SpigotResourceManager implements ResourceManager {
 	public List<User> getPremiumResourceBuyers(PremiumResource resource,
 			User user) {
 		List<User> buyers = new ArrayList<User>();
+
+		SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
 		try {
 			String url = "http://www.spigotmc.org/resources/"
 					+ resource.getResourceId() + "/buyers";
@@ -287,14 +296,17 @@ public class SpigotResourceManager implements ResourceManager {
 			Elements buyersBlocks = doc.select("div.member");
 			for (Element buyersBlock : buyersBlocks) {
 				SpigotUser buyer = new SpigotUser();
-				buyer.setUsername(buyersBlock.select("a.username").get(0)
-						.text());
 
+				Element userElement = buyersBlock.select("a.username").get(0);
+				buyer.setUsername(userElement.text());
+				buyer.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+						userElement.attr("href"), "\\.(.*?)/")));
 				buyers.add(buyer);
 			}
 		} catch (Exception ex) {
 
 		}
+		spigotResource.setBuyers(buyers);
 		return buyers;
 	}
 

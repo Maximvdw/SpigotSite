@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
@@ -145,11 +146,57 @@ public class ResourceManagerTest {
 		ResourceManager resourceManager = SpigotSite.getAPI()
 				.getResourceManager();
 		User user = userManager.authenticate(username, password);
-		PremiumResource resource = (PremiumResource) resourceManager
-				.getResourceById(2691);
-		List<User> buyers = resource.getBuyers();
+		Resource resource = resourceManager.getResourceById(2691);
+		PremiumResource premiumResource = (SpigotPremiumResource) resource;
+		List<User> buyers = resourceManager.getPremiumResourceBuyers(
+				premiumResource, user);
+		System.out.println("Buyers of " + resource.getResourceName() + ":");
 		for (User buyer : buyers) {
-			System.out.println("\t" + buyer.getUsername());
+			System.out.println("\t" + buyer.getUsername() + "  ["
+					+ buyer.getUserId() + "]");
+		}
+	}
+
+	@Test(timeout = 15000)
+	public void getTopBuyers() throws InvalidCredentialsException {
+		System.out
+				.println("Testing 'get the buyers that bought all my plugins'");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		ResourceManager resourceManager = SpigotSite.getAPI()
+				.getResourceManager();
+		// Log in
+		User user = userManager.authenticate(username, password);
+
+		List<User> favoriteBuyers = new ArrayList<User>();
+
+		// Get your resources
+		for (Resource resource : resourceManager.getResourcesByUser(user)) {
+			// Check if the resource is premium
+			if (resource instanceof PremiumResource) {
+				PremiumResource premiumResource = (PremiumResource) resource;
+				// Get the people who bought that plugin
+				List<User> buyers = resourceManager.getPremiumResourceBuyers(
+						premiumResource, user);
+				System.out.println("The plugin "
+						+ premiumResource.getResourceName() + " got "
+						+ buyers.size() + " buyers.");
+				if (favoriteBuyers.size() == 0)
+					favoriteBuyers = buyers;
+				else {
+					List<User> newFavorites = new ArrayList<User>();
+					for (User buyer : buyers) {
+						if (favoriteBuyers.contains(buyer))
+							newFavorites.add(buyer);
+					}
+					favoriteBuyers = newFavorites;
+				}
+			}
+		}
+
+		// Your favorite buyers
+		System.out.println("People who bought all your plugins:");
+		for (User favBuyer : favoriteBuyers) {
+			System.out.println("\t" + favBuyer.getUsername() + "  <3");
 		}
 	}
 }
