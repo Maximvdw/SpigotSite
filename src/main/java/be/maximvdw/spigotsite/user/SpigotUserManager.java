@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jsoup.Connection;
@@ -11,6 +12,7 @@ import org.jsoup.nodes.Document;
 
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
+import be.maximvdw.spigotsite.api.user.UserRank;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
@@ -95,6 +97,16 @@ public class SpigotUserManager implements UserManager {
 		// Kill cookies
 		SpigotUser spigotUser = (SpigotUser) user;
 		spigotUser.getCookies().clear();
+	}
+
+	public List<UserRank> getUserRanks() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<User> getUsersByRank(UserRank rank) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

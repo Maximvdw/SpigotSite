@@ -183,8 +183,9 @@ public class SpigotResourceManager implements ResourceManager {
 				Element count = category.select("span.count").first();
 				SpigotResourceCategory resourceCategory = new SpigotResourceCategory();
 				resourceCategory.setCategoryName(link.text());
-				resourceCategory
-						.setResourceCount(Integer.parseInt(count.text()));
+				String resourceCount = count.text().toString().replace(",", "");
+				resourceCategory.setResourceCount(Integer
+						.parseInt(resourceCount));
 				resourceCategory.setCategoryId(Integer.parseInt(StringUtils
 						.getStringBetween(link.attr("href"), "\\.(.*?)/")));
 				resourceCategories.add(resourceCategory);
@@ -265,9 +266,35 @@ public class SpigotResourceManager implements ResourceManager {
 		return null;
 	}
 
-	public List<User> getPremiumResourceBuyers(PremiumResource resource) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<User> getPremiumResourceBuyers(PremiumResource resource,
+			User user) {
+		List<User> buyers = new ArrayList<User>();
+		try {
+			String url = "http://www.spigotmc.org/resources/"
+					+ resource.getResourceId() + "/buyers";
+			Map<String, String> params = new HashMap<String, String>();
+
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.GET)
+					.data(params)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+			Elements buyersBlocks = doc.select("div.member");
+			for (Element buyersBlock : buyersBlocks) {
+				SpigotUser buyer = new SpigotUser();
+				buyer.setUsername(buyersBlock.select("a.username").get(0)
+						.text());
+
+				buyers.add(buyer);
+			}
+		} catch (Exception ex) {
+
+		}
+		return buyers;
 	}
 
 	public void addBuyer(PremiumResource resource, User user, User buyer) {

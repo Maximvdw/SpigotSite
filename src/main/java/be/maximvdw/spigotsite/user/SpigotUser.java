@@ -13,6 +13,7 @@ public class SpigotUser implements User {
 	private int id = 0;
 	private String username = "";
 	private Map<String, String> cookies = new HashMap<String, String>();
+	private boolean authenticated = false;
 	private UserStatistics statistics = null;
 
 	public SpigotUser() {
@@ -45,6 +46,7 @@ public class SpigotUser implements User {
 
 	public void setCookies(Map<String, String> cookies) {
 		this.cookies = cookies;
+		this.authenticated = true;
 	}
 
 	public List<Resource> getPurchasedResources() {
@@ -63,6 +65,10 @@ public class SpigotUser implements User {
 
 	public void setUserStatistics(UserStatistics statistics) {
 		this.statistics = statistics;
+	}
+
+	public boolean isAuthenticated() {
+		return authenticated;
 	}
 
 }

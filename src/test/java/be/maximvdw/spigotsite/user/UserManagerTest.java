@@ -1,5 +1,10 @@
 package be.maximvdw.spigotsite.user;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -8,11 +13,37 @@ import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
+import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 
 public class UserManagerTest {
+	private String username = "";
+	private String password = "";
+
 	@Before
 	public void init() {
 		new SpigotSiteCore();
+
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new FileReader(
+					"C:\\Users\\Maxim\\Documents\\credentials.txt"));
+
+			username = br.readLine();
+			password = br.readLine();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				br.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Test(timeout = 5000)
@@ -32,5 +63,15 @@ public class UserManagerTest {
 
 	public void getUserRanksTest() {
 
+	}
+
+	@Test(timeout = 5000)
+	public void logInUserTest() throws InvalidCredentialsException {
+		System.out.println("Testing 'authenticate' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		User user = userManager.authenticate(username, password);
+		assertEquals(user.getUsername(), "Maximvdw");
+		System.out.println("Logged in: " + user.getUsername() + " ["
+				+ user.getUserId() + "]");
 	}
 }
