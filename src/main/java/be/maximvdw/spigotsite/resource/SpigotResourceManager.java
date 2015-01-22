@@ -13,6 +13,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
@@ -256,6 +258,72 @@ public class SpigotResourceManager implements ResourceManager {
 				return category;
 		}
 		return null;
+	}
+
+	public String getLastVersion(int resourceid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<User> getPremiumResourceBuyers(PremiumResource resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void addBuyer(PremiumResource resource, User user, User buyer) {
+		addBuyer(resource, user, buyer.getUsername());
+	}
+
+	public void addBuyer(PremiumResource resource, User user, int userid) {
+		User buyer = SpigotSite.getAPI().getUserManager().getUserById(userid);
+		addBuyer(resource, user, buyer);
+	}
+
+	public void addBuyer(PremiumResource resource, User user, String username) {
+		addBuyers(resource, user, new String[] { username });
+	}
+
+	public void addBuyers(PremiumResource resource, User user, List<User> buyers) {
+		String[] usernames = new String[buyers.size()];
+		for (int i = 0; i < buyers.size(); i++)
+			usernames[i] = buyers.get(i).getUsername();
+		addBuyers(resource, user, usernames);
+	}
+
+	public void addBuyers(PremiumResource resource, User user,
+			String[] usernames) {
+		try {
+			String url = "http://www.spigotmc.org/resources/"
+					+ resource.getResourceId() + "/add-buyer";
+			Map<String, String> params = new HashMap<String, String>();
+			String usernamesStr = "";
+			for (int i = 0; i < usernames.length; i++)
+				usernamesStr += usernames[i] + ",";
+			params.put("usernames", usernamesStr);
+			params.put("_xfRequestUri",
+					"%2Fresources%2Factionbar.1458%2Fadd-buyer");
+			params.put("_xfToken",
+					((SpigotUser) user).getCookies().get("xf_user"));
+			params.put("_xfResponseType", "json");
+			params.put("_xfNoRedirect", "1");
+			params.put("save", "Save+Changes");
+			params.put("_xfConfirm", "1");
+			params.put("redirect", "/");
+
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }
