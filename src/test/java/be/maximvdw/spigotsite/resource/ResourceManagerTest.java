@@ -3,6 +3,7 @@ package be.maximvdw.spigotsite.resource;
 import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,9 +31,12 @@ public class ResourceManagerTest {
 		new SpigotSiteCore();
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(
-					"C:\\Users\\Maxim\\Documents\\credentials.txt"));
-
+			if (new File("/var/lib/jenkins/credentials.txt").exists())
+				br = new BufferedReader(new FileReader(
+						"/var/lib/jenkins/credentials.txt"));
+			else
+				br = new BufferedReader(new FileReader(
+						"C:\\Users\\Maxim\\Documents\\credentials.txt"));
 			username = br.readLine();
 			password = br.readLine();
 		} catch (FileNotFoundException e) {
