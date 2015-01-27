@@ -12,6 +12,7 @@ public class SpigotConversation implements Conversation {
 	private List<User> participants = new ArrayList<User>();
 	private String title = "";
 	private int id = 0;
+	private int repliesCount = 0;
 
 	public User getAuthor() {
 		return author;
@@ -48,6 +49,19 @@ public class SpigotConversation implements Conversation {
 	public void reply(User user, String bbCode) {
 		SpigotSite.getAPI().getUserManager()
 				.replyToConversation(this, user, bbCode);
+	}
+
+	public int getRepliesCount() {
+		return repliesCount;
+	}
+
+	public void leave(User user) {
+		SpigotSite.getAPI().getUserManager().leaveConversation(this, user);
+
+	}
+
+	public void setRepliesCount(int repliesCount) {
+		this.repliesCount = repliesCount;
 	}
 
 }

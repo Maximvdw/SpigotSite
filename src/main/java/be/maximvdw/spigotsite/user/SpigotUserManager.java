@@ -146,6 +146,8 @@ public class SpigotUserManager implements UserManager {
 				author.setUserId(Integer.parseInt(StringUtils.getStringBetween(
 						username.attr("href"), "\\.(.*?)/")));
 				conversation.setAuthor(author);
+				conversation.setRepliesCount(Integer.parseInt(conversationBlock
+						.select("dd").get(0).text()));
 				conversations.add(conversation);
 			}
 		} catch (HttpStatusException ex) {
@@ -171,6 +173,29 @@ public class SpigotUserManager implements UserManager {
 			params.put("_xfNoRedirect", "1");
 			params.put("_xfResponseType", "json");
 
+			Jsoup.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.ignoreContentType(true)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void leaveConversation(Conversation conversation, User user) {
+		try {
+			String url = "http://www.spigotmc.org/conversations/"
+					+ conversation.getConverationId() + "/leave";
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("deletetype", "delete");
+			params.put("_xfConfirm", "1");
+			params.put("_xfToken", ((SpigotUser) user).getToken());
 			Jsoup.connect(url)
 					.method(Method.POST)
 					.data(params)

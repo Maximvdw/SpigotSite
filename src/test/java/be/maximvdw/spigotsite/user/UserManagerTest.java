@@ -91,11 +91,14 @@ public class UserManagerTest {
 		List<Conversation> conversations = userManager.getConversations(user,
 				20);
 		for (Conversation conv : conversations) {
-			System.out.println(conv.getTitle() + "   BY "
-					+ conv.getAuthor().getUsername());
+			System.out.println(conv.getTitle() + "[" + conv.getRepliesCount()
+					+ "]   BY " + conv.getAuthor().getUsername());
 			if (conv.getTitle().equals("Hello World!")) {
 				System.out.println("Sending reply ...");
-				//conv.reply(user, "This is a test");
+			//	conv.reply(user,
+			//			"This conversation has " + conv.getRepliesCount()
+			//					+ " replies. LEAVING NOW");
+			//	conv.leave(user);
 			}
 		}
 	}
