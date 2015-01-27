@@ -6,6 +6,7 @@ import java.util.Map;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.resource.Resource;
+import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserStatistics;
 
@@ -15,6 +16,7 @@ public class SpigotUser implements User {
 	private Map<String, String> cookies = new HashMap<String, String>();
 	private boolean authenticated = false;
 	private UserStatistics statistics = null;
+	private String token = "";
 
 	public SpigotUser() {
 
@@ -75,6 +77,19 @@ public class SpigotUser implements User {
 		if (user.getUserId() != getUserId())
 			return false;
 		return true;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public List<Conversation> getConversations() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

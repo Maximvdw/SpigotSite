@@ -93,6 +93,10 @@ public class UserManagerTest {
 		for (Conversation conv : conversations) {
 			System.out.println(conv.getTitle() + "   BY "
 					+ conv.getAuthor().getUsername());
+			if (conv.getTitle().equals("Hello World!")) {
+				System.out.println("Sending reply ...");
+				//conv.reply(user, "This is a test");
+			}
 		}
 	}
 }

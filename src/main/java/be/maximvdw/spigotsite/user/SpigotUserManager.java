@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +19,6 @@ import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.UserRank;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
-import be.maximvdw.spigotsite.resource.SpigotResource;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotUserManager implements UserManager {
@@ -87,7 +87,8 @@ public class SpigotUserManager implements UserManager {
 			user.setUsername(doc.select("a.username.NoOverlay").text());
 			user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
 					res.body(), "member\\?user_id=(.*?)\">Your Content")));
-
+			user.setToken(doc.select("input[name=_xfToken]").get(0)
+					.attr("value"));
 			return user;
 		} catch (HttpStatusException ex) {
 			ex.printStackTrace();
@@ -155,4 +156,33 @@ public class SpigotUserManager implements UserManager {
 		return conversations;
 	}
 
+	public void replyToConversation(Conversation conversation, User user,
+			String reply) {
+		try {
+			String url = "http://www.spigotmc.org/conversations/"
+					+ conversation.getConverationId() + "/insert-reply";
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("message", reply);
+			params.put("last_date", String.valueOf(new Date().getTime()));
+			params.put("last_known_date", "");
+			params.put("_xfToken", ((SpigotUser) user).getToken());
+			params.put("_xfRelativeResolver", url);
+			params.put("_xfRequestUri", url);
+			params.put("_xfNoRedirect", "1");
+			params.put("_xfResponseType", "json");
+
+			Jsoup.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.ignoreContentType(true)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
 }

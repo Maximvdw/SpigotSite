@@ -3,6 +3,7 @@ package be.maximvdw.spigotsite.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 
@@ -42,6 +43,11 @@ public class SpigotConversation implements Conversation {
 
 	public void setConversationId(int id) {
 		this.id = id;
+	}
+
+	public void reply(User user, String bbCode) {
+		SpigotSite.getAPI().getUserManager()
+				.replyToConversation(this, user, bbCode);
 	}
 
 }
