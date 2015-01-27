@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
@@ -78,5 +80,19 @@ public class UserManagerTest {
 		assertEquals(user.getUsername(), "Maximvdw");
 		System.out.println("Logged in: " + user.getUsername() + " ["
 				+ user.getUserId() + "]");
+	}
+
+	@Test(timeout = 5000)
+	public void conversationsTest() throws InvalidCredentialsException {
+		System.out.println("Testing 'getConversations' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		User user = userManager.authenticate(username, password);
+
+		List<Conversation> conversations = userManager.getConversations(user,
+				20);
+		for (Conversation conv : conversations) {
+			System.out.println(conv.getTitle() + "   BY "
+					+ conv.getAuthor().getUsername());
+		}
 	}
 }
