@@ -64,11 +64,15 @@ public class SpigotConversation implements Conversation {
 		this.repliesCount = repliesCount;
 	}
 
-	public boolean equals(Conversation conv) {
-		if (conv.getConverationId() == getConverationId())
-			return true;
+	@Override
+	public boolean equals(Object object) {
+		boolean sameSame = false;
 
-		return false;
+		if (object != null && object instanceof SpigotConversation) {
+			sameSame = this.id == ((SpigotConversation) object).id;
+		}
+
+		return sameSame;
 	}
 
 }
