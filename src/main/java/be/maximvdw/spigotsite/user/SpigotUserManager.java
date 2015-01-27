@@ -76,7 +76,8 @@ public class SpigotUserManager implements UserManager {
 					.execute();
 			if (res.body().contains("Incorrect password. Please try again.")) {
 				// Password incorrect
-
+				
+				throw new InvalidCredentialsException();
 			}
 			Document doc = res.parse();
 
