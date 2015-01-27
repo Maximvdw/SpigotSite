@@ -64,4 +64,11 @@ public class SpigotConversation implements Conversation {
 		this.repliesCount = repliesCount;
 	}
 
+	public boolean equal(Conversation conv) {
+		if (conv.getConverationId() == getConverationId())
+			return true;
+
+		return false;
+	}
+
 }
