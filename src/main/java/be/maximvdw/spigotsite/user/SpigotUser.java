@@ -75,7 +75,7 @@ public class SpigotUser implements User {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof User)) {
+		if (!(obj instanceof SpigotUser)) {
 			return false;
 		}
 		User user = (User) obj;
