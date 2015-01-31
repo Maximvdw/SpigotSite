@@ -129,13 +129,16 @@ public class SpigotConversationManager implements ConversationManager {
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("title", title);
 			params.put("message", body);
-			params.put("recipents", recipentsStr);
+			params.put("recipients", recipentsStr);
 			params.put("_xfToken", ((SpigotUser) user).getToken());
 			params.put("_xfRelativeResolver", url);
 			params.put("_xfRequestUri", url);
 			params.put("_xfNoRedirect", "1");
 			params.put("_xfResponseType", "json");
-			Jsoup.connect(url)
+			params.put("conversation_locked", locked ? "1" : "0");
+			params.put("conversation_sticky", sticky ? "1" : "0");
+			params.put("open_invite", invite ? "1" : "0");
+			Connection.Response res = 	Jsoup.connect(url)
 					.method(Method.POST)
 					.data(params)
 					.ignoreContentType(true)
@@ -143,6 +146,8 @@ public class SpigotConversationManager implements ConversationManager {
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
+			Document doc = res.parse();
+			doc.select("div.titleBar");
 		} catch (HttpStatusException ex) {
 			ex.printStackTrace();
 		} catch (Exception ex) {
