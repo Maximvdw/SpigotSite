@@ -1,0 +1,155 @@
+package be.maximvdw.spigotsite.user;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
+import org.jsoup.Jsoup;
+import org.jsoup.Connection.Method;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import be.maximvdw.spigotsite.api.user.Conversation;
+import be.maximvdw.spigotsite.api.user.ConversationManager;
+import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.utils.StringUtils;
+
+public class SpigotConversationManager implements ConversationManager {
+
+	public List<Conversation> getConversations(User user, int count) {
+		List<Conversation> conversations = new ArrayList<Conversation>();
+		try {
+			String url = "http://www.spigotmc.org/conversations/";
+			Map<String, String> params = new HashMap<String, String>();
+
+			Connection.Response res = Jsoup
+					.connect(url)
+					.method(Method.GET)
+					.data(params)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+			Elements conversationBlocks = doc.select("li.discussionListItem");
+			for (Element conversationBlock : conversationBlocks) {
+				SpigotConversation conversation = new SpigotConversation();
+				int id = Integer.parseInt(conversationBlock.id().replace(
+						"conversation-", ""));
+				Element conversationLink = conversationBlock.select("h3.title")
+						.get(0).getElementsByTag("a").get(0);
+				conversation.setTitle(conversationLink.text());
+				conversation.setConversationId(id);
+				Element username = conversationBlock.select("a.username")
+						.first();
+				SpigotUser author = new SpigotUser();
+				author.setUsername(username.text());
+				author.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+						username.attr("href"), "\\.(.*?)/")));
+				conversation.setAuthor(author);
+				conversation.setRepliesCount(Integer.parseInt(conversationBlock
+						.select("dd").get(0).text()));
+				conversations.add(conversation);
+			}
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return conversations;
+	}
+
+	public void replyToConversation(Conversation conversation, User user,
+			String reply) {
+		try {
+			String url = "http://www.spigotmc.org/conversations/"
+					+ conversation.getConverationId() + "/insert-reply";
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("message", reply);
+			params.put("last_date", String.valueOf(new Date().getTime()));
+			params.put("last_known_date", "");
+			params.put("_xfToken", ((SpigotUser) user).getToken());
+			params.put("_xfRelativeResolver", url);
+			params.put("_xfRequestUri", url);
+			params.put("_xfNoRedirect", "1");
+			params.put("_xfResponseType", "json");
+
+			Jsoup.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.ignoreContentType(true)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public void leaveConversation(Conversation conversation, User user) {
+		try {
+			String url = "http://www.spigotmc.org/conversations/"
+					+ conversation.getConverationId() + "/leave";
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("deletetype", "delete");
+			params.put("_xfConfirm", "1");
+			params.put("_xfToken", ((SpigotUser) user).getToken());
+			Jsoup.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.ignoreContentType(true)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public Conversation createConversation(User user, Set<String> recipents,
+			String title, String body, boolean locked, boolean invite,
+			boolean sticky) {
+		Conversation conversation = new SpigotConversation();
+		try {
+			String url = "http://www.spigotmc.org/conversations/insert";
+			String recipentsStr = recipents.iterator().next();
+
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("title", title);
+			params.put("message", body);
+			params.put("recipents", recipentsStr);
+			params.put("_xfToken", ((SpigotUser) user).getToken());
+			params.put("_xfRelativeResolver", url);
+			params.put("_xfRequestUri", url);
+			params.put("_xfNoRedirect", "1");
+			params.put("_xfResponseType", "json");
+			Jsoup.connect(url)
+					.method(Method.POST)
+					.data(params)
+					.ignoreContentType(true)
+					.cookies(((SpigotUser) user).getCookies())
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return conversation;
+	}
+
+}

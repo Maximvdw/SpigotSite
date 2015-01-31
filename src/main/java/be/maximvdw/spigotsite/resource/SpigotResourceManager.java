@@ -13,6 +13,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.resource.Resource;
@@ -38,7 +39,7 @@ public class SpigotResourceManager implements ResourceManager {
 					.method(Method.GET)
 					.data(params)
 					.cookies(
-							user == null ? new HashMap<String, String>()
+							user == null ? SpigotSiteCore.getBaseCookies()
 									: ((SpigotUser) user).getCookies())
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
@@ -95,6 +96,7 @@ public class SpigotResourceManager implements ResourceManager {
 			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.GET)
+					.cookies(SpigotSiteCore.getBaseCookies())
 					.data(params)
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
@@ -179,6 +181,7 @@ public class SpigotResourceManager implements ResourceManager {
 			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.GET)
+					.cookies(SpigotSiteCore.getBaseCookies())
 					.data(params)
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
@@ -222,6 +225,7 @@ public class SpigotResourceManager implements ResourceManager {
 				Connection.Response res = Jsoup
 						.connect(url)
 						.method(Method.GET)
+						.cookies(SpigotSiteCore.getBaseCookies())
 						.data(params)
 						.userAgent(
 								"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
@@ -353,6 +357,7 @@ public class SpigotResourceManager implements ResourceManager {
 			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.POST)
+					.cookies(((SpigotUser) user).getCookies())
 					.data(params)
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")

@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,11 +16,12 @@ import static org.junit.Assert.*;
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.user.Conversation;
+import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 
-public class UserManagerTest {
+public class ConversationManagerTest {
 	private String username = "";
 	private String password = "";
 
@@ -54,31 +57,37 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 5000)
-	public void getUserByIdTest() {
-		System.out.println("Testing 'getUserById 1' ...");
+	public void conversationsTest() throws InvalidCredentialsException {
+		System.out.println("Testing 'getConversations' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.getUserById(1);
-		System.out.println("Username: " + user.getUsername());
-		System.out.println("User Id: " + user.getUserId());
-		assertEquals(1, user.getUserId());
-		assertEquals("md_5", user.getUsername());
-	}
-
-	public void getUsersByRankTest() {
-
-	}
-
-	public void getUserRanksTest() {
-
+		User user = userManager.authenticate(username, password);
+		ConversationManager conversationManager = SpigotSite.getAPI()
+				.getConversationManager();
+		List<Conversation> conversations = conversationManager
+				.getConversations(user, 20);
+		for (Conversation conv : conversations) {
+			System.out.println(conv.getTitle() + "[" + conv.getRepliesCount()
+					+ "]   BY " + conv.getAuthor().getUsername());
+			if (conv.getTitle().equals("Hello World!")) {
+				System.out.println("Sending reply ...");
+				// conv.reply(user,
+				// "This conversation has " + conv.getRepliesCount()
+				// + " replies. LEAVING NOW");
+				// conv.leave(user);
+			}
+		}
 	}
 
 	@Test(timeout = 5000)
-	public void logInUserTest() throws InvalidCredentialsException {
-		System.out.println("Testing 'authenticate' ...");
+	public void conversationSendTest() throws InvalidCredentialsException {
+		System.out.println("Testing 'createConversation' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.authenticate(username, password);
-		assertEquals(user.getUsername(), "Maximvdw");
-		System.out.println("Logged in: " + user.getUsername() + " ["
-				+ user.getUserId() + "]");
+		ConversationManager conversationManager = SpigotSite.getAPI()
+				.getConversationManager();
+		Set<String> recipents = new HashSet<String>();
+		recipents.add("MVdWSoftware");
+		conversationManager.createConversation(user, recipents, "Hello",
+				"World", true, false, false);
 	}
 }

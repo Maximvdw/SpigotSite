@@ -47,7 +47,7 @@ public class SpigotConversation implements Conversation {
 	}
 
 	public void reply(User user, String bbCode) {
-		SpigotSite.getAPI().getUserManager()
+		SpigotSite.getAPI().getConversationManager()
 				.replyToConversation(this, user, bbCode);
 	}
 
@@ -56,7 +56,8 @@ public class SpigotConversation implements Conversation {
 	}
 
 	public void leave(User user) {
-		SpigotSite.getAPI().getUserManager().leaveConversation(this, user);
+		SpigotSite.getAPI().getConversationManager()
+				.leaveConversation(this, user);
 
 	}
 
