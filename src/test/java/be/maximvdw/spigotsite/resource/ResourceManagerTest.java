@@ -150,6 +150,12 @@ public class ResourceManagerTest {
 		PremiumResource premiumResource = (SpigotPremiumResource) resource;
 		List<User> buyers = resourceManager.getPremiumResourceBuyers(
 				premiumResource, user);
+		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(
+				premiumResource, user);
+
+		if (!buyers.isEmpty())
+			assertEquals(buyers.get(0), buyers2.get(0));
+
 		System.out.println("Buyers of " + resource.getResourceName() + ":");
 		for (User buyer : buyers) {
 			System.out.println("\t" + buyer.getUsername() + "  ["

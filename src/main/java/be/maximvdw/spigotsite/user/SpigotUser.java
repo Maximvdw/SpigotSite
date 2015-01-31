@@ -73,7 +73,12 @@ public class SpigotUser implements User {
 		return authenticated;
 	}
 
-	public boolean equals(User user) {
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof User)) {
+			return false;
+		}
+		User user = (User) obj;
 		if (user.getUserId() != getUserId())
 			return false;
 		return true;
