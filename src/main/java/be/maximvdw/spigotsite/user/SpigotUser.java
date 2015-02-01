@@ -79,7 +79,8 @@ public class SpigotUser implements User {
 			return false;
 		}
 		User user = (User) obj;
-		if (user.getUserId() != getUserId())
+		if (user.getUserId() != getUserId()
+				&& (!user.getUsername().equals(getUsername())))
 			return false;
 		return true;
 	}
