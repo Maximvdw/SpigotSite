@@ -15,6 +15,7 @@ import org.jsoup.select.Elements;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
@@ -279,7 +280,7 @@ public class SpigotResourceManager implements ResourceManager {
 	}
 
 	public List<User> getPremiumResourceBuyers(PremiumResource resource,
-			User user) {
+			User user) throws ConnectionFailedException {
 		List<User> buyers = new ArrayList<User>();
 
 		SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
@@ -307,8 +308,10 @@ public class SpigotResourceManager implements ResourceManager {
 						userElement.attr("href"), "\\.(.*?)/")));
 				buyers.add(buyer);
 			}
+		} catch (HttpStatusException ex) {
+			throw new ConnectionFailedException();
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 		spigotResource.setBuyers(buyers);
 		return buyers;
