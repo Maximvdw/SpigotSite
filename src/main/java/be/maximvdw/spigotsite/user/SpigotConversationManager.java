@@ -1,5 +1,6 @@
 package be.maximvdw.spigotsite.user;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.User;
@@ -66,7 +68,7 @@ public class SpigotConversationManager implements ConversationManager {
 	}
 
 	public void replyToConversation(Conversation conversation, User user,
-			String reply) {
+			String reply) throws SpamWarningException {
 		try {
 			String url = "http://www.spigotmc.org/conversations/"
 					+ conversation.getConverationId() + "/insert-reply";
@@ -80,7 +82,8 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("_xfNoRedirect", "1");
 			params.put("_xfResponseType", "json");
 
-			Jsoup.connect(url)
+			Connection.Response res = Jsoup
+					.connect(url)
 					.method(Method.POST)
 					.data(params)
 					.ignoreContentType(true)
@@ -88,10 +91,16 @@ public class SpigotConversationManager implements ConversationManager {
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
+			Document doc = res.parse();
+
+			if (doc.text().contains("\"error\":")) {
+				throw new SpamWarningException();
+			}
 		} catch (HttpStatusException ex) {
 			ex.printStackTrace();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
@@ -120,7 +129,7 @@ public class SpigotConversationManager implements ConversationManager {
 
 	public Conversation createConversation(User user, Set<String> recipents,
 			String title, String body, boolean locked, boolean invite,
-			boolean sticky) {
+			boolean sticky) throws SpamWarningException {
 		Conversation conversation = new SpigotConversation();
 		try {
 			String url = "http://www.spigotmc.org/conversations/insert";
@@ -138,7 +147,8 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("conversation_locked", locked ? "1" : "0");
 			params.put("conversation_sticky", sticky ? "1" : "0");
 			params.put("open_invite", invite ? "1" : "0");
-			Connection.Response res = 	Jsoup.connect(url)
+			Connection.Response res = Jsoup
+					.connect(url)
 					.method(Method.POST)
 					.data(params)
 					.ignoreContentType(true)
@@ -147,11 +157,16 @@ public class SpigotConversationManager implements ConversationManager {
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
 			Document doc = res.parse();
+
+			if (doc.text().contains("\"error\":")) {
+				throw new SpamWarningException();
+			}
+
 			doc.select("div.titleBar");
 		} catch (HttpStatusException ex) {
 			ex.printStackTrace();
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		return conversation;

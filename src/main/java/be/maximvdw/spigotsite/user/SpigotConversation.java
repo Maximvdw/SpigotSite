@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 
@@ -46,7 +47,7 @@ public class SpigotConversation implements Conversation {
 		this.id = id;
 	}
 
-	public void reply(User user, String bbCode) {
+	public void reply(User user, String bbCode) throws SpamWarningException{
 		SpigotSite.getAPI().getConversationManager()
 				.replyToConversation(this, user, bbCode);
 	}

@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.User;
@@ -67,14 +68,36 @@ public class ConversationManagerTest {
 		for (Conversation conv : conversations) {
 			System.out.println(conv.getTitle() + "[" + conv.getRepliesCount()
 					+ "]   BY " + conv.getAuthor().getUsername());
-			if (conv.getTitle().equals("Hello World!")) {
+			if (conv.getTitle().equals("Hello")
+					&& conv.getAuthor().getUsername().equals("Maximvdw")) {
 				System.out.println("Sending reply ...");
-				// conv.reply(user,
-				// "This conversation has " + conv.getRepliesCount()
-				// + " replies. LEAVING NOW");
-				// conv.leave(user);
+				try {
+					conv.reply(user,
+							"This conversation has " + conv.getRepliesCount()
+									+ " replies. LEAVING NOW");
+				} catch (SpamWarningException ex) {
+
+				}
+				conv.leave(user);
 			}
 		}
+	}
+
+	@Test(timeout = 5000, expected = SpamWarningException.class)
+	public void spamConversationTest() throws InvalidCredentialsException,
+			InterruptedException {
+		System.out.println("Testing 'Spam detection' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		User user = userManager.authenticate(username, password);
+		ConversationManager conversationManager = SpigotSite.getAPI()
+				.getConversationManager();
+		Set<String> recipents = new HashSet<String>();
+		recipents.add("MVdWSoftware");
+		conversationManager.createConversation(user, recipents, "Hello",
+				"World", true, false, false);
+		conversationManager.createConversation(user, recipents, "Hello",
+				"World", true, false, false);
+		Thread.sleep(15000);
 	}
 
 	@Test(timeout = 5000)
@@ -86,7 +109,11 @@ public class ConversationManagerTest {
 				.getConversationManager();
 		Set<String> recipents = new HashSet<String>();
 		recipents.add("MVdWSoftware");
-		conversationManager.createConversation(user, recipents, "Hello",
-				"World", true, false, false);
+		try {
+			conversationManager.createConversation(user, recipents, "Hello",
+					"World", true, false, false);
+		} catch (SpamWarningException ex) {
+
+		}
 	}
 }
