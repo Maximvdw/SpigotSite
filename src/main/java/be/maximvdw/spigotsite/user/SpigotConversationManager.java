@@ -60,7 +60,7 @@ public class SpigotConversationManager implements ConversationManager {
 				conversations.add(conversation);
 			}
 		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -72,6 +72,10 @@ public class SpigotConversationManager implements ConversationManager {
 		try {
 			String url = "http://www.spigotmc.org/conversations/"
 					+ conversation.getConverationId() + "/insert-reply";
+
+			if (((SpigotUser) user).requiresRefresh())
+				((SpigotUser) user).refresh();
+
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("message", reply);
 			params.put("last_date", String.valueOf(new Date().getTime()));
@@ -108,6 +112,10 @@ public class SpigotConversationManager implements ConversationManager {
 		try {
 			String url = "http://www.spigotmc.org/conversations/"
 					+ conversation.getConverationId() + "/leave";
+
+			if (((SpigotUser) user).requiresRefresh())
+				((SpigotUser) user).refresh();
+
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("deletetype", "delete");
 			params.put("_xfConfirm", "1");
@@ -135,6 +143,8 @@ public class SpigotConversationManager implements ConversationManager {
 			String url = "http://www.spigotmc.org/conversations/insert";
 			String recipentsStr = recipents.iterator().next();
 
+			if (((SpigotUser) user).requiresRefresh())
+				((SpigotUser) user).refresh();
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("title", title);
 			params.put("message", body);

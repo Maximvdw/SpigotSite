@@ -1,7 +1,5 @@
 package be.maximvdw.spigotsite.user;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,11 +9,7 @@ import org.jsoup.Connection.Method;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import be.maximvdw.spigotsite.SpigotSiteCore;
-import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.UserRank;
