@@ -1,5 +1,6 @@
 package be.maximvdw.spigotsite.user;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.jsoup.Connection.Method;
 import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
@@ -110,5 +112,34 @@ public class SpigotUserManager implements UserManager {
 	public List<User> getUsersByRank(UserRank rank) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public List<User> getUsersByName(String name) {
+		List<User> users = new ArrayList<User>();
+		try {
+			String url = "http://www.spigotmc.org/index.php?members/find&_xfResponseType=json";
+			Map<String, String> params = new HashMap<String, String>();
+			// Login parameters
+			params.put("q", name);
+			params.put("_xfToken", "");
+			params.put("_xfNoRedirect", "1");
+			params.put("_xfResponseType", "json");
+			Connection.Response res = Jsoup
+					.connect(url)
+					.cookies(SpigotSiteCore.getBaseCookies())
+					.method(Method.POST)
+					.data(params)
+					.ignoreContentType(true)
+					.userAgent(
+							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+					.execute();
+			Document doc = res.parse();
+			System.out.println(doc.text());
+		} catch (HttpStatusException ex) {
+			ex.printStackTrace();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return users;
 	}
 }

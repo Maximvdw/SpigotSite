@@ -54,6 +54,13 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 5000)
+	public void getUsersByNameTest() {
+		System.out.println("Testing 'getUsersByName' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		userManager.getUsersByName("Max");
+	}
+
+	@Test(timeout = 5000)
 	public void getUserByIdTest() {
 		System.out.println("Testing 'getUserById 1' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();

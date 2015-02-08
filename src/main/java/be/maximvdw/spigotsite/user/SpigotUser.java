@@ -110,9 +110,13 @@ public class SpigotUser implements User {
 		return null;
 	}
 
+	public long getCurrentDate() {
+		return new Date().getTime();
+	}
+
 	public boolean requiresRefresh() {
 		long cur = new Date().getTime();
-		if (cur > getLoginDate() + (24 * 60 * 60 * 1000)) {
+		if (cur > (getLoginDate() + (24 * 60 * 60 * 1000))) {
 			return true;
 		}
 		return false;
