@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.ConversationManager;
@@ -57,7 +58,8 @@ public class ConversationManagerTest {
 	}
 
 	@Test(timeout = 5000)
-	public void conversationsTest() throws InvalidCredentialsException {
+	public void conversationsTest() throws InvalidCredentialsException,
+			ConnectionFailedException {
 		System.out.println("Testing 'getConversations' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.authenticate(username, password);
@@ -115,5 +117,10 @@ public class ConversationManagerTest {
 		} catch (SpamWarningException ex) {
 
 		}
+		SpigotUser spigotUser = (SpigotUser) user;
+		for (String cookie : spigotUser.getCookies().keySet())
+			System.out.println("Return cookie: " + cookie);
+
+		spigotUser.refresh();
 	}
 }

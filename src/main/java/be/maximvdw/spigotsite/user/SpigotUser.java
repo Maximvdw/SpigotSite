@@ -129,7 +129,7 @@ public class SpigotUser implements User {
 
 			Connection.Response res = Jsoup
 					.connect(url)
-					.cookies(SpigotSiteCore.getBaseCookies())
+					.cookies(getCookies())
 					.method(Method.GET)
 					.data(params)
 					.userAgent(
@@ -139,7 +139,7 @@ public class SpigotUser implements User {
 			setToken(doc.select("input[name=_xfToken]").get(0).attr("value"));
 			setLoginDate(new Date().getTime());
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 	}
 
