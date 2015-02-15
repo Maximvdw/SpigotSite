@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
@@ -72,6 +73,7 @@ public class ResourceManagerTest {
 				+ resource.getAuthor().getUsername() + " ["
 				+ resource.getAuthor().getUserId() + "]");
 		System.out.println("Resource version: " + resource.getLastVersion());
+		System.out.println("Resource URL: " + resource.getDownloadURL());
 		assertEquals("Tab", resource.getResourceName());
 		assertEquals(1448, resource.getResourceId());
 		assertEquals("Maximvdw", resource.getAuthor().getUsername());
@@ -140,7 +142,8 @@ public class ResourceManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getBuyers() throws InvalidCredentialsException {
+	public void getBuyers() throws InvalidCredentialsException,
+			ConnectionFailedException {
 		System.out.println("Testing 'getBuyers 2691' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		ResourceManager resourceManager = SpigotSite.getAPI()
@@ -164,7 +167,8 @@ public class ResourceManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getTopBuyers() throws InvalidCredentialsException {
+	public void getTopBuyers() throws InvalidCredentialsException,
+			ConnectionFailedException {
 		System.out
 				.println("Testing 'get the buyers that bought all my plugins'");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
