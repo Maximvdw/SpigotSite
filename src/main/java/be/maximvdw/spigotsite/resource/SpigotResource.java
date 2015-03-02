@@ -3,14 +3,19 @@ package be.maximvdw.spigotsite.resource;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+
+import org.jsoup.Connection.Response;
+import org.jsoup.Jsoup;
 
 import be.maximvdw.spigotsite.api.resource.Rating;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceUpdate;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.user.SpigotUser;
 
 public class SpigotResource implements Resource {
 	private int id = 0;
@@ -73,42 +78,19 @@ public class SpigotResource implements Resource {
 		this.downloadURL = downloadURL;
 	}
 
-	public File downloadResource(File output) {
-		BufferedInputStream in = null;
-		FileOutputStream fout = null;
-		try {
-			// Download the file
-			final URL url = new URL(getDownloadURL());
-			final int fileLength = url.openConnection().getContentLength();
-			in = new BufferedInputStream(url.openStream());
-			fout = new FileOutputStream(output.getAbsolutePath()
-					+ File.separator + output);
+	public File downloadResource(User user, File output) throws IOException {
+		// Open a URL Stream
+		Response resultImageResponse = Jsoup.connect(getDownloadURL())
+				.cookies(((SpigotUser) user).getCookies())
+				.ignoreContentType(true).execute();
 
-			final byte[] data = new byte[1024];
-			int count;
-			long downloaded = 0;
-			while ((count = in.read(data, 0, 1024)) != -1) {
-				downloaded += count;
-				fout.write(data, 0, count);
-				final int percent = (int) ((downloaded * 100) / fileLength);
-				if (((percent % 10) == 0)) {
-					// Event
-				}
-			}
-			return null;
-		} catch (final Exception ex) {
-			return null;
-		} finally {
-			try {
-				if (in != null) {
-					in.close();
-				}
-				if (fout != null) {
-					fout.close();
-				}
-			} catch (final Exception ex) {
-			}
-		}
+		// output here
+		FileOutputStream out = (new FileOutputStream(output));
+		out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
+														// is where the image's
+														// contents are.
+		out.close();
+		return output;
 	}
 
 	public boolean isDeleted() {
