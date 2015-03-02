@@ -77,6 +77,10 @@ public class SpigotResource implements Resource {
 
 	public File downloadResource(User user, File output) {
 		try {
+			if (!output.exists()){
+				output.mkdirs();
+				output.createNewFile();
+			}
 			// Open a URL Stream
 			Response resultImageResponse = Jsoup.connect(getDownloadURL())
 					.cookies(((SpigotUser) user).getCookies())
