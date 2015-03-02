@@ -1,10 +1,7 @@
 package be.maximvdw.spigotsite.resource;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URL;
 import java.util.List;
 
 import org.jsoup.Connection.Response;
@@ -78,19 +75,25 @@ public class SpigotResource implements Resource {
 		this.downloadURL = downloadURL;
 	}
 
-	public File downloadResource(User user, File output) throws IOException {
-		// Open a URL Stream
-		Response resultImageResponse = Jsoup.connect(getDownloadURL())
-				.cookies(((SpigotUser) user).getCookies())
-				.ignoreContentType(true).execute();
+	public File downloadResource(User user, File output) {
+		try {
+			// Open a URL Stream
+			Response resultImageResponse = Jsoup.connect(getDownloadURL())
+					.cookies(((SpigotUser) user).getCookies())
+					.ignoreContentType(true).execute();
 
-		// output here
-		FileOutputStream out = (new FileOutputStream(output));
-		out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
-														// is where the image's
-														// contents are.
-		out.close();
-		return output;
+			// output here
+			FileOutputStream out = (new FileOutputStream(output));
+			out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
+															// is where the
+															// image's
+															// contents are.
+			out.close();
+			return output;
+		} catch (Exception ex) {
+
+		}
+		return null;
 	}
 
 	public boolean isDeleted() {
