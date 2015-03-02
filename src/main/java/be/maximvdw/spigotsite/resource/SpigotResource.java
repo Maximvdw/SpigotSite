@@ -77,8 +77,8 @@ public class SpigotResource implements Resource {
 
 	public File downloadResource(User user, File output) {
 		try {
-			if (!output.exists()){
-				output.mkdirs();
+			if (output.exists()){
+				output.delete();
 			}
 			// Open a URL Stream
 			Response resultImageResponse = Jsoup.connect(getDownloadURL())
