@@ -62,6 +62,13 @@
 							<exclude>org.spigotmc:spigot</exclude>
 						</excludes>
 					</artifactSet>
+
+					<relocations>
+						<relocation>
+							<pattern>org.jsoup</pattern>
+							<shadedPattern>be.maximvdw.spigotsite.jsoup</shadedPattern>
+						</relocation>
+					</relocations>
 				</configuration>
 			</plugin>
 		</plugins>
