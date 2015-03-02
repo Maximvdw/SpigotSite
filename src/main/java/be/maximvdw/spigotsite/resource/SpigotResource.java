@@ -91,7 +91,7 @@ public class SpigotResource implements Resource {
 			out.close();
 			return output;
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 		return null;
 	}
