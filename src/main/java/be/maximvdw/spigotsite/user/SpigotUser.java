@@ -28,6 +28,7 @@ public class SpigotUser implements User {
 	private UserStatistics statistics = null;
 	private String token = "";
 	private long loginDate = new Date().getTime();
+	private String lastActivity = "";
 
 	public SpigotUser() {
 
@@ -149,6 +150,14 @@ public class SpigotUser implements User {
 
 	public void setLoginDate(long loginDate) {
 		this.loginDate = loginDate;
+	}
+
+	public String getLastActivity() {
+		return lastActivity;
+	}
+
+	public void setLastActivity(String lastActivity) {
+		this.lastActivity = lastActivity;
 	}
 
 }

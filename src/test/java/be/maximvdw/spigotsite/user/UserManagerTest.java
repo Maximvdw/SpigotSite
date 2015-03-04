@@ -70,6 +70,17 @@ public class UserManagerTest {
 		assertEquals(1, user.getUserId());
 		assertEquals("md_5", user.getUsername());
 	}
+	
+	@Test(timeout = 5000)
+	public void getUserActivityTest() {
+		System.out.println("Testing 'getUserActivityTest' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		User user = userManager.getUserById(6687);
+		System.out.println("Username: " + user.getUsername());
+		System.out.println("User Id: " + user.getUserId());
+		System.out.println("Activity: " + user.getLastActivity());
+	}
+
 
 	public void getUsersByRankTest() {
 

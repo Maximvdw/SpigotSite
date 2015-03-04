@@ -42,6 +42,10 @@ public class SpigotUserManager implements UserManager {
 			SpigotUser reqUser = new SpigotUser();
 			reqUser.setUsername(doc.select("h1.username").get(0).text());
 			reqUser.setUserId(userid);
+			if (doc.select("dl.lastActivity").size() != 0)
+				if (doc.select("dl.lastActivity").get(0).select("dd").size() != 0)
+					reqUser.setLastActivity(doc.select("dl.lastActivity")
+							.get(0).select("dd").get(0).text());
 			return reqUser;
 		} catch (Exception ex) {
 			ex.printStackTrace();
