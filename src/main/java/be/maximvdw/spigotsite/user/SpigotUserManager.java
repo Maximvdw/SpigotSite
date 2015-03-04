@@ -48,7 +48,7 @@ public class SpigotUserManager implements UserManager {
 							.get(0).select("dd").get(0).text());
 			return reqUser;
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			
 		}
 
 		return null;
