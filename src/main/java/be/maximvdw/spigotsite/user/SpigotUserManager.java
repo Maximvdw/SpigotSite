@@ -16,6 +16,8 @@ import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.UserRank;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.http.HTTPResponse;
+import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotUserManager implements UserManager {
@@ -48,7 +50,7 @@ public class SpigotUserManager implements UserManager {
 							.get(0).select("dd").get(0).text());
 			return reqUser;
 		} catch (Exception ex) {
-			
+
 		}
 
 		return null;
@@ -67,34 +69,25 @@ public class SpigotUserManager implements UserManager {
 			params.put("cookie_check", "0"); // Fix error Cookies required
 			params.put("_xfToken", "");
 			params.put("redirect", "/");
-
-			Connection.Response res = Jsoup
-					.connect(url)
-					.cookies(SpigotSiteCore.getBaseCookies())
-					.method(Method.POST)
-					.data(params)
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			if (res.body().contains("Incorrect password. Please try again.")) {
+			HTTPResponse res = Request.post(url,
+					SpigotSiteCore.getBaseCookies(), params);
+			if (res.getHtml().contains("Incorrect password. Please try again.")) {
 				// Password incorrect
 
 				throw new InvalidCredentialsException();
 			}
-			Document doc = res.parse();
+			Document doc = res.getDocument();
 
 			SpigotUser user = new SpigotUser(username);
-			user.setCookies(res.cookies());
+			user.setCookies(res.getCookies());
 
 			// Fetch data
 			user.setUsername(doc.select("a.username.NoOverlay").text());
 			user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
-					res.body(), "member\\?user_id=(.*?)\">Your Content")));
+					res.getHtml(), "member\\?user_id=(.*?)\">Your Content")));
 			user.setToken(doc.select("input[name=_xfToken]").get(0)
 					.attr("value"));
 			return user;
-		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -128,19 +121,13 @@ public class SpigotUserManager implements UserManager {
 			params.put("_xfToken", "");
 			params.put("_xfNoRedirect", "1");
 			params.put("_xfResponseType", "json");
-			Connection.Response res = Jsoup
-					.connect(url)
-					.cookies(SpigotSiteCore.getBaseCookies())
-					.method(Method.POST)
-					.data(params)
-					.ignoreContentType(true)
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
+
+			HTTPResponse res = Request.post(url,
+					SpigotSiteCore.getBaseCookies(), params);
+
+			Document doc = res.getDocument();
 			System.out.println(doc.text());
-		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
+
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}

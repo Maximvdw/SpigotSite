@@ -21,6 +21,8 @@ import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.http.HTTPResponse;
+import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
 import be.maximvdw.spigotsite.utils.StringUtils;
 
@@ -35,17 +37,10 @@ public class SpigotResourceManager implements ResourceManager {
 		try {
 			String url = "http://www.spigotmc.org/resources/" + resourceid;
 			Map<String, String> params = new HashMap<String, String>();
-			Connection.Response res = Jsoup
-					.connect(url)
-					.method(Method.GET)
-					.data(params)
-					.cookies(
-							user == null ? SpigotSiteCore.getBaseCookies()
-									: ((SpigotUser) user).getCookies())
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
+			HTTPResponse res = Request.get(url,
+					user == null ? SpigotSiteCore.getBaseCookies()
+							: ((SpigotUser) user).getCookies(), params);
+			Document doc = res.getDocument();
 			Element categoryLink = doc.select("a.crumb").last();
 			SpigotResource resource = new SpigotResource();
 
@@ -93,16 +88,9 @@ public class SpigotResourceManager implements ResourceManager {
 		try {
 			String url = "http://www.spigotmc.org/resources/authors/" + userid;
 			Map<String, String> params = new HashMap<String, String>();
-
-			Connection.Response res = Jsoup
-					.connect(url)
-					.method(Method.GET)
-					.cookies(SpigotSiteCore.getBaseCookies())
-					.data(params)
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
+			HTTPResponse res = Request.get(url,
+					SpigotSiteCore.getBaseCookies(), params);
+			Document doc = res.getDocument();
 			String username = StringUtils
 					.getStringBetween(doc.title(),
 							"Resources from (.*?) | SpigotMC - High Performance Minecraft");
@@ -127,8 +115,6 @@ public class SpigotResourceManager implements ResourceManager {
 				resource.setResourceId(id);
 				createdResources.add(resource);
 			}
-		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
@@ -163,9 +149,9 @@ public class SpigotResourceManager implements ResourceManager {
 				boughtResources.add(resource);
 			}
 		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
+
 		} catch (Exception ex) {
-			ex.printStackTrace();
+
 		}
 
 		return boughtResources;
@@ -205,9 +191,9 @@ public class SpigotResourceManager implements ResourceManager {
 
 			this.resourceCategories = resourceCategories;
 		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
+			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			
 		}
 		return resourceCategories;
 	}
@@ -257,9 +243,9 @@ public class SpigotResourceManager implements ResourceManager {
 				}
 			}
 		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
+			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			
 		}
 		return resources;
 	}
@@ -311,7 +297,7 @@ public class SpigotResourceManager implements ResourceManager {
 		} catch (HttpStatusException ex) {
 			throw new ConnectionFailedException();
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			
 		}
 		spigotResource.setBuyers(buyers);
 		return buyers;
@@ -368,9 +354,9 @@ public class SpigotResourceManager implements ResourceManager {
 			Document doc = res.parse();
 
 		} catch (HttpStatusException ex) {
-			ex.printStackTrace();
+			
 		} catch (Exception ex) {
-			ex.printStackTrace();
+		
 		}
 	}
 

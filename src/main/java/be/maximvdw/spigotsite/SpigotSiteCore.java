@@ -23,7 +23,7 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 	private ForumManager forumManager = null;
 	/* Spigot Conversation Manager */
 	private ConversationManager conversationManager = null;
-
+	private boolean ddosProtection = false;
 	private static Map<String, String> baseCookies = new HashMap<String, String>();
 
 	public SpigotSiteCore() {
@@ -71,5 +71,13 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 
 	public ConversationManager getConversationManager() {
 		return conversationManager;
+	}
+
+	public boolean isDDoSProtection() {
+		return ddosProtection;
+	}
+
+	public void setDDoSProtection(boolean ddosProtection) {
+		this.ddosProtection = ddosProtection;
 	}
 }
