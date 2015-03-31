@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
-import org.jsoup.HttpStatusException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -89,7 +88,7 @@ public class SpigotUserManager implements UserManager {
 					.attr("value"));
 			return user;
 		} catch (Exception ex) {
-			ex.printStackTrace();
+
 		}
 
 		return null;
@@ -129,7 +128,7 @@ public class SpigotUserManager implements UserManager {
 			System.out.println(doc.text());
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+
 		}
 		return users;
 	}
