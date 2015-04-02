@@ -65,7 +65,7 @@
 				<configuration>
 					<artifactSet>
 						<excludes>
-							<exclude>com.gargoylesoftware.htmlunit</exclude>
+							<exclude>com.gargoylesoftware</exclude>
 						</excludes>
 					</artifactSet>
 
