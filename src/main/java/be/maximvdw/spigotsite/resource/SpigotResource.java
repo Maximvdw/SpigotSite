@@ -2,10 +2,12 @@ package be.maximvdw.spigotsite.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
@@ -82,21 +84,25 @@ public class SpigotResource implements Resource {
 			if (output.exists()) {
 				output.delete();
 			}
-			// Open a URL Stream
-			Response resultImageResponse = Jsoup
-					.connect(getDownloadURL())
-					.cookies(
-							user != null ? ((SpigotUser) user).getCookies()
-									: new HashMap<String, String>())
-					.ignoreContentType(true).execute();
+			if (user == null) {
+				FileUtils.copyURLToFile(new URL(getDownloadURL()), output);
+			} else {
+				// Open a URL Stream
+				Response resultImageResponse = Jsoup
+						.connect(getDownloadURL())
+						.cookies(
+								user != null ? ((SpigotUser) user).getCookies()
+										: new HashMap<String, String>())
+						.ignoreContentType(true).userAgent("Mozilla").execute();
 
-			// output here
-			FileOutputStream out = (new FileOutputStream(output));
-			out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
-															// is where the
-															// image's
-															// contents are.
-			out.close();
+				// output here
+				FileOutputStream out = (new FileOutputStream(output));
+				out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
+																// is where the
+																// image's
+																// contents are.
+				out.close();
+			}
 			return output;
 		} catch (Exception ex) {
 			ex.printStackTrace();
