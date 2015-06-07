@@ -3,11 +3,11 @@ package be.maximvdw.spigotsite.resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
@@ -85,7 +85,11 @@ public class SpigotResource implements Resource {
 				output.delete();
 			}
 			if (user == null) {
-				FileUtils.copyURLToFile(new URL(getDownloadURL()), output);
+				URL url = new URL(getDownloadURL());
+				ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+				FileOutputStream fos = new FileOutputStream(output);
+				fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+				fos.close();
 			} else {
 				// Open a URL Stream
 				Response resultImageResponse = Jsoup
