@@ -2,6 +2,9 @@ package be.maximvdw.spigotsite.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -79,6 +82,18 @@ public class SpigotResource implements Resource {
 		this.downloadURL = downloadURL;
 	}
 
+	private InputStream read(URL url) {
+		try {
+			HttpURLConnection httpcon = (HttpURLConnection) url
+					.openConnection();
+			httpcon.addRequestProperty("User-Agent", "Mozilla/4.0");
+
+			return httpcon.getInputStream();
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	public File downloadResource(User user, File output) {
 		try {
 			if (output.exists()) {
@@ -86,7 +101,7 @@ public class SpigotResource implements Resource {
 			}
 			if (user == null) {
 				URL url = new URL(getDownloadURL());
-				ReadableByteChannel rbc = Channels.newChannel(url.openStream());
+				ReadableByteChannel rbc = Channels.newChannel(read(url));
 				FileOutputStream fos = new FileOutputStream(output);
 				fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
 				fos.close();
