@@ -2,7 +2,9 @@ package be.maximvdw.spigotsite.resource;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
@@ -77,12 +79,15 @@ public class SpigotResource implements Resource {
 
 	public File downloadResource(User user, File output) {
 		try {
-			if (output.exists()){
+			if (output.exists()) {
 				output.delete();
 			}
 			// Open a URL Stream
-			Response resultImageResponse = Jsoup.connect(getDownloadURL())
-					.cookies(((SpigotUser) user).getCookies())
+			Response resultImageResponse = Jsoup
+					.connect(getDownloadURL())
+					.cookies(
+							user != null ? ((SpigotUser) user).getCookies()
+									: new HashMap<String, String>())
 					.ignoreContentType(true).execute();
 
 			// output here
