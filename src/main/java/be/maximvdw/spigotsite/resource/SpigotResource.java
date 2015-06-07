@@ -87,7 +87,8 @@ public class SpigotResource implements Resource {
 			HttpURLConnection httpcon = (HttpURLConnection) url
 					.openConnection();
 			httpcon.addRequestProperty("User-Agent", "Mozilla/4.0");
-
+			httpcon.setConnectTimeout(2000);
+			httpcon.setReadTimeout(2500);
 			return httpcon.getInputStream();
 		} catch (IOException e) {
 			throw new RuntimeException(e);
