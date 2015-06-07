@@ -36,7 +36,7 @@
         <configuration>
           <artifactSet>
             <excludes>
-              <exclude>org.httpunit</exclude>
+              <exclude>com.gargoylesoftware</exclude>
             </excludes>
           </artifactSet>
           <relocations>
@@ -58,9 +58,10 @@
   </repositories>
   <dependencies>
     <dependency>
-      <groupId>org.httpunit</groupId>
-      <artifactId>httpunit</artifactId>
-      <version>1.7.2</version>
+      <groupId>com.gargoylesoftware</groupId>
+      <artifactId>HTMLUnit</artifactId>
+      <version>2.15</version>
+      <classifier>OSGi</classifier>
       <scope>compile</scope>
     </dependency>
   </dependencies>

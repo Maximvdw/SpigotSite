@@ -191,9 +191,9 @@ public class SpigotResourceManager implements ResourceManager {
 
 			this.resourceCategories = resourceCategories;
 		} catch (HttpStatusException ex) {
-			
+
 		} catch (Exception ex) {
-			
+
 		}
 		return resourceCategories;
 	}
@@ -205,47 +205,50 @@ public class SpigotResourceManager implements ResourceManager {
 			if (category.getResourceCount() % 20 != 0)
 				lastPage++;
 			for (int i = lastPage; i >= 1; i--) {
-				String url = "http://www.spigotmc.org/resources/categories/"
-						+ category.getCategoryId() + "/?page=" + i;
-				Map<String, String> params = new HashMap<String, String>();
+				try {
+					String url = "http://www.spigotmc.org/resources/categories/"
+							+ category.getCategoryId() + "/?page=" + i;
+					Map<String, String> params = new HashMap<String, String>();
 
-				Connection.Response res = Jsoup
-						.connect(url)
-						.method(Method.GET)
-						.cookies(SpigotSiteCore.getBaseCookies())
-						.data(params)
-						.userAgent(
-								"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-						.execute();
-				Document doc = res.parse();
-				Elements resourceBlocks = doc.select("li.resourceListItem");
-				for (Element resourceBlock : resourceBlocks) {
-					int id = Integer.parseInt(resourceBlock.id().replace(
-							"resource-", ""));
-					Element resourceLink = resourceBlock.select("h3.title")
-							.get(0).getElementsByTag("a").get(0);
-					SpigotResource resource = new SpigotResource(
-							resourceLink.text());
-					resource.setResourceId(id);
-					Element username = resourceBlock.select("a.username")
-							.first();
-					Element version = resourceBlock.select("span.version")
-							.first();
-					resource.setLastVersion(version.text());
-					SpigotUser user = new SpigotUser();
-					user.setUsername(username.text());
-					user.setUserId(Integer.parseInt(StringUtils
-							.getStringBetween(username.attr("href"),
-									"\\.(.*?)/")));
-					resource.setAuthor(user);
+					Connection.Response res = Jsoup
+							.connect(url)
+							.method(Method.GET)
+							.cookies(SpigotSiteCore.getBaseCookies())
+							.data(params)
+							.userAgent(
+									"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+							.execute();
+					Document doc = res.parse();
+					Elements resourceBlocks = doc.select("li.resourceListItem");
 
-					resources.add(resource);
+					for (Element resourceBlock : resourceBlocks) {
+						int id = Integer.parseInt(resourceBlock.id().replace(
+								"resource-", ""));
+						Element resourceLink = resourceBlock.select("h3.title")
+								.get(0).getElementsByTag("a").get(0);
+						SpigotResource resource = new SpigotResource(
+								resourceLink.text());
+						resource.setResourceId(id);
+						Element username = resourceBlock.select("a.username")
+								.first();
+						Element version = resourceBlock.select("span.version")
+								.first();
+						resource.setLastVersion(version.text());
+						SpigotUser user = new SpigotUser();
+						user.setUsername(username.text());
+						user.setUserId(Integer.parseInt(StringUtils
+								.getStringBetween(username.attr("href"),
+										"\\.(.*?)/")));
+						resource.setAuthor(user);
+
+						resources.add(resource);
+					}
+				} catch (HttpStatusException ex) {
+
 				}
 			}
-		} catch (HttpStatusException ex) {
-			
 		} catch (Exception ex) {
-			
+
 		}
 		return resources;
 	}
@@ -297,7 +300,7 @@ public class SpigotResourceManager implements ResourceManager {
 		} catch (HttpStatusException ex) {
 			throw new ConnectionFailedException();
 		} catch (Exception ex) {
-			
+
 		}
 		spigotResource.setBuyers(buyers);
 		return buyers;
@@ -354,9 +357,9 @@ public class SpigotResourceManager implements ResourceManager {
 			Document doc = res.parse();
 
 		} catch (HttpStatusException ex) {
-			
+
 		} catch (Exception ex) {
-		
+
 		}
 	}
 
