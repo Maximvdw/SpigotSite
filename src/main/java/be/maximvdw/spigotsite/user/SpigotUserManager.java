@@ -132,4 +132,19 @@ public class SpigotUserManager implements UserManager {
 		}
 		return users;
 	}
+
+	public List<User> getOnlineUsers() {
+		List<User> users = new ArrayList<User>();
+		try {
+			for (int i = 1; i <= 40; i++) {
+				int pagenr = i;
+				String url = "http://www.spigotmc.org/online/?type=registered&page="
+						+ pagenr;
+			}
+
+		} catch (Exception ex) {
+
+		}
+		return users;
+	}
 }

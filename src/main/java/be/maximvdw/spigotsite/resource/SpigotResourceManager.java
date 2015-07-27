@@ -58,7 +58,7 @@ public class SpigotResourceManager implements ResourceManager {
 
 			Element downloadLink = doc.select("label.downloadButton").get(0)
 					.select("a.inner").get(0);
-			resource.setDownloadURL("http://www.spigotmc.org/"
+			resource.setDownloadURL("https://www.spigotmc.org/"
 					+ downloadLink.attr("href"));
 
 			Element author = doc.select("dl.author").first();
