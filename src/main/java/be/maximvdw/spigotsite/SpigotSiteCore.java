@@ -10,6 +10,8 @@ import be.maximvdw.spigotsite.api.resource.ResourceManager;
 import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.forum.SpigotForumManager;
+import be.maximvdw.spigotsite.http.HTTPResponse;
+import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.resource.SpigotResourceManager;
 import be.maximvdw.spigotsite.user.SpigotConversationManager;
 import be.maximvdw.spigotsite.user.SpigotUserManager;
@@ -25,6 +27,7 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 	private ConversationManager conversationManager = null;
 	private boolean ddosProtection = false;
 	private static Map<String, String> baseCookies = new HashMap<String, String>();
+	private static boolean firstStart = true;
 
 	public SpigotSiteCore() {
 		// Set managers
@@ -35,6 +38,13 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 
 		// Set Site API
 		SpigotSite.setAPI(this);
+
+		if (firstStart) {
+			HTTPResponse res = Request.get("https://www.spigotmc.org/",
+					getBaseCookies(), new HashMap<String, String>());
+			setBaseCookies(res.getCookies());
+			firstStart = false;
+		}
 	}
 
 	public UserManager getUserManager() {

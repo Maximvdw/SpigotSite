@@ -84,23 +84,23 @@ public class ConversationManagerTest {
 			}
 		}
 	}
-
-	@Test(timeout = 5000, expected = SpamWarningException.class)
-	public void spamConversationTest() throws InvalidCredentialsException,
-			InterruptedException {
-		System.out.println("Testing 'Spam detection' ...");
-		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(username, password);
-		ConversationManager conversationManager = SpigotSite.getAPI()
-				.getConversationManager();
-		Set<String> recipents = new HashSet<String>();
-		recipents.add("MVdWSoftware");
-		conversationManager.createConversation(user, recipents, "Hello",
-				"World", true, false, false);
-		conversationManager.createConversation(user, recipents, "Hello",
-				"World", true, false, false);
-		Thread.sleep(15000);
-	}
+//
+//	@Test(timeout = 5000, expected = SpamWarningException.class)
+//	public void spamConversationTest() throws InvalidCredentialsException,
+//			InterruptedException {
+//		System.out.println("Testing 'Spam detection' ...");
+//		UserManager userManager = SpigotSite.getAPI().getUserManager();
+//		User user = userManager.authenticate(username, password);
+//		ConversationManager conversationManager = SpigotSite.getAPI()
+//				.getConversationManager();
+//		Set<String> recipents = new HashSet<String>();
+//		recipents.add("MVdWSoftware");
+//		conversationManager.createConversation(user, recipents, "Hello",
+//				"World", true, false, false);
+//		conversationManager.createConversation(user, recipents, "Hello",
+//				"World", true, false, false);
+//		Thread.sleep(15000);
+//	}
 
 	@Test(timeout = 5000)
 	public void conversationSendTest() throws InvalidCredentialsException {

@@ -165,15 +165,9 @@ public class SpigotResourceManager implements ResourceManager {
 			String url = "http://www.spigotmc.org/resources/";
 			Map<String, String> params = new HashMap<String, String>();
 
-			Connection.Response res = Jsoup
-					.connect(url)
-					.method(Method.GET)
-					.cookies(SpigotSiteCore.getBaseCookies())
-					.data(params)
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
+			HTTPResponse res = Request.get(url,
+					SpigotSiteCore.getBaseCookies(), params);
+			Document doc = res.getDocument();
 			Element categoryList = doc.select("div.categoryList").first();
 			Elements categories = categoryList.select("li");
 			for (Element category : categories) {
@@ -190,8 +184,6 @@ public class SpigotResourceManager implements ResourceManager {
 			}
 
 			this.resourceCategories = resourceCategories;
-		} catch (HttpStatusException ex) {
-
 		} catch (Exception ex) {
 
 		}
@@ -205,46 +197,36 @@ public class SpigotResourceManager implements ResourceManager {
 			if (category.getResourceCount() % 20 != 0)
 				lastPage++;
 			for (int i = lastPage; i >= 1; i--) {
-				try {
-					String url = "http://www.spigotmc.org/resources/categories/"
-							+ category.getCategoryId() + "/?page=" + i;
-					Map<String, String> params = new HashMap<String, String>();
+				String url = "http://www.spigotmc.org/resources/categories/"
+						+ category.getCategoryId() + "/?page=" + i;
+				Map<String, String> params = new HashMap<String, String>();
 
-					Connection.Response res = Jsoup
-							.connect(url)
-							.method(Method.GET)
-							.cookies(SpigotSiteCore.getBaseCookies())
-							.data(params)
-							.userAgent(
-									"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-							.execute();
-					Document doc = res.parse();
-					Elements resourceBlocks = doc.select("li.resourceListItem");
+				HTTPResponse res = Request.get(url,
+						SpigotSiteCore.getBaseCookies(), params);
+				Document doc = res.getDocument();
+				Elements resourceBlocks = doc.select("li.resourceListItem");
 
-					for (Element resourceBlock : resourceBlocks) {
-						int id = Integer.parseInt(resourceBlock.id().replace(
-								"resource-", ""));
-						Element resourceLink = resourceBlock.select("h3.title")
-								.get(0).getElementsByTag("a").get(0);
-						SpigotResource resource = new SpigotResource(
-								resourceLink.text());
-						resource.setResourceId(id);
-						Element username = resourceBlock.select("a.username")
-								.first();
-						Element version = resourceBlock.select("span.version")
-								.first();
-						resource.setLastVersion(version.text());
-						SpigotUser user = new SpigotUser();
-						user.setUsername(username.text());
-						user.setUserId(Integer.parseInt(StringUtils
-								.getStringBetween(username.attr("href"),
-										"\\.(.*?)/")));
-						resource.setAuthor(user);
+				for (Element resourceBlock : resourceBlocks) {
+					int id = Integer.parseInt(resourceBlock.id().replace(
+							"resource-", ""));
+					Element resourceLink = resourceBlock.select("h3.title")
+							.get(0).getElementsByTag("a").get(0);
+					SpigotResource resource = new SpigotResource(
+							resourceLink.text());
+					resource.setResourceId(id);
+					Element username = resourceBlock.select("a.username")
+							.first();
+					Element version = resourceBlock.select("span.version")
+							.first();
+					resource.setLastVersion(version.text());
+					SpigotUser user = new SpigotUser();
+					user.setUsername(username.text());
+					user.setUserId(Integer.parseInt(StringUtils
+							.getStringBetween(username.attr("href"),
+									"\\.(.*?)/")));
+					resource.setAuthor(user);
 
-						resources.add(resource);
-					}
-				} catch (HttpStatusException ex) {
-
+					resources.add(resource);
 				}
 			}
 		} catch (Exception ex) {
@@ -277,16 +259,9 @@ public class SpigotResourceManager implements ResourceManager {
 			String url = "http://www.spigotmc.org/resources/"
 					+ resource.getResourceId() + "/buyers";
 			Map<String, String> params = new HashMap<String, String>();
-
-			Connection.Response res = Jsoup
-					.connect(url)
-					.method(Method.GET)
-					.data(params)
-					.cookies(((SpigotUser) user).getCookies())
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
+			HTTPResponse res = Request.get(url,
+					((SpigotUser) user).getCookies(), params);
+			Document doc = res.getDocument();
 			Elements buyersBlocks = doc.select("div.member");
 			for (Element buyersBlock : buyersBlocks) {
 				SpigotUser buyer = new SpigotUser();
@@ -297,8 +272,6 @@ public class SpigotResourceManager implements ResourceManager {
 						userElement.attr("href"), "\\.(.*?)/")));
 				buyers.add(buyer);
 			}
-		} catch (HttpStatusException ex) {
-			throw new ConnectionFailedException();
 		} catch (Exception ex) {
 
 		}
@@ -346,17 +319,9 @@ public class SpigotResourceManager implements ResourceManager {
 			params.put("_xfConfirm", "1");
 			params.put("redirect", "/");
 
-			Connection.Response res = Jsoup
-					.connect(url)
-					.method(Method.POST)
-					.cookies(((SpigotUser) user).getCookies())
-					.data(params)
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
-
-		} catch (HttpStatusException ex) {
+			HTTPResponse res = Request.post(url,
+					((SpigotUser) user).getCookies(), params);
+			Document doc = res.getDocument();
 
 		} catch (Exception ex) {
 

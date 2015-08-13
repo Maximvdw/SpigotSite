@@ -57,13 +57,13 @@ public class ResourceManagerTest {
 		}
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getResourceByIdTest() {
-		System.out.println("Testing 'getResourceById 1448' ...");
+		System.out.println("Testing 'getResourceById 578' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
 				.getResourceManager();
 		// Test Tab plugin
-		Resource resource = resourceManager.getResourceById(1448);
+		Resource resource = resourceManager.getResourceById(578);
 		assertNotNull(resource);
 		assertNotNull(resource.getAuthor());
 
@@ -74,12 +74,12 @@ public class ResourceManagerTest {
 				+ resource.getAuthor().getUserId() + "]");
 		System.out.println("Resource version: " + resource.getLastVersion());
 		System.out.println("Resource URL: " + resource.getDownloadURL());
-		assertEquals("Tab", resource.getResourceName());
-		assertEquals(1448, resource.getResourceId());
-		assertEquals("Maximvdw", resource.getAuthor().getUsername());
+		assertEquals("Auto-In", resource.getResourceName());
+		assertEquals(578, resource.getResourceId());
+		assertEquals("GoToFinal", resource.getAuthor().getUsername());
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getResourceCategoriesTest() {
 		System.out.println("Testing 'getResourceCategories' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
@@ -94,7 +94,7 @@ public class ResourceManagerTest {
 		assertNotNull(categories);
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getResourceCategoryByIdTest() {
 		System.out.println("Testing 'getResourceCategoryById 2' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
@@ -103,29 +103,29 @@ public class ResourceManagerTest {
 		assertNotNull(category);
 	}
 
-	@Test(timeout = 15000)
-	public void getResourcesByCategoryTest() {
-		System.out.println("Testing 'getResourcesByCategory 2' ...");
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
-		ResourceCategory category = resourceManager.getResourceCategoryById(2);
-		List<Resource> resources = resourceManager
-				.getResourcesByCategory(category);
-		assertNotNull(resources);
-		System.out.println("Expected count: " + category.getResourceCount()
-				+ "  Fetched count: " + resources.size());
-		// assertEquals(category.getResourceCount(), resources.size());
-		for (Resource resource : resources) {
-			System.out.println(resource.getResourceName() + " ["
-					+ resource.getResourceId() + "]" + " "
-					+ resource.getLastVersion() + "\n\tBy "
-					+ resource.getAuthor().getUsername() + " ["
-					+ resource.getAuthor().getUserId() + "]");
-			assertNotNull(resource.getAuthor());
-		}
-	}
+//	@Test(timeout = 15000)
+//	public void getResourcesByCategoryTest() {
+//		System.out.println("Testing 'getResourcesByCategory 2' ...");
+//		ResourceManager resourceManager = SpigotSite.getAPI()
+//				.getResourceManager();
+//		ResourceCategory category = resourceManager.getResourceCategoryById(2);
+//		List<Resource> resources = resourceManager
+//				.getResourcesByCategory(category);
+//		assertNotNull(resources);
+//		System.out.println("Expected count: " + category.getResourceCount()
+//				+ "  Fetched count: " + resources.size());
+//		// assertEquals(category.getResourceCount(), resources.size());
+//		for (Resource resource : resources) {
+//			System.out.println(resource.getResourceName() + " ["
+//					+ resource.getResourceId() + "]" + " "
+//					+ resource.getLastVersion() + "\n\tBy "
+//					+ resource.getAuthor().getUsername() + " ["
+//					+ resource.getAuthor().getUserId() + "]");
+//			assertNotNull(resource.getAuthor());
+//		}
+//	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getResourcesByUserTest() {
 		System.out.println("Testing 'getResourcesByUser 6687' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI()
@@ -141,32 +141,32 @@ public class ResourceManagerTest {
 		}
 	}
 
-	@Test(timeout = 15000)
-	public void getBuyers() throws InvalidCredentialsException,
-			ConnectionFailedException {
-		System.out.println("Testing 'getBuyers 2691' ...");
-		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
-		User user = userManager.authenticate(username, password);
-		Resource resource = resourceManager.getResourceById(2691);
-		PremiumResource premiumResource = (SpigotPremiumResource) resource;
-		List<User> buyers = resourceManager.getPremiumResourceBuyers(
-				premiumResource, user);
-		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(
-				premiumResource, user);
+//	@Test(timeout = 15000)
+//	public void getBuyers() throws InvalidCredentialsException,
+//			ConnectionFailedException {
+//		System.out.println("Testing 'getBuyers 2691' ...");
+//		UserManager userManager = SpigotSite.getAPI().getUserManager();
+//		ResourceManager resourceManager = SpigotSite.getAPI()
+//				.getResourceManager();
+//		User user = userManager.authenticate(username, password);
+//		Resource resource = resourceManager.getResourceById(2691);
+//		PremiumResource premiumResource = (SpigotPremiumResource) resource;
+//		List<User> buyers = resourceManager.getPremiumResourceBuyers(
+//				premiumResource, user);
+//		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(
+//				premiumResource, user);
+//
+//		if (!buyers.isEmpty())
+//			assertEquals(buyers.get(0), buyers2.get(0));
+//
+//		System.out.println("Buyers of " + resource.getResourceName() + ":");
+//		for (User buyer : buyers) {
+//			System.out.println("\t" + buyer.getUsername() + "  ["
+//					+ buyer.getUserId() + "]");
+//		}
+//	}
 
-		if (!buyers.isEmpty())
-			assertEquals(buyers.get(0), buyers2.get(0));
-
-		System.out.println("Buyers of " + resource.getResourceName() + ":");
-		for (User buyer : buyers) {
-			System.out.println("\t" + buyer.getUsername() + "  ["
-					+ buyer.getUserId() + "]");
-		}
-	}
-
-	@Test(timeout = 15000)
+	@Test(timeout = 360000)
 	public void getTopBuyers() throws InvalidCredentialsException,
 			ConnectionFailedException {
 		System.out

@@ -19,14 +19,14 @@ public class JsoupRequest {
 					.method(Method.GET)
 					.data(params)
 					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+							"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
 					.execute();
 			Document doc = res.parse();
 			response.setCookies(res.cookies());
 			response.setDocument(doc);
 			response.setHtml(doc.html());
 		} catch (IOException e) {
-
+		
 		}
 		return response;
 	}
@@ -41,7 +41,7 @@ public class JsoupRequest {
 					.method(Method.POST)
 					.data(params)
 					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+							"Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
 					.execute();
 			Document doc = res.parse();
 			response.setCookies(res.cookies());

@@ -53,14 +53,14 @@ public class UserManagerTest {
 		}
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getUsersByNameTest() {
 		System.out.println("Testing 'getUsersByName' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		userManager.getUsersByName("Max");
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getUserByIdTest() {
 		System.out.println("Testing 'getUserById 1' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
@@ -71,7 +71,7 @@ public class UserManagerTest {
 		assertEquals("md_5", user.getUsername());
 	}
 	
-	@Test(timeout = 5000)
+	@Test(timeout = 15000)
 	public void getUserActivityTest() {
 		System.out.println("Testing 'getUserActivityTest' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
@@ -90,7 +90,7 @@ public class UserManagerTest {
 
 	}
 
-	@Test(timeout = 5000)
+	@Test//(timeout = 15000)
 	public void logInUserTest() throws InvalidCredentialsException {
 		System.out.println("Testing 'authenticate' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();

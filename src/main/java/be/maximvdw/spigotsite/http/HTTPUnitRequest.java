@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpMethod;
+import com.gargoylesoftware.htmlunit.Page;
+import com.gargoylesoftware.htmlunit.UnexpectedPage;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -29,7 +32,10 @@ public class HTTPUnitRequest {
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setRedirectEnabled(true);
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setPrintContentOnFailingStatusCode(false);
+			java.util.logging.Logger.getLogger("com.gargoylesoftware")
+					.setLevel(Level.OFF);
 			WebRequest wr = new WebRequest(new URL(url), HttpMethod.GET);
 			for (Map.Entry<String, String> entry : cookies.entrySet())
 				webClient.getCookieManager().addCookie(
@@ -40,24 +46,33 @@ public class HTTPUnitRequest {
 				paramsPair.add(new NameValuePair(entry.getKey(), entry
 						.getValue()));
 			wr.setRequestParameters(paramsPair);
-			HtmlPage page = webClient.getPage(wr);
-			if (page.asXml().contains("http://www.cloudflare.com/")) {
+			Page page = webClient.getPage(wr);
+			if (page instanceof HtmlPage)
+				if (((HtmlPage) page).asXml().contains(
+						"DDoS protection by CloudFlare")) {
 
-				// DDOS protection
-				try {
-					Thread.sleep(9000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt(); // restore interrupted
-														// status
+					// DDOS protection
+					try {
+						Thread.sleep(9000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt(); // restore
+															// interrupted
+															// status
+					}
+					if (webClient.getPage(wr) instanceof UnexpectedPage) {
+						UnexpectedPage unexpectedPage = webClient.getPage(wr);
+						System.out.println("UNEXPECTED PAGE: "
+								+ unexpectedPage.getWebResponse()
+										.getStatusMessage());
+					} else
+						page = webClient.getPage(wr);
 				}
-				page = webClient.getPage(wr);
-			}
 			Map<String, String> cookiesMap = new HashMap<String, String>();
 			for (Cookie cookie : webClient.getCookieManager().getCookies()) {
 				cookiesMap.put(cookie.getName(), cookie.getValue());
 			}
 
-			Document doc = Jsoup.parse(page.asXml());
+			Document doc = Jsoup.parse(((HtmlPage) page).asXml());
 			response.setDocument(doc);
 			response.setHtml(doc.html());
 
@@ -84,8 +99,11 @@ public class HTTPUnitRequest {
 			webClient.getOptions().setCssEnabled(false);
 			webClient.getOptions().setRedirectEnabled(true);
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setPrintContentOnFailingStatusCode(false);
 			webClient.getOptions().setCssEnabled(false);
+			java.util.logging.Logger.getLogger("com.gargoylesoftware")
+					.setLevel(Level.OFF);
 			WebRequest wr = new WebRequest(new URL(url), HttpMethod.POST);
 			for (Map.Entry<String, String> entry : cookies.entrySet())
 				webClient.getCookieManager().addCookie(
@@ -96,24 +114,39 @@ public class HTTPUnitRequest {
 				paramsPair.add(new NameValuePair(entry.getKey(), entry
 						.getValue()));
 			wr.setRequestParameters(paramsPair);
-			HtmlPage page = webClient.getPage(wr);
-			if (page.asXml().contains("http://www.cloudflare.com/")) {
-				// DDOS protection
-				try {
-					Thread.sleep(9000);
-				} catch (InterruptedException e) {
-					Thread.currentThread().interrupt(); // restore interrupted
-														// status
+			Page page = webClient.getPage(wr);
+			if (page instanceof HtmlPage)
+				if (((HtmlPage) page).asXml().contains(
+						"DDoS protection by CloudFlare")) {
+					// DDOS protection
+					try {
+						Thread.sleep(9000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt(); // restore
+															// interrupted
+															// status
+					}
+					wr = new WebRequest(new URL(url), HttpMethod.POST);
+					paramsPair = new ArrayList<NameValuePair>();
+					for (Map.Entry<String, String> entry : params.entrySet())
+						paramsPair.add(new NameValuePair(entry.getKey(), entry
+								.getValue()));
+					wr.setRequestParameters(paramsPair);
+
+					if (webClient.getPage(wr) instanceof UnexpectedPage) {
+						UnexpectedPage unexpectedPage = webClient.getPage(wr);
+						System.out.println("UNEXPECTED PAGE: "
+								+ unexpectedPage.getWebResponse()
+										.getStatusMessage());
+					} else
+						page = webClient.getPage(wr);
 				}
-				page = webClient.getPage(wr);
-			}
-	
+
 			Map<String, String> cookiesMap = new HashMap<String, String>();
 			for (Cookie cookie : webClient.getCookieManager().getCookies()) {
 				cookiesMap.put(cookie.getName(), cookie.getValue());
 			}
-
-			Document doc = Jsoup.parse(page.asXml());
+			Document doc = Jsoup.parse(((HtmlPage) page).asXml());
 			response.setDocument(doc);
 			response.setHtml(doc.html());
 

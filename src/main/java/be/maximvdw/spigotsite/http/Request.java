@@ -3,7 +3,7 @@ package be.maximvdw.spigotsite.http;
 import java.util.Map;
 
 public abstract class Request {
-	private static boolean ddosBypass = false;
+	private static boolean ddosBypass = true;
 
 	public static HTTPResponse get(String url, Map<String, String> cookies,
 			Map<String, String> params) {
