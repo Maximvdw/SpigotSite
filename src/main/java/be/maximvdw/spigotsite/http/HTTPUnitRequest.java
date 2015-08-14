@@ -1,5 +1,7 @@
 package be.maximvdw.spigotsite.http;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,6 +23,50 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 public class HTTPUnitRequest {
+
+	public static InputStream downloadFile(String url,
+			Map<String, String> cookies) {
+		try {
+			WebClient webClient = new WebClient(BrowserVersion.CHROME);
+			webClient.getOptions().setJavaScriptEnabled(true);
+			webClient.getOptions().setTimeout(30000);
+			webClient.getOptions().setCssEnabled(false);
+			webClient.getOptions().setRedirectEnabled(true);
+			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
+			webClient.getOptions().setPrintContentOnFailingStatusCode(false);
+			java.util.logging.Logger.getLogger("com.gargoylesoftware")
+					.setLevel(Level.OFF);
+			WebRequest wr = new WebRequest(new URL(url), HttpMethod.GET);
+			for (Map.Entry<String, String> entry : cookies.entrySet())
+				webClient.getCookieManager().addCookie(
+						new Cookie("spigotmc.org", entry.getKey(), entry
+								.getValue()));
+			InputStream stream = null;
+			Page page = webClient.getPage(wr);
+			if (page instanceof HtmlPage)
+				if (((HtmlPage) page).asXml().contains(
+						"DDoS protection by CloudFlare")) {
+
+					// DDOS protection
+					try {
+						Thread.sleep(9000);
+					} catch (InterruptedException e) {
+						Thread.currentThread().interrupt(); // restore
+															// interrupted
+															// status
+					}
+
+				}
+			stream = webClient.getCurrentWindow().getEnclosedPage()
+					.getWebResponse().getContentAsStream();
+			return stream;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+
 	public static HTTPResponse get(String url, Map<String, String> cookies,
 			Map<String, String> params) {
 		HTTPResponse response = new HTTPResponse();

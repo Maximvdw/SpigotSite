@@ -103,27 +103,27 @@ public class ResourceManagerTest {
 		assertNotNull(category);
 	}
 
-//	@Test(timeout = 15000)
-//	public void getResourcesByCategoryTest() {
-//		System.out.println("Testing 'getResourcesByCategory 2' ...");
-//		ResourceManager resourceManager = SpigotSite.getAPI()
-//				.getResourceManager();
-//		ResourceCategory category = resourceManager.getResourceCategoryById(2);
-//		List<Resource> resources = resourceManager
-//				.getResourcesByCategory(category);
-//		assertNotNull(resources);
-//		System.out.println("Expected count: " + category.getResourceCount()
-//				+ "  Fetched count: " + resources.size());
-//		// assertEquals(category.getResourceCount(), resources.size());
-//		for (Resource resource : resources) {
-//			System.out.println(resource.getResourceName() + " ["
-//					+ resource.getResourceId() + "]" + " "
-//					+ resource.getLastVersion() + "\n\tBy "
-//					+ resource.getAuthor().getUsername() + " ["
-//					+ resource.getAuthor().getUserId() + "]");
-//			assertNotNull(resource.getAuthor());
-//		}
-//	}
+	// @Test(timeout = 15000)
+	// public void getResourcesByCategoryTest() {
+	// System.out.println("Testing 'getResourcesByCategory 2' ...");
+	// ResourceManager resourceManager = SpigotSite.getAPI()
+	// .getResourceManager();
+	// ResourceCategory category = resourceManager.getResourceCategoryById(2);
+	// List<Resource> resources = resourceManager
+	// .getResourcesByCategory(category);
+	// assertNotNull(resources);
+	// System.out.println("Expected count: " + category.getResourceCount()
+	// + "  Fetched count: " + resources.size());
+	// // assertEquals(category.getResourceCount(), resources.size());
+	// for (Resource resource : resources) {
+	// System.out.println(resource.getResourceName() + " ["
+	// + resource.getResourceId() + "]" + " "
+	// + resource.getLastVersion() + "\n\tBy "
+	// + resource.getAuthor().getUsername() + " ["
+	// + resource.getAuthor().getUserId() + "]");
+	// assertNotNull(resource.getAuthor());
+	// }
+	// }
 
 	@Test(timeout = 15000)
 	public void getResourcesByUserTest() {
@@ -141,30 +141,39 @@ public class ResourceManagerTest {
 		}
 	}
 
-//	@Test(timeout = 15000)
-//	public void getBuyers() throws InvalidCredentialsException,
-//			ConnectionFailedException {
-//		System.out.println("Testing 'getBuyers 2691' ...");
-//		UserManager userManager = SpigotSite.getAPI().getUserManager();
-//		ResourceManager resourceManager = SpigotSite.getAPI()
-//				.getResourceManager();
-//		User user = userManager.authenticate(username, password);
-//		Resource resource = resourceManager.getResourceById(2691);
-//		PremiumResource premiumResource = (SpigotPremiumResource) resource;
-//		List<User> buyers = resourceManager.getPremiumResourceBuyers(
-//				premiumResource, user);
-//		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(
-//				premiumResource, user);
-//
-//		if (!buyers.isEmpty())
-//			assertEquals(buyers.get(0), buyers2.get(0));
-//
-//		System.out.println("Buyers of " + resource.getResourceName() + ":");
-//		for (User buyer : buyers) {
-//			System.out.println("\t" + buyer.getUsername() + "  ["
-//					+ buyer.getUserId() + "]");
-//		}
-//	}
+	@Test
+	public void downloadResource() {
+		System.out.println("Testing 'downloadResource 578' ...");
+		ResourceManager resourceManager = SpigotSite.getAPI()
+				.getResourceManager();
+		Resource res = resourceManager.getResourceById(578);
+		res.downloadResource(null, new File("resourceTest"));
+	}
+
+	// @Test(timeout = 15000)
+	// public void getBuyers() throws InvalidCredentialsException,
+	// ConnectionFailedException {
+	// System.out.println("Testing 'getBuyers 2691' ...");
+	// UserManager userManager = SpigotSite.getAPI().getUserManager();
+	// ResourceManager resourceManager = SpigotSite.getAPI()
+	// .getResourceManager();
+	// User user = userManager.authenticate(username, password);
+	// Resource resource = resourceManager.getResourceById(2691);
+	// PremiumResource premiumResource = (SpigotPremiumResource) resource;
+	// List<User> buyers = resourceManager.getPremiumResourceBuyers(
+	// premiumResource, user);
+	// List<User> buyers2 = resourceManager.getPremiumResourceBuyers(
+	// premiumResource, user);
+	//
+	// if (!buyers.isEmpty())
+	// assertEquals(buyers.get(0), buyers2.get(0));
+	//
+	// System.out.println("Buyers of " + resource.getResourceName() + ":");
+	// for (User buyer : buyers) {
+	// System.out.println("\t" + buyer.getUsername() + "  ["
+	// + buyer.getUserId() + "]");
+	// }
+	// }
 
 	@Test(timeout = 360000)
 	public void getTopBuyers() throws InvalidCredentialsException,

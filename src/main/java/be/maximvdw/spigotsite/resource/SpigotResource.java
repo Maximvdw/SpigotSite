@@ -14,11 +14,14 @@ import java.util.List;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
+import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.resource.Rating;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceUpdate;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.http.HTTPUnitRequest;
+import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
 
 public class SpigotResource implements Resource {
@@ -100,28 +103,44 @@ public class SpigotResource implements Resource {
 			if (output.exists()) {
 				output.delete();
 			}
-			if (user == null) {
-				URL url = new URL(getDownloadURL());
-				ReadableByteChannel rbc = Channels.newChannel(read(url));
+			if (Request.isDdosBypass()) {
+				InputStream stream = HTTPUnitRequest.downloadFile(
+						getDownloadURL(),
+						user != null ? ((SpigotUser) user).getCookies()
+								: SpigotSiteCore.getBaseCookies());
 				FileOutputStream fos = new FileOutputStream(output);
-				fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+				byte[] buffer = new byte[stream.available()];
+				stream.read(buffer);
+				fos.write(buffer);
 				fos.close();
 			} else {
-				// Open a URL Stream
-				Response resultImageResponse = Jsoup
-						.connect(getDownloadURL())
-						.cookies(
-								user != null ? ((SpigotUser) user).getCookies()
-										: new HashMap<String, String>())
-						.ignoreContentType(true).userAgent("Mozilla").execute();
+				if (user == null) {
+					URL url = new URL(getDownloadURL());
+					ReadableByteChannel rbc = Channels.newChannel(read(url));
+					FileOutputStream fos = new FileOutputStream(output);
+					fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+					fos.close();
+				} else {
+					// Open a URL Stream
+					Response resultImageResponse = Jsoup
+							.connect(getDownloadURL())
+							.cookies(
+									user != null ? ((SpigotUser) user)
+											.getCookies() : SpigotSiteCore
+											.getBaseCookies())
+							.ignoreContentType(true).userAgent("Mozilla")
+							.execute();
 
-				// output here
-				FileOutputStream out = (new FileOutputStream(output));
-				out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
-																// is where the
-																// image's
-																// contents are.
-				out.close();
+					// output here
+					FileOutputStream out = (new FileOutputStream(output));
+					out.write(resultImageResponse.bodyAsBytes()); // resultImageResponse.body()
+																	// is where
+																	// the
+																	// image's
+																	// contents
+																	// are.
+					out.close();
+				}
 			}
 			return output;
 		} catch (Exception ex) {
