@@ -1,6 +1,5 @@
 package be.maximvdw.spigotsite.http;
 
-import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,6 +25,12 @@ public class HTTPUnitRequest {
 
 	public static InputStream downloadFile(String url,
 			Map<String, String> cookies) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		try {
 			WebClient webClient = new WebClient(BrowserVersion.CHROME);
 			webClient.getOptions().setJavaScriptEnabled(true);
@@ -69,6 +74,12 @@ public class HTTPUnitRequest {
 
 	public static HTTPResponse get(String url, Map<String, String> cookies,
 			Map<String, String> params) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		HTTPResponse response = new HTTPResponse();
 
 		try {
@@ -136,6 +147,12 @@ public class HTTPUnitRequest {
 
 	public static HTTPResponse post(String url, Map<String, String> cookies,
 			Map<String, String> params) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		HTTPResponse response = new HTTPResponse();
 
 		try {
