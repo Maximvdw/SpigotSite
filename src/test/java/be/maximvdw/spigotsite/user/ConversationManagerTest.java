@@ -57,7 +57,7 @@ public class ConversationManagerTest {
 		}
 	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 20000)
 	public void conversationsTest() throws InvalidCredentialsException,
 			ConnectionFailedException {
 		System.out.println("Testing 'getConversations' ...");
@@ -102,7 +102,7 @@ public class ConversationManagerTest {
 //		Thread.sleep(15000);
 //	}
 
-	@Test(timeout = 5000)
+	@Test(timeout = 20000)
 	public void conversationSendTest() throws InvalidCredentialsException {
 		System.out.println("Testing 'createConversation' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
