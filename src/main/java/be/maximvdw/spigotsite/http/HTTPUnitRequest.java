@@ -22,14 +22,26 @@ import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 public class HTTPUnitRequest {
+	private static boolean rateLimit = false;
+	private static int rateLimitTimeout = 2000;
 
 	public static InputStream downloadFile(String url,
 			Map<String, String> cookies) {
 		try {
-			Thread.sleep(1000);
+			if (rateLimit == false) {
+				rateLimit = true;
+				Thread.sleep(rateLimitTimeout);
+				rateLimit = false;
+			} else {
+				while (rateLimit) {
+					Thread.sleep(rateLimitTimeout);
+				}
+				rateLimit = true;
+				Thread.sleep(rateLimitTimeout);
+				rateLimit = false;
+			}
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			rateLimit = false;
 		}
 		try {
 			WebClient webClient = new WebClient(BrowserVersion.CHROME);
@@ -75,10 +87,20 @@ public class HTTPUnitRequest {
 	public static HTTPResponse get(String url, Map<String, String> cookies,
 			Map<String, String> params) {
 		try {
-			Thread.sleep(1000);
+			if (rateLimit == false) {
+				rateLimit = true;
+				Thread.sleep(rateLimitTimeout);
+				rateLimit = false;
+			} else {
+				while (rateLimit) {
+					Thread.sleep(rateLimitTimeout);
+				}
+				rateLimit = true;
+				Thread.sleep(rateLimitTimeout);
+				rateLimit = false;
+			}
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			rateLimit = false;
 		}
 		HTTPResponse response = new HTTPResponse();
 
@@ -148,10 +170,20 @@ public class HTTPUnitRequest {
 	public static HTTPResponse post(String url, Map<String, String> cookies,
 			Map<String, String> params) {
 		try {
-			Thread.sleep(1000);
+			if (rateLimit == false) {
+				rateLimit = true;
+				Thread.sleep(rateLimitTimeout);
+				rateLimit = false;
+			} else {
+				while (rateLimit) {
+					Thread.sleep(rateLimitTimeout);
+				}
+				rateLimit = true;
+				Thread.sleep(rateLimitTimeout);
+				rateLimit = false;
+			}
 		} catch (InterruptedException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			rateLimit = false;
 		}
 		HTTPResponse response = new HTTPResponse();
 
