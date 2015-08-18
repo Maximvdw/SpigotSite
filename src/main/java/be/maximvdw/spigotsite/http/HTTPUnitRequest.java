@@ -64,7 +64,11 @@ public class HTTPUnitRequest {
 			Page page = webClient.getPage(wr);
 			if (page instanceof HtmlPage)
 				if (((HtmlPage) page).asXml().contains(
-						"DDoS protection by CloudFlare")) {
+						"DDoS protection by CloudFlare")
+						|| ((HtmlPage) page)
+								.asXml()
+								.contains(
+										"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
 
 					// DDOS protection
 					try {
@@ -129,7 +133,11 @@ public class HTTPUnitRequest {
 			Page page = webClient.getPage(wr);
 			if (page instanceof HtmlPage)
 				if (((HtmlPage) page).asXml().contains(
-						"DDoS protection by CloudFlare")) {
+						"DDoS protection by CloudFlare")
+						|| ((HtmlPage) page)
+								.asXml()
+								.contains(
+										"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
 
 					// DDOS protection
 					try {
@@ -213,7 +221,12 @@ public class HTTPUnitRequest {
 			Page page = webClient.getPage(wr);
 			if (page instanceof HtmlPage)
 				if (((HtmlPage) page).asXml().contains(
-						"DDoS protection by CloudFlare")) {
+						"DDoS protection by CloudFlare")
+						|| ((HtmlPage) page)
+								.asXml()
+								.contains(
+										"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
+
 					// DDOS protection
 					try {
 						Thread.sleep(9000);

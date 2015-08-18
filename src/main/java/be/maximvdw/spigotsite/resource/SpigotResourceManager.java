@@ -35,7 +35,8 @@ public class SpigotResourceManager implements ResourceManager {
 
 	public Resource getResourceById(int resourceid, User user) {
 		try {
-			String url = SpigotSiteCore.getBaseURL() + "resources/" + resourceid;
+			String url = SpigotSiteCore.getBaseURL() + "resources/"
+					+ resourceid;
 			Map<String, String> params = new HashMap<String, String>();
 			HTTPResponse res = Request.get(url,
 					user == null ? SpigotSiteCore.getBaseCookies()
@@ -58,7 +59,7 @@ public class SpigotResourceManager implements ResourceManager {
 
 			Element downloadLink = doc.select("label.downloadButton").get(0)
 					.select("a.inner").get(0);
-			resource.setDownloadURL(SpigotSiteCore.getBaseURL() 
+			resource.setDownloadURL(SpigotSiteCore.getBaseURL()
 					+ downloadLink.attr("href"));
 
 			Element author = doc.select("dl.author").first();
@@ -86,7 +87,8 @@ public class SpigotResourceManager implements ResourceManager {
 	public List<Resource> getResourcesByUser(int userid) {
 		List<Resource> createdResources = new ArrayList<Resource>();
 		try {
-			String url = SpigotSiteCore.getBaseURL() + "resources/authors/" + userid;
+			String url = SpigotSiteCore.getBaseURL() + "resources/authors/"
+					+ userid;
 			Map<String, String> params = new HashMap<String, String>();
 			HTTPResponse res = Request.get(url,
 					SpigotSiteCore.getBaseCookies(), params);
@@ -185,7 +187,7 @@ public class SpigotResourceManager implements ResourceManager {
 
 			this.resourceCategories = resourceCategories;
 		} catch (Exception ex) {
-
+			ex.printStackTrace();
 		}
 		return resourceCategories;
 	}
@@ -197,8 +199,9 @@ public class SpigotResourceManager implements ResourceManager {
 			if (category.getResourceCount() % 20 != 0)
 				lastPage++;
 			for (int i = lastPage; i >= 1; i--) {
-				String url = SpigotSiteCore.getBaseURL() + "resources/categories/"
-						+ category.getCategoryId() + "/?page=" + i;
+				String url = SpigotSiteCore.getBaseURL()
+						+ "resources/categories/" + category.getCategoryId()
+						+ "/?page=" + i;
 				Map<String, String> params = new HashMap<String, String>();
 
 				HTTPResponse res = Request.get(url,
