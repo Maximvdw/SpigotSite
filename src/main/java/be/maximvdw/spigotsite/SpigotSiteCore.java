@@ -28,6 +28,8 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 	private boolean ddosProtection = false;
 	private static Map<String, String> baseCookies = new HashMap<String, String>();
 	private static boolean firstStart = true;
+	private static String baseURL = "https://www.spigotmc.org/";
+	private static int rateLimitTimeout = 1500;
 
 	public SpigotSiteCore() {
 		// Set managers
@@ -89,5 +91,21 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 
 	public void setDDoSProtection(boolean ddosProtection) {
 		this.ddosProtection = ddosProtection;
+	}
+
+	public static String getBaseURL() {
+		return baseURL;
+	}
+
+	public static void setBaseURL(String baseURL) {
+		SpigotSiteCore.baseURL = baseURL;
+	}
+
+	public static int getRateLimitTimeout() {
+		return rateLimitTimeout;
+	}
+
+	public static void setRateLimitTimeout(int rateLimitTimeout) {
+		SpigotSiteCore.rateLimitTimeout = rateLimitTimeout;
 	}
 }

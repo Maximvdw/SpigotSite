@@ -27,7 +27,7 @@ public class SpigotUserManager implements UserManager {
 
 	public User getUserById(int userid, User user) {
 		try {
-			String url = "https://www.spigotmc.org/members/" + userid;
+			String url = SpigotSiteCore.getBaseURL() + "members/" + userid;
 			Map<String, String> params = new HashMap<String, String>();
 
 			HTTPResponse res = Request.get(url,
@@ -52,7 +52,7 @@ public class SpigotUserManager implements UserManager {
 	public User authenticate(String username, String password)
 			throws InvalidCredentialsException {
 		try {
-			String url = "https://www.spigotmc.org/login/login";
+			String url = SpigotSiteCore.getBaseURL() + "login/login";
 			Map<String, String> params = new HashMap<String, String>();
 			// Login parameters
 			params.put("login", username);
@@ -61,7 +61,7 @@ public class SpigotUserManager implements UserManager {
 			params.put("remember", "1"); // No need to remember
 			params.put("cookie_check", "1"); // Fix error Cookies required
 			params.put("_xfToken", "");
-			params.put("redirect", "https://www.spigotmc.org/");
+			params.put("redirect", SpigotSiteCore.getBaseURL() + "");
 			HTTPResponse res = Request.post(url,
 					SpigotSiteCore.getBaseCookies(), params);
 			if (res.getHtml().contains("Incorrect password. Please try again.")) {
@@ -107,7 +107,7 @@ public class SpigotUserManager implements UserManager {
 	public List<User> getUsersByName(String name) {
 		List<User> users = new ArrayList<User>();
 		try {
-			String url = "https://www.spigotmc.org/index.php?members/find&_xfResponseType=json";
+			String url = SpigotSiteCore.getBaseURL() + "index.php?members/find&_xfResponseType=json";
 			Map<String, String> params = new HashMap<String, String>();
 			// Login parameters
 			params.put("q", name);
@@ -132,7 +132,7 @@ public class SpigotUserManager implements UserManager {
 		try {
 			for (int i = 1; i <= 40; i++) {
 				int pagenr = i;
-				String url = "https://www.spigotmc.org/online/?type=registered&page="
+				String url = SpigotSiteCore.getBaseURL() + "online/?type=registered&page="
 						+ pagenr;
 			}
 

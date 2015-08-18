@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import be.maximvdw.spigotsite.SpigotSiteCore;
+
 import com.gargoylesoftware.htmlunit.BrowserVersion;
 import com.gargoylesoftware.htmlunit.HttpMethod;
 import com.gargoylesoftware.htmlunit.Page;
@@ -23,21 +25,20 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 
 public class HTTPUnitRequest {
 	private static boolean rateLimit = false;
-	private static int rateLimitTimeout = 2000;
 
 	public static InputStream downloadFile(String url,
 			Map<String, String> cookies) {
 		try {
 			if (rateLimit == false) {
 				rateLimit = true;
-				Thread.sleep(rateLimitTimeout);
+				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
 			} else {
 				while (rateLimit) {
-					Thread.sleep(rateLimitTimeout);
+					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				}
 				rateLimit = true;
-				Thread.sleep(rateLimitTimeout);
+				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
 			}
 		} catch (InterruptedException e1) {
@@ -89,14 +90,14 @@ public class HTTPUnitRequest {
 		try {
 			if (rateLimit == false) {
 				rateLimit = true;
-				Thread.sleep(rateLimitTimeout);
+				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
 			} else {
 				while (rateLimit) {
-					Thread.sleep(rateLimitTimeout);
+					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				}
 				rateLimit = true;
-				Thread.sleep(rateLimitTimeout);
+				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
 			}
 		} catch (InterruptedException e1) {
@@ -172,14 +173,14 @@ public class HTTPUnitRequest {
 		try {
 			if (rateLimit == false) {
 				rateLimit = true;
-				Thread.sleep(rateLimitTimeout);
+				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
 			} else {
 				while (rateLimit) {
-					Thread.sleep(rateLimitTimeout);
+					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				}
 				rateLimit = true;
-				Thread.sleep(rateLimitTimeout);
+				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
 			}
 		} catch (InterruptedException e1) {

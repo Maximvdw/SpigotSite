@@ -35,7 +35,7 @@ public class SpigotResourceManager implements ResourceManager {
 
 	public Resource getResourceById(int resourceid, User user) {
 		try {
-			String url = "http://www.spigotmc.org/resources/" + resourceid;
+			String url = SpigotSiteCore.getBaseURL() + "resources/" + resourceid;
 			Map<String, String> params = new HashMap<String, String>();
 			HTTPResponse res = Request.get(url,
 					user == null ? SpigotSiteCore.getBaseCookies()
@@ -58,7 +58,7 @@ public class SpigotResourceManager implements ResourceManager {
 
 			Element downloadLink = doc.select("label.downloadButton").get(0)
 					.select("a.inner").get(0);
-			resource.setDownloadURL("https://www.spigotmc.org/"
+			resource.setDownloadURL(SpigotSiteCore.getBaseURL() 
 					+ downloadLink.attr("href"));
 
 			Element author = doc.select("dl.author").first();
@@ -86,7 +86,7 @@ public class SpigotResourceManager implements ResourceManager {
 	public List<Resource> getResourcesByUser(int userid) {
 		List<Resource> createdResources = new ArrayList<Resource>();
 		try {
-			String url = "http://www.spigotmc.org/resources/authors/" + userid;
+			String url = SpigotSiteCore.getBaseURL() + "resources/authors/" + userid;
 			Map<String, String> params = new HashMap<String, String>();
 			HTTPResponse res = Request.get(url,
 					SpigotSiteCore.getBaseCookies(), params);
@@ -125,7 +125,7 @@ public class SpigotResourceManager implements ResourceManager {
 	public List<Resource> getPurchasedResources(User user) {
 		List<Resource> boughtResources = new ArrayList<Resource>();
 		try {
-			String url = "http://www.spigotmc.org/resources/purchased";
+			String url = SpigotSiteCore.getBaseURL() + "resources/purchased";
 			Map<String, String> params = new HashMap<String, String>();
 
 			Connection.Response res = Jsoup
@@ -162,7 +162,7 @@ public class SpigotResourceManager implements ResourceManager {
 		if (this.resourceCategories.size() > 0)
 			return this.resourceCategories;
 		try {
-			String url = "http://www.spigotmc.org/resources/";
+			String url = SpigotSiteCore.getBaseURL() + "resources/";
 			Map<String, String> params = new HashMap<String, String>();
 
 			HTTPResponse res = Request.get(url,
@@ -197,7 +197,7 @@ public class SpigotResourceManager implements ResourceManager {
 			if (category.getResourceCount() % 20 != 0)
 				lastPage++;
 			for (int i = lastPage; i >= 1; i--) {
-				String url = "http://www.spigotmc.org/resources/categories/"
+				String url = SpigotSiteCore.getBaseURL() + "resources/categories/"
 						+ category.getCategoryId() + "/?page=" + i;
 				Map<String, String> params = new HashMap<String, String>();
 
@@ -256,7 +256,7 @@ public class SpigotResourceManager implements ResourceManager {
 
 		SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
 		try {
-			String url = "http://www.spigotmc.org/resources/"
+			String url = SpigotSiteCore.getBaseURL() + "resources/"
 					+ resource.getResourceId() + "/buyers";
 			Map<String, String> params = new HashMap<String, String>();
 			HTTPResponse res = Request.get(url,
@@ -302,7 +302,7 @@ public class SpigotResourceManager implements ResourceManager {
 	public void addBuyers(PremiumResource resource, User user,
 			String[] usernames) {
 		try {
-			String url = "http://www.spigotmc.org/resources/"
+			String url = SpigotSiteCore.getBaseURL() + "resources/"
 					+ resource.getResourceId() + "/add-buyer";
 			Map<String, String> params = new HashMap<String, String>();
 			String usernamesStr = "";

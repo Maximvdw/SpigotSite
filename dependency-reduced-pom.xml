@@ -4,7 +4,7 @@
   <groupId>be.maximvdw</groupId>
   <artifactId>spigotsite</artifactId>
   <name>SpigotSite</name>
-  <version>0.0.7-SNAPSHOT</version>
+  <version>0.0.8-SNAPSHOT</version>
   <build>
     <resources>
       <resource>

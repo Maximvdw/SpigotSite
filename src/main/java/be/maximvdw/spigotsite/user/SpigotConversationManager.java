@@ -16,6 +16,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.ConversationManager;
@@ -27,7 +28,7 @@ public class SpigotConversationManager implements ConversationManager {
 	public List<Conversation> getConversations(User user, int count) {
 		List<Conversation> conversations = new ArrayList<Conversation>();
 		try {
-			String url = "http://www.spigotmc.org/conversations/";
+			String url = SpigotSiteCore.getBaseURL() + "conversations/";
 			Map<String, String> params = new HashMap<String, String>();
 
 			Connection.Response res = Jsoup
@@ -70,7 +71,7 @@ public class SpigotConversationManager implements ConversationManager {
 	public void replyToConversation(Conversation conversation, User user,
 			String reply) throws SpamWarningException {
 		try {
-			String url = "http://www.spigotmc.org/conversations/"
+			String url = SpigotSiteCore.getBaseURL() + "conversations/"
 					+ conversation.getConverationId() + "/insert-reply";
 
 			if (((SpigotUser) user).requiresRefresh())
@@ -110,7 +111,7 @@ public class SpigotConversationManager implements ConversationManager {
 
 	public void leaveConversation(Conversation conversation, User user) {
 		try {
-			String url = "http://www.spigotmc.org/conversations/"
+			String url = SpigotSiteCore.getBaseURL() + "conversations/"
 					+ conversation.getConverationId() + "/leave";
 
 			if (((SpigotUser) user).requiresRefresh())
@@ -140,7 +141,7 @@ public class SpigotConversationManager implements ConversationManager {
 			boolean sticky) throws SpamWarningException {
 		Conversation conversation = new SpigotConversation();
 		try {
-			String url = "http://www.spigotmc.org/conversations/insert";
+			String url = SpigotSiteCore.getBaseURL() + "conversations/insert";
 			String recipentsStr = recipents.iterator().next();
 
 			if (((SpigotUser) user).requiresRefresh())
