@@ -8,7 +8,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.util.HashMap;
 import java.util.List;
 
 import org.jsoup.Connection.Response;
@@ -20,6 +19,7 @@ import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.resource.ResourceCategory;
 import be.maximvdw.spigotsite.api.resource.ResourceUpdate;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.http.HTTPDownloadResponse;
 import be.maximvdw.spigotsite.http.HTTPUnitRequest;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
@@ -32,6 +32,7 @@ public class SpigotResource implements Resource {
 	private ResourceCategory category = null;
 	private boolean deleted = false;
 	private String downloadURL = "";
+	private String externalURL = "";
 
 	public SpigotResource() {
 
@@ -104,10 +105,12 @@ public class SpigotResource implements Resource {
 				output.delete();
 			}
 			if (Request.isDdosBypass()) {
-				InputStream stream = HTTPUnitRequest.downloadFile(
+				HTTPDownloadResponse dlResponse = HTTPUnitRequest.downloadFile(
 						getDownloadURL(),
 						user != null ? ((SpigotUser) user).getCookies()
 								: SpigotSiteCore.getBaseCookies());
+				setExternalURL(dlResponse.getUrl().toString());
+				InputStream stream = dlResponse.getStream();
 				FileOutputStream fos = new FileOutputStream(output);
 				byte[] buffer = new byte[stream.available()];
 				stream.read(buffer);
@@ -170,5 +173,13 @@ public class SpigotResource implements Resource {
 	public List<ResourceUpdate> gerResourceUpdates() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public String getExternalURL() {
+		return externalURL;
+	}
+
+	public void setExternalURL(String externalURL) {
+		this.externalURL = externalURL;
 	}
 }

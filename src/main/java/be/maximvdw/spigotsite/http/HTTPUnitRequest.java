@@ -26,7 +26,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 public class HTTPUnitRequest {
 	private static boolean rateLimit = false;
 
-	public static InputStream downloadFile(String url,
+	public static HTTPDownloadResponse downloadFile(String url,
 			Map<String, String> cookies) {
 		try {
 			if (rateLimit == false) {
@@ -80,9 +80,11 @@ public class HTTPUnitRequest {
 					}
 
 				}
+			URL outputURL = webClient.getCurrentWindow().getEnclosedPage()
+					.getUrl();
 			stream = webClient.getCurrentWindow().getEnclosedPage()
 					.getWebResponse().getContentAsStream();
-			return stream;
+			return new HTTPDownloadResponse(stream, outputURL);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
