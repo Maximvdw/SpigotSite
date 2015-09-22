@@ -24,6 +24,7 @@ public class SpigotConversationManager implements ConversationManager {
 
 	public List<Conversation> getConversations(User user, int count) {
 		List<Conversation> conversations = new ArrayList<Conversation>();
+		String lastUser = "null";
 		try {
 			String url = SpigotSiteCore.getBaseURL() + "conversations/";
 			Map<String, String> params = new HashMap<String, String>();
@@ -50,9 +51,11 @@ public class SpigotConversationManager implements ConversationManager {
 				SpigotConversation conversation = new SpigotConversation();
 				int id = Integer.parseInt(conversationBlock.id().replace(
 						"conversation-", ""));
+				conversation.setUnread(conversationBlock.hasClass("unread"));
 				Element conversationLink = conversationBlock.select("h3.title")
 						.get(0).getElementsByTag("a").get(0);
 				conversation.setTitle(conversationLink.text());
+				lastUser = conversationLink.text();
 				conversation.setConversationId(id);
 				Element username = conversationBlock.select("a.username")
 						.first();
@@ -61,6 +64,21 @@ public class SpigotConversationManager implements ConversationManager {
 				author.setUserId(Integer.parseInt(StringUtils.getStringBetween(
 						username.attr("href"), "\\.(.*?)/")));
 				conversation.setAuthor(author);
+
+				username = conversationBlock.select("div.listBlock.lastPost > dl > dt > span > a").first();
+				SpigotUser replier = new SpigotUser();
+				replier.setUsername(username.text());
+				replier.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+						username.attr("href"), "\\.(.*?)/")));
+				conversation.setLastReplier(replier);
+
+				Elements abbr = conversationBlock.select("div.listBlock.lastPost > dl > dd > a > abbr");
+				if( abbr != null && abbr.first() != null && abbr.first().hasAttr("data-time") ) {
+					String unixTime = abbr.first().attr("data-time");
+					if (unixTime != null)
+						conversation.setLastReplyDate(Long.parseLong( unixTime ));
+				}
+
 				conversation.setRepliesCount(Integer.parseInt(conversationBlock
 						.select("dd").get(0).text()));
 				conversations.add(conversation);
@@ -68,6 +86,7 @@ public class SpigotConversationManager implements ConversationManager {
 		/*} catch (HttpStatusException ex) {}*/
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			System.out.println(lastUser);
 		}
 		return conversations;
 	}
@@ -91,7 +110,8 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("_xfNoRedirect", "1");
 			params.put("_xfResponseType", "json");
 
-			/*Connection.Response res = Jsoup
+			/* Old stuff.
+			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.POST)
 					.data(params)
@@ -128,7 +148,8 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("deletetype", "delete");
 			params.put("_xfConfirm", "1");
 			params.put("_xfToken", ((SpigotUser) user).getToken());
-			/*Jsoup.connect(url)
+			/* Old stuff.
+			Jsoup.connect(url)
 					.method(Method.POST)
 					.data(params)
 					.ignoreContentType(true)
@@ -170,7 +191,8 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("conversation_locked", locked ? "1" : "0");
 			params.put("conversation_sticky", sticky ? "1" : "0");
 			params.put("open_invite", invite ? "1" : "0");
-			/*Connection.Response res = Jsoup
+			/* Old stuff.
+			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.POST)
 					.data(params)
