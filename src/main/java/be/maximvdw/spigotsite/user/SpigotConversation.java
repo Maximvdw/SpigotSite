@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
@@ -14,6 +15,9 @@ public class SpigotConversation implements Conversation {
 	private String title = "";
 	private int id = 0;
 	private int repliesCount = 0;
+	private boolean unread;
+	private User lastReplier = null;
+	private Date lastReplyDate = null;
 
 	public User getAuthor() {
 		return author;
@@ -64,6 +68,34 @@ public class SpigotConversation implements Conversation {
 
 	public void setRepliesCount(int repliesCount) {
 		this.repliesCount = repliesCount;
+	}
+
+	public boolean isUnread() {
+		return unread;
+	}
+
+	public void setUnread(boolean unread) {
+		this.unread = unread;
+	}
+
+	public User getLastReplier() {
+		return lastReplier;
+	}
+
+	public void setLastReplier( User lastReplier ) {
+		this.lastReplier = lastReplier;
+	}
+
+	public Date getLastReplyDate() {
+		return this.lastReplyDate;
+	}
+
+	public void setLastReplyDate( Date lastReplyDate ) {
+		this.lastReplyDate = lastReplyDate;
+	}
+
+	public void setLastReplyDate( long unixTimeStamp ) {
+		this.lastReplyDate = new Date( unixTimeStamp * 1000 );
 	}
 
 	@Override

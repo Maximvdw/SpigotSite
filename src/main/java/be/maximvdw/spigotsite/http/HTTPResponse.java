@@ -3,6 +3,7 @@ package be.maximvdw.spigotsite.http;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class HTTPResponse {
@@ -36,7 +37,7 @@ public class HTTPResponse {
 	}
 
 	public Document getDocument() {
-		return document;
+		return document == null ? this.document = Jsoup.parse( getHtml() ) : document;
 	}
 
 	public void setDocument(Document document) {

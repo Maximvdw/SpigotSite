@@ -1,6 +1,5 @@
 package be.maximvdw.spigotsite.user;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,10 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.Method;
+import be.maximvdw.spigotsite.http.HTTPResponse;
+import be.maximvdw.spigotsite.http.Request;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -27,11 +24,14 @@ public class SpigotConversationManager implements ConversationManager {
 
 	public List<Conversation> getConversations(User user, int count) {
 		List<Conversation> conversations = new ArrayList<Conversation>();
+		String lastUser = "null";
 		try {
 			String url = SpigotSiteCore.getBaseURL() + "conversations/";
 			Map<String, String> params = new HashMap<String, String>();
 
+			/* Old stuff.
 			Connection.Response res = Jsoup
+
 					.connect(url)
 					.method(Method.GET)
 					.data(params)
@@ -39,15 +39,23 @@ public class SpigotConversationManager implements ConversationManager {
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
-			Document doc = res.parse();
+			Document doc = res.parse();*/
+
+			HTTPResponse req = Request.get(url, ((SpigotUser) user).getCookies(), params);
+			((SpigotUser) user).getCookies().putAll( req.getCookies() );
+
+			Document doc = req.getDocument();
+
 			Elements conversationBlocks = doc.select("li.discussionListItem");
 			for (Element conversationBlock : conversationBlocks) {
 				SpigotConversation conversation = new SpigotConversation();
 				int id = Integer.parseInt(conversationBlock.id().replace(
 						"conversation-", ""));
+				conversation.setUnread(conversationBlock.hasClass("unread"));
 				Element conversationLink = conversationBlock.select("h3.title")
 						.get(0).getElementsByTag("a").get(0);
 				conversation.setTitle(conversationLink.text());
+				lastUser = conversationLink.text();
 				conversation.setConversationId(id);
 				Element username = conversationBlock.select("a.username")
 						.first();
@@ -56,14 +64,29 @@ public class SpigotConversationManager implements ConversationManager {
 				author.setUserId(Integer.parseInt(StringUtils.getStringBetween(
 						username.attr("href"), "\\.(.*?)/")));
 				conversation.setAuthor(author);
+
+				username = conversationBlock.select("div.listBlock.lastPost > dl > dt > span > a").first();
+				SpigotUser replier = new SpigotUser();
+				replier.setUsername(username.text());
+				replier.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+						username.attr("href"), "\\.(.*?)/")));
+				conversation.setLastReplier(replier);
+
+				Elements abbr = conversationBlock.select("div.listBlock.lastPost > dl > dd > a > abbr");
+				if( abbr != null && abbr.first() != null && abbr.first().hasAttr("data-time") ) {
+					String unixTime = abbr.first().attr("data-time");
+					if (unixTime != null)
+						conversation.setLastReplyDate(Long.parseLong( unixTime ));
+				}
+
 				conversation.setRepliesCount(Integer.parseInt(conversationBlock
 						.select("dd").get(0).text()));
 				conversations.add(conversation);
 			}
-		} catch (HttpStatusException ex) {
-
+		/*} catch (HttpStatusException ex) {}*/
 		} catch (Exception ex) {
 			ex.printStackTrace();
+			System.out.println(lastUser);
 		}
 		return conversations;
 	}
@@ -87,6 +110,7 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("_xfNoRedirect", "1");
 			params.put("_xfResponseType", "json");
 
+			/* Old stuff.
 			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.POST)
@@ -96,15 +120,18 @@ public class SpigotConversationManager implements ConversationManager {
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
-			Document doc = res.parse();
+			Document doc = res.parse();*/
+			HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
+			((SpigotUser) user).getCookies().putAll(req.getCookies());
 
+			Document doc = req.getDocument();
 			if (doc.text().contains("\"error\":")) {
 				throw new SpamWarningException();
 			}
-		} catch (HttpStatusException ex) {
+		/*} catch (HttpStatusException ex) {
 			ex.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		}*/
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -121,6 +148,7 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("deletetype", "delete");
 			params.put("_xfConfirm", "1");
 			params.put("_xfToken", ((SpigotUser) user).getToken());
+			/* Old stuff.
 			Jsoup.connect(url)
 					.method(Method.POST)
 					.data(params)
@@ -128,10 +156,15 @@ public class SpigotConversationManager implements ConversationManager {
 					.cookies(((SpigotUser) user).getCookies())
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-		} catch (HttpStatusException ex) {
+					.execute();*/
+
+			HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
+			((SpigotUser) user).getCookies().putAll(req.getCookies());
+
+		/*} catch (HttpStatusException ex) {
 			ex.printStackTrace();
-		} catch (Exception ex) {
+		}*/
+		}catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -158,6 +191,7 @@ public class SpigotConversationManager implements ConversationManager {
 			params.put("conversation_locked", locked ? "1" : "0");
 			params.put("conversation_sticky", sticky ? "1" : "0");
 			params.put("open_invite", invite ? "1" : "0");
+			/* Old stuff.
 			Connection.Response res = Jsoup
 					.connect(url)
 					.method(Method.POST)
@@ -167,16 +201,21 @@ public class SpigotConversationManager implements ConversationManager {
 					.userAgent(
 							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
 					.execute();
-			Document doc = res.parse();
+			Document doc = res.parse();*/
+			HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
+			((SpigotUser) user).getCookies().putAll(req.getCookies());
+
+			Document doc = req.getDocument();
 
 			if (doc.text().contains("\"error\":")) {
 				throw new SpamWarningException();
 			}
 
 			doc.select("div.titleBar");
-		} catch (HttpStatusException ex) {
+		/*} catch (HttpStatusException ex) {
 			ex.printStackTrace();
-		} catch (IOException e) {
+		}*/
+		}catch (Exception e) {
 			e.printStackTrace();
 		}
 
