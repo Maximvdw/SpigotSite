@@ -128,6 +128,8 @@ public class SpigotConversationManager implements ConversationManager {
 			if (text.contains("\"error\":")) {
 				throw new SpamWarningException();
 			}
+			
+			((SpigotConversation) conversation).setUnread( false );
 		/*} catch (HttpStatusException ex) {
 			ex.printStackTrace();
 		}*/
