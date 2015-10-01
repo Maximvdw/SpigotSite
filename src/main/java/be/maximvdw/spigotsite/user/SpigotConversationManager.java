@@ -124,13 +124,48 @@ public class SpigotConversationManager implements ConversationManager {
 			HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
 			((SpigotUser) user).getCookies().putAll(req.getCookies());
 
-			Document doc = req.getDocument();
-			if (doc.text().contains("\"error\":")) {
+			String text = req.getHtml();
+			if (text.contains("\"error\":")) {
 				throw new SpamWarningException();
 			}
+			
+			((SpigotConversation) conversation).setUnread( false );
 		/*} catch (HttpStatusException ex) {
 			ex.printStackTrace();
 		}*/
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void markAsUnread(Conversation conversation, User user, boolean unreadOrNot) throws SpamWarningException {
+
+		if( unreadOrNot == conversation.isUnread() ) return;
+
+		try {
+			String url = SpigotSiteCore.getBaseURL() + "conversations/"
+					+ conversation.getConverationId() + "/toggle-read";
+
+			if (((SpigotUser) user).requiresRefresh())
+				((SpigotUser) user).refresh();
+
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("_xfConfirm", "1");
+			params.put("_xfToken", ((SpigotUser) user).getToken());
+			params.put("_xfRequestUri", url);
+			params.put("_xfNoRedirect", "1");
+			params.put("_xfResponseType", "json");
+
+			HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
+			((SpigotUser) user).getCookies().putAll(req.getCookies());
+
+			String text = req.getHtml();
+			if (text.contains("\"error\":")) {
+				throw new Exception("Unknown error occurred", new Throwable( text ));
+			}
+
+			((SpigotConversation) conversation).setUnread( unreadOrNot );
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

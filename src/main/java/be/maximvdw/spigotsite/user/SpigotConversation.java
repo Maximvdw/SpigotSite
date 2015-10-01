@@ -78,6 +78,10 @@ public class SpigotConversation implements Conversation {
 		this.unread = unread;
 	}
 
+	public void markAsUnread( User user, boolean unreadOrNot ) {
+		SpigotSite.getAPI().getConversationManager().markAsUnread( this, user, unreadOrNot );
+	}
+
 	public User getLastReplier() {
 		return lastReplier;
 	}

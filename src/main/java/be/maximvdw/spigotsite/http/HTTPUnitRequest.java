@@ -181,7 +181,7 @@ public class HTTPUnitRequest {
 	public static HTTPResponse post(String url, Map<String, String> cookies,
 			Map<String, String> params) {
 		try {
-			if (rateLimit == false) {
+			if (!rateLimit) {
 				rateLimit = true;
 				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
 				rateLimit = false;
@@ -257,7 +257,16 @@ public class HTTPUnitRequest {
 			for (Cookie cookie : webClient.getCookieManager().getCookies()) {
 				cookiesMap.put(cookie.getName(), cookie.getValue());
 			}
-			Document doc = Jsoup.parse(((HtmlPage) page).asXml());
+
+			Document doc;
+
+			if( page instanceof UnexpectedPage ) {
+				UnexpectedPage unPage = ((UnexpectedPage) page);
+				doc = Jsoup.parse( unPage.getWebResponse().getContentAsString() );
+			} else {
+				doc = Jsoup.parse(((HtmlPage) page).asXml());
+			}
+
 			response.setDocument(doc);
 			response.setHtml(doc.html());
 
