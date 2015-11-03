@@ -5,10 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.jsoup.Connection;
-import org.jsoup.HttpStatusException;
-import org.jsoup.Jsoup;
-import org.jsoup.Connection.Method;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -130,15 +126,8 @@ public class SpigotResourceManager implements ResourceManager {
 			String url = SpigotSiteCore.getBaseURL() + "resources/purchased";
 			Map<String, String> params = new HashMap<String, String>();
 
-			Connection.Response res = Jsoup
-					.connect(url)
-					.method(Method.GET)
-					.data(params)
-					.cookies(((SpigotUser) user).getCookies())
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
+			HTTPResponse res = Request.get(url,((SpigotUser) user).getCookies(), params);
+			Document doc = res.getDocument();
 			Elements resourceBlocks = doc.select("li.resourceListItem");
 			for (Element resourceBlock : resourceBlocks) {
 				int id = Integer.parseInt(resourceBlock.id().replace(
@@ -150,8 +139,6 @@ public class SpigotResourceManager implements ResourceManager {
 				resource.setResourceId(id);
 				boughtResources.add(resource);
 			}
-		} catch (HttpStatusException ex) {
-
 		} catch (Exception ex) {
 
 		}

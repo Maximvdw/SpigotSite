@@ -10,15 +10,12 @@ import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
 import org.jsoup.nodes.Document;
 
-import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.resource.Resource;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserStatistics;
-import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
-import be.maximvdw.spigotsite.utils.StringUtils;
 
 public class SpigotUser implements User {
 	private int id = 0;

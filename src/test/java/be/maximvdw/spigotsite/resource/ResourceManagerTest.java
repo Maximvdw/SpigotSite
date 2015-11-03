@@ -34,11 +34,9 @@ public class ResourceManagerTest {
 		BufferedReader br = null;
 		try {
 			if (new File("/var/lib/jenkins/credentials.txt").exists())
-				br = new BufferedReader(new FileReader(
-						"/var/lib/jenkins/credentials.txt"));
+				br = new BufferedReader(new FileReader("/var/lib/jenkins/credentials.txt"));
 			else
-				br = new BufferedReader(new FileReader(
-						"C:\\Users\\Maxim\\Documents\\credentials.txt"));
+				br = new BufferedReader(new FileReader("C:\\Users\\Maxim\\Documents\\credentials.txt"));
 			username = br.readLine();
 			password = br.readLine();
 		} catch (FileNotFoundException e) {
@@ -60,8 +58,7 @@ public class ResourceManagerTest {
 	@Test(timeout = 15000)
 	public void getResourceByIdTest() {
 		System.out.println("Testing 'getResourceById 578' ...");
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		// Test Tab plugin
 		Resource resource = resourceManager.getResourceById(578);
 		assertNotNull(resource);
@@ -69,8 +66,7 @@ public class ResourceManagerTest {
 
 		System.out.println("Resource name: " + resource.getResourceName());
 		System.out.println("Resource id: " + resource.getResourceId());
-		System.out.println("Resource author: "
-				+ resource.getAuthor().getUsername() + " ["
+		System.out.println("Resource author: " + resource.getAuthor().getUsername() + " ["
 				+ resource.getAuthor().getUserId() + "]");
 		System.out.println("Resource version: " + resource.getLastVersion());
 		System.out.println("Resource URL: " + resource.getDownloadURL());
@@ -82,13 +78,10 @@ public class ResourceManagerTest {
 	@Test(timeout = 15000)
 	public void getResourceCategoriesTest() {
 		System.out.println("Testing 'getResourceCategories' ...");
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
-		List<ResourceCategory> categories = resourceManager
-				.getResourceCategories();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+		List<ResourceCategory> categories = resourceManager.getResourceCategories();
 		for (ResourceCategory category : categories) {
-			System.out.println(category.getCategoryName() + " ["
-					+ category.getCategoryId() + "] - Count: "
+			System.out.println(category.getCategoryName() + " [" + category.getCategoryId() + "] - Count: "
 					+ category.getResourceCount());
 		}
 		assertNotNull(categories);
@@ -97,8 +90,7 @@ public class ResourceManagerTest {
 	@Test(timeout = 15000)
 	public void getResourceCategoryByIdTest() {
 		System.out.println("Testing 'getResourceCategoryById 2' ...");
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		ResourceCategory category = resourceManager.getResourceCategoryById(2);
 		assertNotNull(category);
 	}
@@ -113,7 +105,7 @@ public class ResourceManagerTest {
 	// .getResourcesByCategory(category);
 	// assertNotNull(resources);
 	// System.out.println("Expected count: " + category.getResourceCount()
-	// + "  Fetched count: " + resources.size());
+	// + " Fetched count: " + resources.size());
 	// // assertEquals(category.getResourceCount(), resources.size());
 	// for (Resource resource : resources) {
 	// System.out.println(resource.getResourceName() + " ["
@@ -128,24 +120,38 @@ public class ResourceManagerTest {
 	@Test(timeout = 15000)
 	public void getResourcesByUserTest() {
 		System.out.println("Testing 'getResourcesByUser 6687' ...");
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		List<Resource> resources = resourceManager.getResourcesByUser(6687);
 		assertNotNull(resources);
 		System.out.println("Resources by User 6687:");
 		for (Resource resource : resources) {
-			System.out.println(resource.getResourceName() + " ["
-					+ resource.getResourceId() + "]" + " "
+			System.out.println(resource.getResourceName() + " [" + resource.getResourceId() + "]" + " "
 					+ resource.getLastVersion());
 			assertNotNull(resource.getAuthor());
+		}
+	}
+
+	@Test(timeout = 15000)
+	public void getPurchasedResourcesByUserTest() throws InvalidCredentialsException, ConnectionFailedException {
+		System.out.println("Testing 'getPurchasedResourcesByUser' ...");
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		// Log in
+		User user = userManager.authenticate(username, password);
+
+		List<Resource> resources = resourceManager.getPurchasedResources(user);
+		assertNotNull(resources);
+		System.out.println("Purchased Resources by User:");
+		for (Resource resource : resources) {
+			System.out.println(resource.getResourceName() + " [" + resource.getResourceId() + "]" + " "
+					+ resource.getLastVersion());
 		}
 	}
 
 	@Test
 	public void downloadResource() {
 		System.out.println("Testing 'downloadResource 578' ...");
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		Resource res = resourceManager.getResourceById(578);
 		res.downloadResource(null, new File("resourceTest"));
 	}
@@ -170,19 +176,16 @@ public class ResourceManagerTest {
 	//
 	// System.out.println("Buyers of " + resource.getResourceName() + ":");
 	// for (User buyer : buyers) {
-	// System.out.println("\t" + buyer.getUsername() + "  ["
+	// System.out.println("\t" + buyer.getUsername() + " ["
 	// + buyer.getUserId() + "]");
 	// }
 	// }
 
 	@Test(timeout = 360000)
-	public void getTopBuyers() throws InvalidCredentialsException,
-			ConnectionFailedException {
-		System.out
-				.println("Testing 'get the buyers that bought all my plugins'");
+	public void getTopBuyers() throws InvalidCredentialsException, ConnectionFailedException {
+		System.out.println("Testing 'get the buyers that bought all my plugins'");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		ResourceManager resourceManager = SpigotSite.getAPI()
-				.getResourceManager();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		// Log in
 		User user = userManager.authenticate(username, password);
 
@@ -194,11 +197,9 @@ public class ResourceManagerTest {
 			if (resource instanceof PremiumResource) {
 				PremiumResource premiumResource = (PremiumResource) resource;
 				// Get the people who bought that plugin
-				List<User> buyers = resourceManager.getPremiumResourceBuyers(
-						premiumResource, user);
-				System.out.println("The plugin "
-						+ premiumResource.getResourceName() + " got "
-						+ buyers.size() + " buyers.");
+				List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+				System.out.println(
+						"The plugin " + premiumResource.getResourceName() + " got " + buyers.size() + " buyers.");
 				if (favoriteBuyers.size() == 0)
 					favoriteBuyers = buyers;
 				else {
