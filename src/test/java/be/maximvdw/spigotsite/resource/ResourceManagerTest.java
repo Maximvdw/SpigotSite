@@ -149,11 +149,26 @@ public class ResourceManagerTest {
 	}
 
 	@Test
-	public void downloadResource() {
+	public void downloadResource() throws IOException {
 		System.out.println("Testing 'downloadResource 578' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		Resource res = resourceManager.getResourceById(578);
-		res.downloadResource(null, new File("resourceTest"));
+		File tmpFile = File.createTempFile("resource-", ".jar");
+		res.downloadResource(null, tmpFile);
+		tmpFile.delete();
+	}
+	
+	@Test
+	public void downloadPremiumResource() throws InvalidCredentialsException, IOException {
+		System.out.println("Testing 'downloadPremiumResource 1458' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		// Log in
+		User user = userManager.authenticate(username, password);
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+		Resource res = resourceManager.getResourceById(1458,user);
+		File tmpFile = File.createTempFile("resource-", ".jar");
+		res.downloadResource(user, tmpFile);
+		tmpFile.delete();
 	}
 
 	// @Test(timeout = 15000)
