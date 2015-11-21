@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>be.maximvdw</groupId>
 			<artifactId>spigotsite-api</artifactId>
-			<version>0.0.3-SNAPSHOT</version>
+			<version>0.0.4-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
