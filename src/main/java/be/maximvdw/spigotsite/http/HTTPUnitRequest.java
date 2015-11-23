@@ -28,22 +28,22 @@ public class HTTPUnitRequest {
 
 	public static HTTPDownloadResponse downloadFile(String url,
 			Map<String, String> cookies) {
-		try {
-			if (rateLimit == false) {
-				rateLimit = true;
-				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-				rateLimit = false;
-			} else {
-				while (rateLimit) {
-					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-				}
-				rateLimit = true;
-				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-				rateLimit = false;
-			}
-		} catch (InterruptedException e1) {
-			rateLimit = false;
-		}
+//		try {
+//			if (rateLimit == false) {
+//				rateLimit = true;
+//				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
+//				rateLimit = false;
+//			} else {
+//				while (rateLimit) {
+//					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
+//				}
+//				rateLimit = true;
+//				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
+//				rateLimit = false;
+//			}
+//		} catch (InterruptedException e1) {
+//			rateLimit = false;
+//		}
 		try {
 			WebClient webClient = new WebClient(BrowserVersion.CHROME);
 			webClient.getOptions().setJavaScriptEnabled(true);
@@ -93,22 +93,22 @@ public class HTTPUnitRequest {
 
 	public static HTTPResponse get(String url, Map<String, String> cookies,
 			Map<String, String> params) {
-		try {
-			if (rateLimit == false) {
-				rateLimit = true;
-				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-				rateLimit = false;
-			} else {
-				while (rateLimit) {
-					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-				}
-				rateLimit = true;
-				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-				rateLimit = false;
-			}
-		} catch (InterruptedException e1) {
-			rateLimit = false;
-		}
+//		try {
+//			if (rateLimit == false) {
+//				rateLimit = true;
+//				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
+//				rateLimit = false;
+//			} else {
+//				while (rateLimit) {
+//					Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
+//				}
+//				rateLimit = true;
+//				Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
+//				rateLimit = false;
+//			}
+//		} catch (InterruptedException e1) {
+//			rateLimit = false;
+//		}
 		HTTPResponse response = new HTTPResponse();
 
 		try {
