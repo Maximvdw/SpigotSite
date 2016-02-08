@@ -26,8 +26,7 @@ import com.gargoylesoftware.htmlunit.util.NameValuePair;
 public class HTTPUnitRequest {
 	private static boolean rateLimit = false;
 
-	public static HTTPDownloadResponse downloadFile(String url,
-			Map<String, String> cookies) {
+	public static HTTPDownloadResponse downloadFile(String url, Map<String, String> cookies) {
 		try {
 			if (rateLimit == false) {
 				rateLimit = true;
@@ -53,22 +52,16 @@ public class HTTPUnitRequest {
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setPrintContentOnFailingStatusCode(false);
-			java.util.logging.Logger.getLogger("com.gargoylesoftware")
-					.setLevel(Level.OFF);
+			java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 			WebRequest wr = new WebRequest(new URL(url), HttpMethod.GET);
 			for (Map.Entry<String, String> entry : cookies.entrySet())
-				webClient.getCookieManager().addCookie(
-						new Cookie("spigotmc.org", entry.getKey(), entry
-								.getValue()));
+				webClient.getCookieManager().addCookie(new Cookie("spigotmc.org", entry.getKey(), entry.getValue()));
 			InputStream stream = null;
 			Page page = webClient.getPage(wr);
 			if (page instanceof HtmlPage)
-				if (((HtmlPage) page).asXml().contains(
-						"DDoS protection by CloudFlare")
-						|| ((HtmlPage) page)
-								.asXml()
-								.contains(
-										"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
+				if (((HtmlPage) page).asXml().contains("DDoS protection by CloudFlare")
+						|| ((HtmlPage) page).asXml().contains(
+								"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
 
 					// DDOS protection
 					try {
@@ -80,10 +73,8 @@ public class HTTPUnitRequest {
 					}
 
 				}
-			URL outputURL = webClient.getCurrentWindow().getEnclosedPage()
-					.getUrl();
-			stream = webClient.getCurrentWindow().getEnclosedPage()
-					.getWebResponse().getContentAsStream();
+			URL outputURL = webClient.getCurrentWindow().getEnclosedPage().getUrl();
+			stream = webClient.getCurrentWindow().getEnclosedPage().getWebResponse().getContentAsStream();
 			return new HTTPDownloadResponse(stream, outputURL);
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -91,8 +82,7 @@ public class HTTPUnitRequest {
 		return null;
 	}
 
-	public static HTTPResponse get(String url, Map<String, String> cookies,
-			Map<String, String> params) {
+	public static HTTPResponse get(String url, Map<String, String> cookies, Map<String, String> params) {
 		try {
 			if (rateLimit == false) {
 				rateLimit = true;
@@ -120,26 +110,19 @@ public class HTTPUnitRequest {
 			webClient.getOptions().setThrowExceptionOnFailingStatusCode(false);
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setPrintContentOnFailingStatusCode(false);
-			java.util.logging.Logger.getLogger("com.gargoylesoftware")
-					.setLevel(Level.OFF);
+			java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 			WebRequest wr = new WebRequest(new URL(url), HttpMethod.GET);
 			for (Map.Entry<String, String> entry : cookies.entrySet())
-				webClient.getCookieManager().addCookie(
-						new Cookie("spigotmc.org", entry.getKey(), entry
-								.getValue()));
+				webClient.getCookieManager().addCookie(new Cookie("spigotmc.org", entry.getKey(), entry.getValue()));
 			List<NameValuePair> paramsPair = new ArrayList<NameValuePair>();
 			for (Map.Entry<String, String> entry : params.entrySet())
-				paramsPair.add(new NameValuePair(entry.getKey(), entry
-						.getValue()));
+				paramsPair.add(new NameValuePair(entry.getKey(), entry.getValue()));
 			wr.setRequestParameters(paramsPair);
 			Page page = webClient.getPage(wr);
 			if (page instanceof HtmlPage)
-				if (((HtmlPage) page).asXml().contains(
-						"DDoS protection by CloudFlare")
-						|| ((HtmlPage) page)
-								.asXml()
-								.contains(
-										"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
+				if (((HtmlPage) page).asXml().contains("DDoS protection by CloudFlare")
+						|| ((HtmlPage) page).asXml().contains(
+								"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
 
 					// DDOS protection
 					try {
@@ -151,9 +134,7 @@ public class HTTPUnitRequest {
 					}
 					if (webClient.getPage(wr) instanceof UnexpectedPage) {
 						UnexpectedPage unexpectedPage = webClient.getPage(wr);
-						System.out.println("UNEXPECTED PAGE: "
-								+ unexpectedPage.getWebResponse()
-										.getStatusMessage());
+						System.out.println("UNEXPECTED PAGE: " + unexpectedPage.getWebResponse().getStatusMessage());
 					} else
 						page = webClient.getPage(wr);
 				}
@@ -178,8 +159,7 @@ public class HTTPUnitRequest {
 		return response;
 	}
 
-	public static HTTPResponse post(String url, Map<String, String> cookies,
-			Map<String, String> params) {
+	public static HTTPResponse post(String url, Map<String, String> cookies, Map<String, String> params) {
 		try {
 			if (rateLimit == false) {
 				rateLimit = true;
@@ -208,26 +188,19 @@ public class HTTPUnitRequest {
 			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			webClient.getOptions().setPrintContentOnFailingStatusCode(false);
 			webClient.getOptions().setCssEnabled(false);
-			java.util.logging.Logger.getLogger("com.gargoylesoftware")
-					.setLevel(Level.OFF);
+			java.util.logging.Logger.getLogger("com.gargoylesoftware").setLevel(Level.OFF);
 			WebRequest wr = new WebRequest(new URL(url), HttpMethod.POST);
 			for (Map.Entry<String, String> entry : cookies.entrySet())
-				webClient.getCookieManager().addCookie(
-						new Cookie("spigotmc.org", entry.getKey(), entry
-								.getValue()));
+				webClient.getCookieManager().addCookie(new Cookie("spigotmc.org", entry.getKey(), entry.getValue()));
 			List<NameValuePair> paramsPair = new ArrayList<NameValuePair>();
 			for (Map.Entry<String, String> entry : params.entrySet())
-				paramsPair.add(new NameValuePair(entry.getKey(), entry
-						.getValue()));
+				paramsPair.add(new NameValuePair(entry.getKey(), entry.getValue()));
 			wr.setRequestParameters(paramsPair);
 			Page page = webClient.getPage(wr);
 			if (page instanceof HtmlPage)
-				if (((HtmlPage) page).asXml().contains(
-						"DDoS protection by CloudFlare")
-						|| ((HtmlPage) page)
-								.asXml()
-								.contains(
-										"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
+				if (((HtmlPage) page).asXml().contains("DDoS protection by CloudFlare")
+						|| ((HtmlPage) page).asXml().contains(
+								"Checking your browser before accessing mc-market.org. This process is automatic. Your browser will redirect to your requested content shortly. Please allow up to 5 seconds")) {
 
 					// DDOS protection
 					try {
@@ -240,15 +213,12 @@ public class HTTPUnitRequest {
 					wr = new WebRequest(new URL(url), HttpMethod.POST);
 					paramsPair = new ArrayList<NameValuePair>();
 					for (Map.Entry<String, String> entry : params.entrySet())
-						paramsPair.add(new NameValuePair(entry.getKey(), entry
-								.getValue()));
+						paramsPair.add(new NameValuePair(entry.getKey(), entry.getValue()));
 					wr.setRequestParameters(paramsPair);
 
 					if (webClient.getPage(wr) instanceof UnexpectedPage) {
 						UnexpectedPage unexpectedPage = webClient.getPage(wr);
-						System.out.println("UNEXPECTED PAGE: "
-								+ unexpectedPage.getWebResponse()
-										.getStatusMessage());
+						System.out.println("UNEXPECTED PAGE: " + unexpectedPage.getWebResponse().getStatusMessage());
 					} else
 						page = webClient.getPage(wr);
 				}
@@ -257,9 +227,15 @@ public class HTTPUnitRequest {
 			for (Cookie cookie : webClient.getCookieManager().getCookies()) {
 				cookiesMap.put(cookie.getName(), cookie.getValue());
 			}
-			Document doc = Jsoup.parse(((HtmlPage) page).asXml());
-			response.setDocument(doc);
-			response.setHtml(doc.html());
+			if (page instanceof HtmlPage) {
+				Document doc = Jsoup.parse(((HtmlPage) page).asXml());
+				response.setDocument(doc);
+				response.setHtml(doc.html());
+			}else{
+				response.setHtml(page.getWebResponse().getContentAsString());
+				Document doc = Jsoup.parse(response.getHtml());
+				response.setDocument(doc);
+			}
 
 			Map<String, String> resultCookies = new HashMap<String, String>();
 			for (Cookie cookie : webClient.getCookieManager().getCookies()) {
