@@ -29,11 +29,9 @@ public class UserManagerTest {
 		BufferedReader br = null;
 		try {
 			if (new File("/var/lib/jenkins/credentials.txt").exists())
-				br = new BufferedReader(new FileReader(
-						"/var/lib/jenkins/credentials.txt"));
+				br = new BufferedReader(new FileReader("/var/lib/jenkins/credentials.txt"));
 			else
-				br = new BufferedReader(new FileReader(
-						"C:\\Users\\Maxim\\Documents\\credentials.txt"));
+				br = new BufferedReader(new FileReader("D:\\maxim\\Documents\\credentials.txt"));
 
 			username = br.readLine();
 			password = br.readLine();
@@ -70,7 +68,7 @@ public class UserManagerTest {
 		assertEquals(1, user.getUserId());
 		assertEquals("md_5", user.getUsername());
 	}
-	
+
 	@Test(timeout = 15000)
 	public void getUserActivityTest() {
 		System.out.println("Testing 'getUserActivityTest' ...");
@@ -81,7 +79,6 @@ public class UserManagerTest {
 		System.out.println("Activity: " + user.getLastActivity());
 	}
 
-
 	public void getUsersByRankTest() {
 
 	}
@@ -90,13 +87,12 @@ public class UserManagerTest {
 
 	}
 
-	@Test//(timeout = 15000)
+	@Test(timeout = 60000)
 	public void logInUserTest() throws InvalidCredentialsException {
 		System.out.println("Testing 'authenticate' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.authenticate(username, password);
 		assertEquals(user.getUsername(), "Maximvdw");
-		System.out.println("Logged in: " + user.getUsername() + " ["
-				+ user.getUserId() + "]");
+		System.out.println("Logged in: " + user.getUsername() + " [" + user.getUserId() + "]");
 	}
 }

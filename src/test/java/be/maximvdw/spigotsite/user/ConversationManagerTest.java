@@ -37,7 +37,7 @@ public class ConversationManagerTest {
 						"/var/lib/jenkins/credentials.txt"));
 			else
 				br = new BufferedReader(new FileReader(
-						"C:\\Users\\Maxim\\Documents\\credentials.txt"));
+						"D:\\maxim\\Documents\\credentials.txt"));
 
 			username = br.readLine();
 			password = br.readLine();

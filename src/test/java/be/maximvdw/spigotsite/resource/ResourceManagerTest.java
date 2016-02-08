@@ -95,7 +95,7 @@ public class ResourceManagerTest {
 		assertNotNull(category);
 	}
 
-	@Test(timeout = 150000)
+	@Test
 	public void getResourcesByCategoryTest() {
 		System.out.println("Testing 'getResourcesByCategory 2' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
@@ -166,13 +166,13 @@ public class ResourceManagerTest {
 		tmpFile.delete();
 	}
 
-	@Test(timeout = 15000)
+	@Test//(timeout = 15000)
 	public void getBuyers() throws InvalidCredentialsException, ConnectionFailedException {
 		System.out.println("Testing 'getBuyers 2691' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		User user = userManager.authenticate(username, password);
-		Resource resource = resourceManager.getResourceById(2691);
+		Resource resource = resourceManager.getResourceById(2691,user);
 		PremiumResource premiumResource = (SpigotPremiumResource) resource;
 		List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
 		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(premiumResource, user);

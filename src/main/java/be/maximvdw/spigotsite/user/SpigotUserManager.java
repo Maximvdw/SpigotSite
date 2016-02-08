@@ -72,7 +72,7 @@ public class SpigotUserManager implements UserManager {
 			user.setCookies(res.getCookies());
 
 			// Fetch data
-			user.setUsername(doc.select("a.username.NoOverlay").text());
+			user.setUsername(doc.select("a.username.NoOverlay").first().text());
 			user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
 					res.getHtml(), "member\\?user_id=(.*?)\">")));
 			user.setToken(doc.select("input[name=_xfToken]").get(0)
