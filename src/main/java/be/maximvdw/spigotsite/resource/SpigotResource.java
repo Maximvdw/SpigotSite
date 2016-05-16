@@ -1,18 +1,5 @@
 package be.maximvdw.spigotsite.resource;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.List;
-
-import org.jsoup.Connection.Response;
-import org.jsoup.Jsoup;
-
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.resource.Rating;
 import be.maximvdw.spigotsite.api.resource.Resource;
@@ -23,6 +10,18 @@ import be.maximvdw.spigotsite.http.HTTPDownloadResponse;
 import be.maximvdw.spigotsite.http.HTTPUnitRequest;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
+import org.jsoup.Connection.Response;
+import org.jsoup.Jsoup;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.List;
 
 public class SpigotResource implements Resource {
 	private int id = 0;
@@ -33,6 +32,7 @@ public class SpigotResource implements Resource {
 	private boolean deleted = false;
 	private String downloadURL = "";
 	private String externalURL = "";
+	private List<ResourceUpdate> resourceUpdates = null;
 
 	public SpigotResource() {
 
@@ -72,6 +72,10 @@ public class SpigotResource implements Resource {
 
 	public void setLastVersion(String version) {
 		this.version = version;
+	}
+
+	public void setResourceUpdates(List<ResourceUpdate> updates) {
+		this.resourceUpdates = updates;
 	}
 
 	public ResourceCategory getResourceCategory() {
@@ -170,9 +174,8 @@ public class SpigotResource implements Resource {
 		return null;
 	}
 
-	public List<ResourceUpdate> gerResourceUpdates() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<ResourceUpdate> getResourceUpdates() {
+		return resourceUpdates;
 	}
 
 	public String getExternalURL() {

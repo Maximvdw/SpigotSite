@@ -1,28 +1,21 @@
 package be.maximvdw.spigotsite.resource;
 
-import static org.junit.Assert.*;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
-import be.maximvdw.spigotsite.api.resource.PremiumResource;
-import be.maximvdw.spigotsite.api.resource.Resource;
-import be.maximvdw.spigotsite.api.resource.ResourceCategory;
-import be.maximvdw.spigotsite.api.resource.ResourceManager;
+import be.maximvdw.spigotsite.api.resource.*;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ResourceManagerTest {
 	private String username = "";
@@ -36,7 +29,7 @@ public class ResourceManagerTest {
 			if (new File("/var/lib/jenkins/credentials.txt").exists())
 				br = new BufferedReader(new FileReader("/var/lib/jenkins/credentials.txt"));
 			else
-				br = new BufferedReader(new FileReader("D:\\maxim\\Documents\\credentials.txt"));
+				br = new BufferedReader(new FileReader("C:\\Files\\Git\\credentials.txt"));
 			username = br.readLine();
 			password = br.readLine();
 		} catch (FileNotFoundException e) {
@@ -172,7 +165,7 @@ public class ResourceManagerTest {
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		User user = userManager.authenticate(username, password);
-		Resource resource = resourceManager.getResourceById(2691,user);
+		Resource resource = resourceManager.getResourceById(3663,user);
 		PremiumResource premiumResource = (SpigotPremiumResource) resource;
 		List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
 		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(premiumResource, user);
@@ -184,6 +177,24 @@ public class ResourceManagerTest {
 		for (User buyer : buyers) {
 			System.out.println("\t" + buyer.getUsername() + " [" + buyer.getUserId() + "]");
 		}
+	}
+
+	@Test//(timeout = 15000)
+	public void getUpdates() throws InvalidCredentialsException, ConnectionFailedException {
+		System.out.println("Testing 'getUpdates 3663' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+		User user = userManager.authenticate(username, password);
+		Resource resource = resourceManager.getResourceById(3663,user);
+		PremiumResource premiumResource = (SpigotPremiumResource) resource;
+		List<ResourceUpdate> updates = premiumResource.getResourceUpdates();
+
+		System.out.println("Updates of " + resource.getResourceName() + ":");
+		System.out.println("Number of Updates: " + updates.size());
+
+		System.out.println(updates.get(0).getTextHeading() + "\n"
+				+ updates.get(0).getUpdateID() + " "  + updates.get(0).getMessageMeta() + " " + updates.get(0).getUpdateLink()
+				+ updates.get(0).getArticle() + "\n");
 	}
 
 	@Test(timeout = 700000)

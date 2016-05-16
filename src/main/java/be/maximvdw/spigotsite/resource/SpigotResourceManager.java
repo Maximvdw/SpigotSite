@@ -1,26 +1,19 @@
 package be.maximvdw.spigotsite.resource;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
-import be.maximvdw.spigotsite.api.resource.PremiumResource;
-import be.maximvdw.spigotsite.api.resource.Resource;
-import be.maximvdw.spigotsite.api.resource.ResourceCategory;
-import be.maximvdw.spigotsite.api.resource.ResourceManager;
+import be.maximvdw.spigotsite.api.resource.*;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
 import be.maximvdw.spigotsite.utils.StringUtils;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
+import java.util.*;
 
 public class SpigotResourceManager implements ResourceManager {
 	private List<ResourceCategory> resourceCategories = new ArrayList<ResourceCategory>();
@@ -58,7 +51,46 @@ public class SpigotResourceManager implements ResourceManager {
 			authorUser.setUserId(Integer
 					.parseInt(StringUtils.getStringBetween(author.select("a").first().attr("href"), "\\.(.*?)/")));
 			resource.setAuthor(authorUser);
+			resource.setResourceUpdates(getResourceUpdates(resourceid, user));
 			return resource;
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		return null;
+	}
+
+	public List<ResourceUpdate> getResourceUpdates(int resourceid, User user) {
+		try {
+			String url = SpigotSiteCore.getBaseURL() + "resources/" + resourceid + "/updates";
+			Map<String, String> params = new HashMap<String, String>();
+			HTTPResponse res = Request.get(url,
+					user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+			Document doc = res.getDocument();
+			List<ResourceUpdate> updates = new ArrayList<ResourceUpdate>();
+
+			Elements pages = doc.select("div.PageNav nav a");
+			pages.remove(pages.size() - 1);
+			for(Element page: pages) {
+				String newUrl = SpigotSiteCore.getBaseURL() + page.attr("href");
+				HTTPResponse newRes = Request.get(newUrl,
+						user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+				Document newDoc = newRes.getDocument();
+
+				Elements resourceBlocks = newDoc.select("li.primaryContent");
+				for(Element resourceBlock: resourceBlocks) {
+					ResourceUpdate resourceUpdate = new SpigotResourceUpdate();
+					resourceUpdate.setUpdateID(resourceBlock.attr("id"));
+					resourceUpdate.setUpdateLink(url + resourceBlock.select("h2.textHeading a").first().attr("href"));
+					resourceUpdate.setTextHeading(resourceBlock.select("h2.textHeading a").first().text());
+					resourceUpdate.setArticle(resourceBlock.select("article blockquote").first().text());
+					resourceUpdate.setMessageMeta(resourceBlock.select("div.messageMeta span.item a span").first().attr("title"));
+
+					updates.add(resourceUpdate);
+				}
+			}
+
+			return updates;
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
