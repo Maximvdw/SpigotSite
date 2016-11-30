@@ -1,18 +1,7 @@
 package be.maximvdw.spigotsite.user;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.junit.Before;
-import org.junit.Test;
-
 import be.maximvdw.spigotsite.SpigotSiteCore;
+import be.maximvdw.spigotsite.UserDebugging;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
@@ -21,6 +10,12 @@ import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class ConversationManagerTest {
 	private String username = "";
@@ -29,32 +24,8 @@ public class ConversationManagerTest {
 	@Before
 	public void init() {
 		new SpigotSiteCore();
-
-		BufferedReader br = null;
-		try {
-			if (new File("/var/lib/jenkins/credentials.txt").exists())
-				br = new BufferedReader(new FileReader(
-						"/var/lib/jenkins/credentials.txt"));
-			else
-				br = new BufferedReader(new FileReader(
-						"D:\\maxim\\Documents\\credentials.txt"));
-
-			username = br.readLine();
-			password = br.readLine();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		this.username = UserDebugging.username;
+		this.password = UserDebugging.password;
 	}
 
 	@Test(timeout = 20000)

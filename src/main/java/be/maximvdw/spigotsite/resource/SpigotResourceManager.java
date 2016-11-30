@@ -333,4 +333,8 @@ public class SpigotResourceManager implements ResourceManager {
 		}
 	}
 
+	public void removeBuyer(PremiumResource premiumResource, User user, String s) {
+
+	}
+
 }

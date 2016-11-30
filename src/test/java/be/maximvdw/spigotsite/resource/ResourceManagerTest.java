@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite.resource;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
+import be.maximvdw.spigotsite.UserDebugging;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.resource.*;
@@ -24,28 +25,9 @@ public class ResourceManagerTest {
 	@Before
 	public void init() {
 		new SpigotSiteCore();
-		BufferedReader br = null;
-		try {
-			if (new File("/var/lib/jenkins/credentials.txt").exists())
-				br = new BufferedReader(new FileReader("/var/lib/jenkins/credentials.txt"));
-			else
-				br = new BufferedReader(new FileReader("C:\\Files\\Git\\credentials.txt"));
-			username = br.readLine();
-			password = br.readLine();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				br.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+
+		this.username = UserDebugging.username;
+		this.password = UserDebugging.password;
 	}
 
 	@Test(timeout = 15000)

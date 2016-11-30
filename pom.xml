@@ -3,20 +3,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.maximvdw</groupId>
 	<artifactId>spigotsite</artifactId>
-	<version>0.0.12-SNAPSHOT</version>
+	<version>0.0.13-SNAPSHOT</version>
 	<name>SpigotSite</name>
 	<repositories>
 		<repository>
 			<id>public</id>
 			<name>Public Repositories</name>
-			<url>http://repo.mvdw-software.be/content/groups/public/</url>
+			<url>http://repo.mvdw-software.com/content/groups/public/</url>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>be.maximvdw</groupId>
 			<artifactId>spigotsite-api</artifactId>
-			<version>0.0.5-SNAPSHOT</version>
+			<version>0.0.6-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>
