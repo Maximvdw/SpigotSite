@@ -50,6 +50,7 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 					getBaseCookies(), new HashMap<String, String>());
 			setBaseCookies(res.getCookies());
 			firstStart = false;
+			Request.setDdosBypass(false);
 		}
 	}
 

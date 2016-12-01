@@ -10,6 +10,8 @@ import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationExcepti
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 
 public class UserManagerTest {
@@ -23,7 +25,11 @@ public class UserManagerTest {
 	public void getUsersByNameTest() {
 		System.out.println("Testing 'getUsersByName' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		userManager.getUsersByName("Max");
+		List<User> users = userManager.getUsersByName("Max");
+		System.out.println("Found: ");
+		for (User user : users){
+			System.out.println("\t" + user.getUsername());
+		}
 	}
 
 	@Test(timeout = 15000)

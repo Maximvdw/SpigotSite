@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class HTTPUnitRequest {
-    private static boolean rateLimit = false;
     private static WebClient webClient = null;
 
     public static void initialize() {
@@ -44,6 +43,7 @@ public class HTTPUnitRequest {
                     // DDOS protection
                     try {
                         Thread.sleep(9000);
+                        Request.setDdosBypass(false);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt(); // restore
                         // interrupted
@@ -77,6 +77,7 @@ public class HTTPUnitRequest {
                     // DDOS protection
                     try {
                         Thread.sleep(9000);
+                        Request.setDdosBypass(false);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt(); // restore
                         // interrupted
@@ -111,20 +112,12 @@ public class HTTPUnitRequest {
 
     public static HTTPResponse post(String url, Map<String, String> cookies, Map<String, String> params) {
         try {
-            if (!rateLimit) {
-                rateLimit = true;
+            if (Request.isRateLimit()) {
                 Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-                rateLimit = false;
-            } else {
-                while (rateLimit) {
-                    Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-                }
-                rateLimit = true;
-                Thread.sleep(SpigotSiteCore.getRateLimitTimeout());
-                rateLimit = false;
+                Request.setRateLimit(false);
             }
         } catch (InterruptedException e1) {
-            rateLimit = false;
+            Request.setRateLimit(false);
         }
         HTTPResponse response = new HTTPResponse();
 
@@ -142,6 +135,7 @@ public class HTTPUnitRequest {
                     // DDOS protection
                     try {
                         Thread.sleep(9000);
+                        Request.setDdosBypass(false);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt(); // restore
                         // interrupted

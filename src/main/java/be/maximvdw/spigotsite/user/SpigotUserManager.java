@@ -163,8 +163,8 @@ public class SpigotUserManager implements UserManager {
             Map<String, String> params = new HashMap<String, String>();
             // Login parameters
             params.put("q", name);
-            params.put("_xfToken", "");
             params.put("_xfNoRedirect", "1");
+            params.put("_xfRequestUri", "/members/");
             params.put("_xfResponseType", "json");
 
             HTTPResponse res = Request.post(url,
