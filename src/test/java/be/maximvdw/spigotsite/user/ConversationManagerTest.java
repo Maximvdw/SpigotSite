@@ -10,6 +10,7 @@ import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,22 +19,18 @@ import java.util.List;
 import java.util.Set;
 
 public class ConversationManagerTest {
-	private String username = "";
-	private String password = "";
 
 	@Before
 	public void init() {
 		new SpigotSiteCore();
-		this.username = UserDebugging.username;
-		this.password = UserDebugging.password;
 	}
 
 	@Test(timeout = 20000)
 	public void conversationsTest() throws InvalidCredentialsException,
-			ConnectionFailedException {
+			ConnectionFailedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'getConversations' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		ConversationManager conversationManager = SpigotSite.getAPI()
 				.getConversationManager();
 		List<Conversation> conversations = conversationManager
@@ -74,10 +71,10 @@ public class ConversationManagerTest {
 //	}
 
 	@Test(timeout = 20000)
-	public void conversationSendTest() throws InvalidCredentialsException {
+	public void conversationSendTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'createConversation' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		ConversationManager conversationManager = SpigotSite.getAPI()
 				.getConversationManager();
 		Set<String> recipents = new HashSet<String>();

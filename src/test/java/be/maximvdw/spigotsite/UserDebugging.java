@@ -4,25 +4,27 @@ import java.io.*;
 
 /**
  * UserDebugging
- *
+ * <p>
  * Created by maxim on 30-Nov-16.
  */
 public class UserDebugging {
     public static String username = "";
     public static String password = "";
+    public static String totpSecret = "";
 
-    static{
+    static {
         BufferedReader br = null;
         try {
             if (new File("/var/lib/jenkins/credentials.txt").exists()) {
                 br = new BufferedReader(new FileReader("/var/lib/jenkins/credentials.txt"));
-            }else if (new File("C:\\Users\\maxim\\credentials.txt").exists()){
+            } else if (new File("C:\\Users\\maxim\\credentials.txt").exists()) {
                 br = new BufferedReader(new FileReader("C:\\Users\\maxim\\credentials.txt"));
-            }else {
+            } else {
                 br = new BufferedReader(new FileReader("D:\\maxim\\Documents\\credentials.txt"));
             }
             username = br.readLine();
             password = br.readLine();
+            totpSecret = br.readLine();
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -8,6 +8,7 @@ import be.maximvdw.spigotsite.api.resource.*;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,15 +20,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ResourceManagerTest {
-	private String username = "";
-	private String password = "";
 
 	@Before
 	public void init() {
 		new SpigotSiteCore();
-
-		this.username = UserDebugging.username;
-		this.password = UserDebugging.password;
 	}
 
 	@Test(timeout = 15000)
@@ -102,12 +98,12 @@ public class ResourceManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getPurchasedResourcesByUserTest() throws InvalidCredentialsException, ConnectionFailedException {
+	public void getPurchasedResourcesByUserTest() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'getPurchasedResourcesByUser' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		// Log in
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 
 		List<Resource> resources = resourceManager.getPurchasedResources(user);
 		assertNotNull(resources);
@@ -129,11 +125,11 @@ public class ResourceManagerTest {
 	}
 	
 	@Test
-	public void downloadPremiumResource() throws InvalidCredentialsException, IOException {
+	public void downloadPremiumResource() throws InvalidCredentialsException, IOException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'downloadPremiumResource 1458' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		// Log in
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		Resource res = resourceManager.getResourceById(1458,user);
 		File tmpFile = File.createTempFile("resource-", ".jar");
@@ -142,11 +138,11 @@ public class ResourceManagerTest {
 	}
 
 	@Test//(timeout = 15000)
-	public void getBuyers() throws InvalidCredentialsException, ConnectionFailedException {
+	public void getBuyers() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'getBuyers 2691' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		Resource resource = resourceManager.getResourceById(3663,user);
 		PremiumResource premiumResource = (SpigotPremiumResource) resource;
 		List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
@@ -162,11 +158,11 @@ public class ResourceManagerTest {
 	}
 
 	@Test//(timeout = 15000)
-	public void getUpdates() throws InvalidCredentialsException, ConnectionFailedException {
+	public void getUpdates() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'getUpdates 3663' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		Resource resource = resourceManager.getResourceById(3663,user);
 		PremiumResource premiumResource = (SpigotPremiumResource) resource;
 		List<ResourceUpdate> updates = premiumResource.getResourceUpdates();
@@ -180,12 +176,12 @@ public class ResourceManagerTest {
 	}
 
 	@Test(timeout = 700000)
-	public void getTopBuyers() throws InvalidCredentialsException, ConnectionFailedException {
+	public void getTopBuyers() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'get the buyers that bought all my plugins'");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
 		// Log in
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 
 		List<User> favoriteBuyers = new ArrayList<User>();
 

@@ -11,6 +11,7 @@ import be.maximvdw.spigotsite.api.user.ConversationManager;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.forum.SpigotForumManager;
 import be.maximvdw.spigotsite.http.HTTPResponse;
+import be.maximvdw.spigotsite.http.HTTPUnitRequest;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.resource.SpigotResourceManager;
 import be.maximvdw.spigotsite.user.SpigotConversationManager;
@@ -37,6 +38,9 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 		resourceManager = new SpigotResourceManager();
 		forumManager = new SpigotForumManager();
 		conversationManager = new SpigotConversationManager();
+
+        // Initialize webclient
+		HTTPUnitRequest.initialize();
 
 		// Set Site API
 		SpigotSite.setAPI(this);

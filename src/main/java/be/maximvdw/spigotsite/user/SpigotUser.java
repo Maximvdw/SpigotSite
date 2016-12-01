@@ -21,6 +21,7 @@ public class SpigotUser implements User {
 	private int id = 0;
 	private String username = "";
 	private Map<String, String> cookies = new HashMap<String, String>();
+	private String totpSecret = null;
 	private boolean authenticated = false;
 	private UserStatistics statistics = null;
 	private String token = "";
@@ -153,8 +154,19 @@ public class SpigotUser implements User {
 		return lastActivity;
 	}
 
+	public boolean hasTwoFactorAuthentication() {
+		return totpSecret != null;
+	}
+
 	public void setLastActivity(String lastActivity) {
 		this.lastActivity = lastActivity;
 	}
 
+    public String getTotpSecret() {
+        return totpSecret;
+    }
+
+    public void setTotpSecret(String totpSecret) {
+        this.totpSecret = totpSecret;
+    }
 }

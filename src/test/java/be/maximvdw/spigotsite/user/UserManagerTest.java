@@ -6,21 +6,17 @@ import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 public class UserManagerTest {
-	private String username = "";
-	private String password = "";
 
 	@Before
 	public void init() {
 		new SpigotSiteCore();
-
-		this.username = UserDebugging.username;
-		this.password = UserDebugging.password;
 	}
 
 	@Test(timeout = 15000)
@@ -60,10 +56,10 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 60000)
-	public void logInUserTest() throws InvalidCredentialsException {
+	public void logInUserTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'authenticate' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(username, password);
+		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		assertEquals(user.getUsername(), "Maximvdw");
 		System.out.println("Logged in: " + user.getUsername() + " [" + user.getUserId() + "]");
 	}
