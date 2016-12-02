@@ -18,6 +18,7 @@ public class JsoupRequest {
                     .connect(url)
                     .cookies(cookies)
                     .method(Method.GET)
+                    .ignoreContentType(true)
                     .data(params)
                     .userAgent(
                             "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
@@ -45,6 +46,7 @@ public class JsoupRequest {
                     .cookies(cookies)
                     .method(Method.POST)
                     .data(params)
+                    .ignoreContentType(true)
                     .userAgent(
                             "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
                     .execute();
