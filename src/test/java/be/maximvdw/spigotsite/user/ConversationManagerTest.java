@@ -29,8 +29,7 @@ public class ConversationManagerTest {
 	public void conversationsTest() throws InvalidCredentialsException,
 			ConnectionFailedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'getConversations' ...");
-		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
+        User user = UserDebugging.getUser();
 		ConversationManager conversationManager = SpigotSite.getAPI()
 				.getConversationManager();
 		List<Conversation> conversations = conversationManager
@@ -57,8 +56,7 @@ public class ConversationManagerTest {
 	public void spamConversationTest() throws InvalidCredentialsException,
 			InterruptedException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'Spam detection' ...");
-		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
+        User user = UserDebugging.getUser();
 		ConversationManager conversationManager = SpigotSite.getAPI()
 				.getConversationManager();
 		Set<String> recipents = new HashSet<String>();
@@ -72,8 +70,7 @@ public class ConversationManagerTest {
 	@Test(timeout = 20000)
 	public void conversationSendTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
 		System.out.println("Testing 'createConversation' ...");
-		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
+        User user = UserDebugging.getUser();
 		ConversationManager conversationManager = SpigotSite.getAPI()
 				.getConversationManager();
 		Set<String> recipents = new HashSet<String>();

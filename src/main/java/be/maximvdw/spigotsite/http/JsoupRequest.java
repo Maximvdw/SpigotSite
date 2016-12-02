@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite.http;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.jsoup.Connection;
@@ -28,7 +29,10 @@ public class JsoupRequest {
                 Request.setDdosBypass(true);
                 return null;
             }
-            response.setCookies(res.cookies());
+            Map<String,String> cookiesCombined = new HashMap<String,String>();
+            cookiesCombined.putAll(cookies);
+            cookiesCombined.putAll(res.cookies());
+            response.setCookies(cookiesCombined);
             response.setDocument(doc);
             response.setHtml(doc.html());
         } catch (IOException e) {
@@ -57,7 +61,10 @@ public class JsoupRequest {
             }
             response.setDocument(doc);
             response.setHtml(doc.html());
-            response.setCookies(res.cookies());
+            Map<String,String> cookiesCombined = new HashMap<String,String>();
+            cookiesCombined.putAll(cookies);
+            cookiesCombined.putAll(res.cookies());
+            response.setCookies(cookiesCombined);
         } catch (IOException e) {
 
         }

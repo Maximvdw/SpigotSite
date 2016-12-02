@@ -1,5 +1,11 @@
 package be.maximvdw.spigotsite;
 
+import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.api.user.UserManager;
+import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
+
 import java.io.*;
 
 /**
@@ -11,6 +17,7 @@ public class UserDebugging {
     public static String username = "";
     public static String password = "";
     public static String totpSecret = "";
+    private static User user = null;
 
     static {
         BufferedReader br = null;
@@ -39,5 +46,14 @@ public class UserDebugging {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static User getUser() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        if (user != null)
+            return user;
+        UserManager userManager = SpigotSite.getAPI().getUserManager();
+        // Log in
+        user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
+        return user;
     }
 }

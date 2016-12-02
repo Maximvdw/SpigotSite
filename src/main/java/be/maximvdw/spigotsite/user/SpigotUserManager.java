@@ -49,12 +49,12 @@ public class SpigotUserManager implements UserManager {
     }
 
     public User authenticate(String username, String password)
-            throws InvalidCredentialsException {
+            throws InvalidCredentialsException, TwoFactorAuthenticationException {
         return authenticate(username, password, null);
     }
 
     public User authenticate(String username, String password, String totpSecret)
-            throws InvalidCredentialsException {
+            throws InvalidCredentialsException, TwoFactorAuthenticationException {
         try {
             String url = SpigotSiteCore.getBaseURL() + "login/login";
             Map<String, String> params = new HashMap<String, String>();
@@ -82,12 +82,12 @@ public class SpigotUserManager implements UserManager {
             SpigotUser user = new SpigotUser(username);
             user.setCookies(res.getCookies());
             user.setTotpSecret(totpSecret);
-            if (totpField != null){
+            if (totpField != null) {
                 user = totpVerification(user);
-                if (user == null){
+                if (user == null) {
                     throw new TwoFactorAuthenticationException();
                 }
-            }else{
+            } else {
                 // Fetch data
                 user.setUsername(doc.select("a.username.NoOverlay").first().text());
                 user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
@@ -96,6 +96,8 @@ public class SpigotUserManager implements UserManager {
                         .attr("value"));
             }
             return user;
+        } catch (TwoFactorAuthenticationException ex) {
+            throw ex;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -119,12 +121,11 @@ public class SpigotUserManager implements UserManager {
             params.put("trust", "1");
             params.put("provider", "totp");
             params.put("_xfConfirm", "1");
-            params.put("_xfToken", "");
             params.put("remember", "1");
-            params.put("save","Confirm");
-            params.put("redirect", SpigotSiteCore.getBaseURL() + "");
+            params.put("save", "Confirm");
+            params.put("redirect", SpigotSiteCore.getBaseURL());
             HTTPResponse res = Request.post(url,
-                    SpigotSiteCore.getBaseCookies(), params);
+                    user.getCookies(), params);
             Document doc = res.getDocument();
             user.setCookies(res.getCookies());
             // Fetch data
@@ -134,7 +135,7 @@ public class SpigotUserManager implements UserManager {
             user.setToken(doc.select("input[name=_xfToken]").get(0)
                     .attr("value"));
             return user;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             // Error
         }
         return null;

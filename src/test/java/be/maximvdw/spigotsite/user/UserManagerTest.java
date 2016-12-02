@@ -68,5 +68,12 @@ public class UserManagerTest {
 		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
 		assertEquals(user.getUsername(), "Maximvdw");
 		System.out.println("Logged in: " + user.getUsername() + " [" + user.getUserId() + "]");
+        if (user.hasTwoFactorAuthentication()){
+            try {
+                Thread.sleep(30000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 	}
 }
