@@ -154,7 +154,7 @@ public class SpigotUserManager implements UserManager {
             Document doc = res.getDocument();
             ((SpigotUser) user).setUsername(doc.select("a.username.NoOverlay").first().text());
             return true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return false;
         }
     }
@@ -187,7 +187,7 @@ public class SpigotUserManager implements UserManager {
             System.out.println(doc.text());
 
         } catch (Exception ex) {
-
+            ex.printStackTrace();
         }
         return users;
     }

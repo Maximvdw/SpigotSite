@@ -276,8 +276,11 @@ public class SpigotResourceManager implements ResourceManager {
             Elements buyersBlocks = doc.select("div.member");
             for (Element buyersBlock : buyersBlocks) {
                 SpigotUser buyer = new SpigotUser();
-
-                Element userElement = buyersBlock.select("a.username").get(0);
+                Elements userNameElements = buyersBlock.select("a.username");
+                if (userNameElements.size() == 0) {
+                    continue;
+                }
+                Element userElement = userNameElements.get(0);
                 buyer.setUsername(userElement.text());
                 buyer.setUserId(Integer.parseInt(StringUtils.getStringBetween(userElement.attr("href"), "\\.(.*?)/")));
                 buyers.add(buyer);
