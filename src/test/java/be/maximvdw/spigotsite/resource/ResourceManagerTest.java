@@ -138,7 +138,7 @@ public class ResourceManagerTest {
 		System.out.println("Testing 'getBuyers 2691' ...");
 		ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         User user = UserDebugging.getUser();
-		Resource resource = resourceManager.getResourceById(3663,user);
+		Resource resource = resourceManager.getResourceById(2691,user);
 		PremiumResource premiumResource = (SpigotPremiumResource) resource;
 		List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
 		List<User> buyers2 = resourceManager.getPremiumResourceBuyers(premiumResource, user);
