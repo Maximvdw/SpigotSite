@@ -147,6 +147,18 @@ public class SpigotUserManager implements UserManager {
         spigotUser.getCookies().clear();
     }
 
+    public boolean isLoggedIn(User user) {
+        try {
+            HTTPResponse res = Request.get(SpigotSiteCore.getBaseURL(),
+                    ((SpigotUser) user).getCookies(), new HashMap<String, String>());
+            Document doc = res.getDocument();
+            ((SpigotUser) user).setUsername(doc.select("a.username.NoOverlay").first().text());
+            return true;
+        }catch (Exception ex){
+            return false;
+        }
+    }
+
     public List<UserRank> getUserRanks() {
         // TODO Auto-generated method stub
         return null;

@@ -32,26 +32,34 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 	private static String baseURL = "https://www.spigotmc.org/";
 	private static int rateLimitTimeout = 2000;
 
-	public SpigotSiteCore() {
-		// Set managers
-		userManager = new SpigotUserManager();
-		resourceManager = new SpigotResourceManager();
-		forumManager = new SpigotForumManager();
-		conversationManager = new SpigotConversationManager();
+	public SpigotSiteCore(Map<String,String> baseCookies) {
+        // Set managers
+        userManager = new SpigotUserManager();
+        resourceManager = new SpigotResourceManager();
+        forumManager = new SpigotForumManager();
+        conversationManager = new SpigotConversationManager();
 
         // Initialize webclient
-		HTTPUnitRequest.initialize();
+        HTTPUnitRequest.initialize();
 
-		// Set Site API
-		SpigotSite.setAPI(this);
+        // Set Site API
+        SpigotSite.setAPI(this);
 
-		if (firstStart) {
-			HTTPResponse res = Request.get("https://www.spigotmc.org/",
-					getBaseCookies(), new HashMap<String, String>());
-			setBaseCookies(res.getCookies());
-			firstStart = false;
-			Request.setDdosBypass(false);
-		}
+        if (firstStart) {
+            if (baseCookies == null) {
+                HTTPResponse res = Request.get("https://www.spigotmc.org/",
+                        getBaseCookies(), new HashMap<String, String>());
+                setBaseCookies(res.getCookies());
+            }else{
+                setBaseCookies(baseCookies);
+            }
+            firstStart = false;
+            Request.setDdosBypass(false);
+        }
+	}
+
+	public SpigotSiteCore() {
+	    this(null);
 	}
 
 	public UserManager getUserManager() {
