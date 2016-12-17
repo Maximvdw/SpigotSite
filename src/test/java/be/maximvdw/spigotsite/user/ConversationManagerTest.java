@@ -20,71 +20,84 @@ import java.util.Set;
 
 public class ConversationManagerTest {
 
-	@Before
-	public void init() {
-		new SpigotSiteCore();
-	}
+    @Before
+    public void init() {
+        new SpigotSiteCore();
+    }
 
-	@Test(timeout = 20000)
-	public void conversationsTest() throws InvalidCredentialsException,
-			ConnectionFailedException, TwoFactorAuthenticationException {
-		System.out.println("Testing 'getConversations' ...");
+    @Test
+    public void conversationsTest() throws InvalidCredentialsException,
+            ConnectionFailedException, TwoFactorAuthenticationException, InterruptedException {
+        System.out.println("Testing 'getConversations' ...");
         User user = UserDebugging.getUser();
-		ConversationManager conversationManager = SpigotSite.getAPI()
-				.getConversationManager();
-		List<Conversation> conversations = conversationManager
-				.getConversations(user, 20);
-		for (Conversation conv : conversations) {
-			System.out.println(conv.getTitle() + "[" + conv.getRepliesCount()
-					+ "]   BY " + conv.getAuthor().getUsername());
-			if (conv.getTitle().equals("Hello")
-					&& conv.getAuthor().getUsername().equals("Maximvdw")) {
-				System.out.println("Sending reply ...");
-				try {
-					conv.reply(user,
-							"This conversation has " + conv.getRepliesCount()
-									+ " replies. LEAVING NOW");
-				} catch (SpamWarningException ex) {
+        ConversationManager conversationManager = SpigotSite.getAPI()
+                .getConversationManager();
+        List<Conversation> conversations = conversationManager
+                .getConversations(user, 10000);
+        for (Conversation conv : conversations) {
+            System.out.println(conv.getTitle() + "[" + conv.getRepliesCount()
+                    + "]   BY " + conv.getAuthor().getUsername());
+            if (conv.getTitle().equals("Hello")
+                    && conv.getAuthor().getUsername().equals("Maximvdw") && conv.getParticipants().size() == 1) {
+                Thread.sleep(12000);
+                System.out.println("Sending reply ...");
+                conv.reply(user,
+                        "This conversation has " + conv.getRepliesCount()
+                                + " replies. LEAVING NOW");
+                conv.leave(user);
+            }
+        }
+    }
 
-				}
-				conv.leave(user);
-			}
-		}
-	}
-
-	@Test(timeout = 30000, expected = SpamWarningException.class)
-	public void spamConversationTest() throws InvalidCredentialsException,
-			InterruptedException, TwoFactorAuthenticationException {
-		System.out.println("Testing 'Spam detection' ...");
+    @Test
+    public void markAllAsReadTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
+        System.out.println("Testing 'mark all as read conversation' ...");
         User user = UserDebugging.getUser();
-		ConversationManager conversationManager = SpigotSite.getAPI()
-				.getConversationManager();
-		Set<String> recipents = new HashSet<String>();
-		recipents.add("MVdWSoftware");
-		conversationManager.createConversation(user, recipents, "Hello",
-				"World", true, false, false);
-		conversationManager.createConversation(user, recipents, "Hello",
-				"World", true, false, false);
-	}
+        ConversationManager conversationManager = SpigotSite.getAPI()
+                .getConversationManager();
+        List<Conversation> conversations = conversationManager
+                .getConversations(user, 10000);
+        for (Conversation conv : conversations) {
+            if (conv.isUnread()){
+                System.out.println("Unread conversation: " + conv.getTitle() + " by " + conv.getAuthor().getUsername());
 
-	@Test(timeout = 20000)
-	public void conversationSendTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
-		System.out.println("Testing 'createConversation' ...");
+            }
+        }
+    }
+
+    @Test(timeout = 30000, expected = SpamWarningException.class)
+    public void spamConversationTest() throws InvalidCredentialsException,
+            InterruptedException, TwoFactorAuthenticationException {
+        System.out.println("Testing 'Spam detection' ...");
         User user = UserDebugging.getUser();
-		ConversationManager conversationManager = SpigotSite.getAPI()
-				.getConversationManager();
-		Set<String> recipents = new HashSet<String>();
-		recipents.add("MVdWSoftware");
-		try {
-			conversationManager.createConversation(user, recipents, "Hello",
-					"World", true, false, false);
-		} catch (SpamWarningException ex) {
+        ConversationManager conversationManager = SpigotSite.getAPI()
+                .getConversationManager();
+        Set<String> recipents = new HashSet<String>();
+        recipents.add("MVdWSoftware");
+        conversationManager.createConversation(user, recipents, "Hello",
+                "World", true, false, false);
+        conversationManager.createConversation(user, recipents, "Hello",
+                "World", true, false, false);
+    }
 
-		}
-		SpigotUser spigotUser = (SpigotUser) user;
-		for (String cookie : spigotUser.getCookies().keySet())
-			System.out.println("Return cookie: " + cookie);
+    @Test(timeout = 20000)
+    public void conversationSendTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        System.out.println("Testing 'createConversation' ...");
+        User user = UserDebugging.getUser();
+        ConversationManager conversationManager = SpigotSite.getAPI()
+                .getConversationManager();
+        Set<String> recipents = new HashSet<String>();
+        recipents.add("MVdWSoftware");
+        try {
+            conversationManager.createConversation(user, recipents, "Hello",
+                    "World", true, false, false);
+        } catch (SpamWarningException ex) {
 
-		spigotUser.refresh();
-	}
+        }
+        SpigotUser spigotUser = (SpigotUser) user;
+        for (String cookie : spigotUser.getCookies().keySet())
+            System.out.println("Return cookie: " + cookie);
+
+        spigotUser.refresh();
+    }
 }
