@@ -197,7 +197,7 @@ public class SpigotUserManager implements UserManager {
                 users.add(user);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+
         }
         return users;
     }
