@@ -173,8 +173,8 @@ public class SpigotUserManager implements UserManager {
         return null;
     }
 
-    public List<User> getUsersByName(String name) {
-        List<User> users = new ArrayList<User>();
+    public List<String> getUsernamesByName(String name) {
+        List<String> users = new ArrayList<String>();
         try {
             String url = SpigotSiteCore.getBaseURL() + "index.php?members/find&_xfResponseType=json";
             Map<String, String> params = new HashMap<String, String>();
@@ -191,15 +191,43 @@ public class SpigotUserManager implements UserManager {
             JsonObject results = root.getJsonObject("results");
             for (JsonValue userObj : results.values()){
                 String username = ((JsonObject)userObj).getString("username");
-                String avatar = ((JsonObject)userObj).getString("avatar");
-                SpigotUser user = new SpigotUser();
-                user.setUsername(username);
-                users.add(user);
+                users.add(username);
             }
         } catch (Exception ex) {
 
         }
         return users;
+    }
+
+    public User getUserByName(String s) {
+        try {
+            String url = SpigotSiteCore.getBaseURL() + "members/?username=" + s;
+            Map<String, String> params = new HashMap<String, String>();
+
+            HTTPResponse res = Request.get(url, SpigotSiteCore.getBaseCookies(), params);
+            Document doc = res.getDocument();
+            SpigotUser reqUser = new SpigotUser();
+            reqUser.setUsername(s);
+            Element importantMessage = doc.getElementsByClass("importantMessage").first();
+            if (importantMessage != null){
+                return null;
+            }
+            Element topLinkElement = doc.getElementsByClass("topLink").first();
+            String linkProfile = topLinkElement.getElementsByTag("a").first().attr("href");
+            String userIdStr = linkProfile.substring(0,linkProfile.lastIndexOf("/"));
+            userIdStr = userIdStr.substring(userIdStr.lastIndexOf("/"));
+            userIdStr = userIdStr.substring(userIdStr.indexOf(".") + 1);
+            reqUser.setUserId(Integer.parseInt(userIdStr));
+            if (doc.select("dl.lastActivity").size() != 0)
+                if (doc.select("dl.lastActivity").get(0).select("dd").size() != 0)
+                    reqUser.setLastActivity(doc.select("dl.lastActivity")
+                            .get(0).select("dd").get(0).text());
+            return reqUser;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return null;
     }
 
     public List<User> getOnlineUsers() {

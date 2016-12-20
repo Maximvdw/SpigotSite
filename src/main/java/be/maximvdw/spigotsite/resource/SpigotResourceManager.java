@@ -320,8 +320,8 @@ public class SpigotResourceManager implements ResourceManager {
             for (int i = 0; i < usernames.length; i++)
                 usernamesStr += usernames[i] + ",";
             params.put("usernames", usernamesStr);
-            params.put("_xfRequestUri", "%2Fresources%2Factionbar.1458%2Fadd-buyer");
-            params.put("_xfToken", ((SpigotUser) user).getCookies().get("xf_user"));
+            params.put("_xfRequestUri", "%2Fresources%2" + resource.getResourceId() + "%2Fadd-buyer");
+            params.put("_xfToken", ((SpigotUser) user).getToken());
             params.put("_xfResponseType", "json");
             params.put("_xfNoRedirect", "1");
             params.put("save", "Save+Changes");
@@ -329,15 +329,26 @@ public class SpigotResourceManager implements ResourceManager {
             params.put("redirect", "/");
 
             HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
-            Document doc = res.getDocument();
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void removeBuyer(PremiumResource premiumResource, User user, String s) {
+    public void removeBuyer(PremiumResource premiumResource, User user, int buyer) {
+        try {
+            String url = SpigotSiteCore.getBaseURL() + "resources/" + premiumResource.getResourceId() + "/delete-buyer";
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("user_id", String.valueOf(buyer));
+            params.put("_xfToken", ((SpigotUser) user).getToken());
+            params.put("_xfResponseType", "json");
+            params.put("_xfNoRedirect", "1");
+            params.put("_xfConfirm", "1");
+            params.put("redirect", "/");
 
+            HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

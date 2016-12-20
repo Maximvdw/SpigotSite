@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 public class ResourceManagerTest {
 
@@ -131,6 +132,45 @@ public class ResourceManagerTest {
         File tmpFile = File.createTempFile("resource-", ".jar");
         res.downloadResource(user, tmpFile);
         tmpFile.delete();
+    }
+
+    @Test
+    public void addAndRemoveFromBuyers() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
+        System.out.println("Testing 'addAndRemoveFromBuyers 13370' ...");
+        ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+        User user = UserDebugging.getUser();
+        Resource resource = resourceManager.getResourceById(13370, user);
+        PremiumResource premiumResource = (SpigotPremiumResource) resource;
+        List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        for (User b : buyers){
+            if (b.getUsername().equalsIgnoreCase("Maximvdw")){
+                fail("User already in buyers");
+            }
+        }
+
+        resourceManager.addBuyer(premiumResource,user,"Maximvdw");
+        buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        boolean found = false;
+        for (User b : buyers){
+            if (b.getUsername().equalsIgnoreCase("Maximvdw")){
+                found = true;
+            }
+        }
+        if (!found){
+            fail("User was not added to the buyers!");
+        }
+
+        resourceManager.removeBuyer(premiumResource,user,user.getUserId());
+        buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        found = false;
+        for (User b : buyers){
+            if (b.getUsername().equalsIgnoreCase("Maximvdw")){
+                found = true;
+            }
+        }
+        if (found){
+            fail("User was not removed from the buyers!");
+        }
     }
 
     @Test//(timeout = 15000)

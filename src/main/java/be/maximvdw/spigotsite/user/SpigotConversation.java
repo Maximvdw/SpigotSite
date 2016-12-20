@@ -66,6 +66,14 @@ public class SpigotConversation implements Conversation {
 
 	}
 
+	public void markAsRead(User user) {
+
+	}
+
+	public void markAsUnread(User user) {
+
+	}
+
 	public void setRepliesCount(int repliesCount) {
 		this.repliesCount = repliesCount;
 	}

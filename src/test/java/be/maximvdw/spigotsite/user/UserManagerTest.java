@@ -13,6 +13,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class UserManagerTest {
 
@@ -22,14 +23,29 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getUsersByNameTest() {
-		System.out.println("Testing 'getUsersByName' ...");
+	public void getUsernamesByNameTest() {
+		System.out.println("Testing 'getUsernamesByName' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		List<User> users = userManager.getUsersByName("Max");
+		List<String> users = userManager.getUsernamesByName("Max");
 		System.out.println("Found: ");
-		for (User user : users){
-			System.out.println("\t" + user.getUsername());
+		for (String user : users){
+			System.out.println("\t" + user);
 		}
+	}
+
+
+	@Test(timeout = 15000)
+	public void getUserByNameTest() {
+		System.out.println("Testing 'getUserByName' ...");
+		UserManager userManager = SpigotSite.getAPI().getUserManager();
+		User u1 = userManager.getUserByName("JamesJ");
+		System.out.println("Found: " + u1.getUserId());
+        assertEquals(8614,u1.getUserId());
+        User u2 = userManager.getUserByName("clip");
+        System.out.println("Found: " + u2.getUserId());
+        assertEquals(1001,u2.getUserId());
+        User u3 = userManager.getUserByName("$#$G#$");
+        assertNull(u3);
 	}
 
 	@Test(timeout = 15000)
