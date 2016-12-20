@@ -1,5 +1,6 @@
 package be.maximvdw.spigotsite.user;
 
+import java.io.StringReader;
 import java.security.GeneralSecurityException;
 import java.util.*;
 
@@ -17,6 +18,9 @@ import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.utils.StringUtils;
 import org.jsoup.nodes.Element;
+
+import javax.json.*;
+
 
 public class SpigotUserManager implements UserManager {
 
@@ -182,10 +186,16 @@ public class SpigotUserManager implements UserManager {
 
             HTTPResponse res = Request.post(url,
                     SpigotSiteCore.getBaseCookies(), params);
-
-            Document doc = res.getDocument();
-            System.out.println(doc.text());
-
+            JsonReader reader = Json.createReader(new StringReader(res.getDocument().text()));
+            JsonObject root = reader.readObject();
+            JsonObject results = root.getJsonObject("results");
+            for (JsonValue userObj : results.values()){
+                String username = ((JsonObject)userObj).getString("username");
+                String avatar = ((JsonObject)userObj).getString("avatar");
+                SpigotUser user = new SpigotUser();
+                user.setUsername(username);
+                users.add(user);
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
