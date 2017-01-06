@@ -94,34 +94,19 @@ public class SpigotResource implements Resource {
             if (output.exists()) {
                 output.delete();
             }
-            if (Request.isDdosBypass() || true) {
-                HTTPDownloadResponse dlResponse = HTTPUnitRequest.downloadFile(
-                        getDownloadURL(),
-                        user != null ? ((SpigotUser) user).getCookies()
-                                : SpigotSiteCore.getBaseCookies());
-                setExternalURL(dlResponse.getUrl().toString());
-                InputStream stream = dlResponse.getStream();
-                FileOutputStream fos = new FileOutputStream(output);
-                byte[] buffer = new byte[stream.available()];
-                stream.read(buffer);
-                fos.write(buffer);
-                fos.close();
-            } else {
-                // Open a URL Stream
-                Response resultImageResponse = Jsoup
-                        .connect(getDownloadURL())
-                        .cookies(
-                                user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user)
-                                        .getCookies())
-                        .ignoreContentType(true)
-                        .userAgent("Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
-                        .execute();
+            output.getParentFile().mkdirs();
 
-                // output here
-                FileOutputStream out = (new FileOutputStream(output));
-                out.write(resultImageResponse.bodyAsBytes());
-                out.close();
-            }
+            HTTPDownloadResponse dlResponse = HTTPUnitRequest.downloadFile(
+                    getDownloadURL(),
+                    user != null ? ((SpigotUser) user).getCookies()
+                            : SpigotSiteCore.getBaseCookies());
+            setExternalURL(dlResponse.getUrl().toString());
+            InputStream stream = dlResponse.getStream();
+            FileOutputStream fos = new FileOutputStream(output);
+            byte[] buffer = new byte[stream.available()];
+            stream.read(buffer);
+            fos.write(buffer);
+            fos.close();
             return output;
         } catch (Exception ex) {
             ex.printStackTrace();
