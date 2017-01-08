@@ -67,11 +67,11 @@ public class SpigotConversation implements Conversation {
 	}
 
 	public void markAsRead(User user) {
-
+		SpigotSite.getAPI().getConversationManager().markConversationAsRead(user,this);
 	}
 
 	public void markAsUnread(User user) {
-
+		SpigotSite.getAPI().getConversationManager().markConversationAsUnread(user,this);
 	}
 
 	public void setRepliesCount(int repliesCount) {
@@ -80,6 +80,10 @@ public class SpigotConversation implements Conversation {
 
 	public boolean isUnread() {
 		return unread;
+	}
+
+	public void setRead(boolean read){
+		this.unread = !read;
 	}
 
 	public void setUnread(boolean unread) {

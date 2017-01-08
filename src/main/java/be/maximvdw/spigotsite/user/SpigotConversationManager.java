@@ -104,13 +104,6 @@ public class SpigotConversationManager implements ConversationManager {
             params.put("_xfNoRedirect", "1");
             params.put("_xfResponseType", "json");
 
-			/*
-             * Old stuff. Connection.Response res = Jsoup .connect(url)
-			 * .method(Method.POST) .data(params) .ignoreContentType(true)
-			 * .cookies(((SpigotUser) user).getCookies()) .userAgent(
-			 * "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0"
-			 * ) .execute(); Document doc = res.parse();
-			 */
             HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
             ((SpigotUser) user).getCookies().putAll(req.getCookies());
 
@@ -118,9 +111,6 @@ public class SpigotConversationManager implements ConversationManager {
             if (doc.text().contains("\"error\":")) {
                 throw new SpamWarningException();
             }
-            /*
-			 * } catch (HttpStatusException ex) { ex.printStackTrace(); }
-			 */
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -137,20 +127,9 @@ public class SpigotConversationManager implements ConversationManager {
             params.put("deletetype", "delete");
             params.put("_xfConfirm", "1");
             params.put("_xfToken", ((SpigotUser) user).getToken());
-			/*
-			 * Old stuff. Jsoup.connect(url) .method(Method.POST) .data(params)
-			 * .ignoreContentType(true) .cookies(((SpigotUser)
-			 * user).getCookies()) .userAgent(
-			 * "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0"
-			 * ) .execute();
-			 */
-
             HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
             ((SpigotUser) user).getCookies().putAll(req.getCookies());
 
-			/*
-			 * } catch (HttpStatusException ex) { ex.printStackTrace(); }
-			 */
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -177,13 +156,7 @@ public class SpigotConversationManager implements ConversationManager {
             params.put("conversation_locked", locked ? "1" : "0");
             params.put("conversation_sticky", sticky ? "1" : "0");
             params.put("open_invite", invite ? "1" : "0");
-			/*
-			 * Old stuff. Connection.Response res = Jsoup .connect(url)
-			 * .method(Method.POST) .data(params) .ignoreContentType(true)
-			 * .cookies(((SpigotUser) user).getCookies()) .userAgent(
-			 * "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0"
-			 * ) .execute(); Document doc = res.parse();
-			 */
+
             HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
             ((SpigotUser) user).getCookies().putAll(req.getCookies());
 
@@ -194,9 +167,6 @@ public class SpigotConversationManager implements ConversationManager {
             }
 
             doc.select("div.titleBar");
-			/*
-			 * } catch (HttpStatusException ex) { ex.printStackTrace(); }
-			 */
         } catch (SpamWarningException e) {
             throw new SpamWarningException();
         } catch (Exception e) {
@@ -206,4 +176,38 @@ public class SpigotConversationManager implements ConversationManager {
         return conversation;
     }
 
+    public void markConversationAsRead(User user, Conversation conversation) {
+        if (!conversation.isUnread()){
+            return;
+        }
+        toggleConversationRead(user,conversation);
+        ((SpigotConversation)conversation).setRead(true);
+    }
+
+    public void markConversationAsUnread(User user, Conversation conversation) {
+        if (conversation.isUnread()){
+            return;
+        }
+        toggleConversationRead(user,conversation);
+        ((SpigotConversation)conversation).setRead(false);
+    }
+
+
+    private void toggleConversationRead(User user, Conversation conversation){
+        try {
+            String url = SpigotSiteCore.getBaseURL() + "conversations/" + conversation.getConverationId() + "/toggle-read";
+
+            if (((SpigotUser) user).requiresRefresh())
+                ((SpigotUser) user).refresh();
+
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("_xfConfirm", "1");
+            params.put("_xfToken", ((SpigotUser) user).getToken());
+            HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            ((SpigotUser) user).getCookies().putAll(req.getCookies());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 }

@@ -58,9 +58,9 @@ public class ConversationManagerTest {
         List<Conversation> conversations = conversationManager
                 .getConversations(user, 10000);
         for (Conversation conv : conversations) {
-            if (conv.isUnread()){
+            if (conv.isUnread()) {
                 System.out.println("Unread conversation: " + conv.getTitle() + " by " + conv.getAuthor().getUsername());
-
+               // conv.markAsRead(user);
             }
         }
     }
