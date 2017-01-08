@@ -39,11 +39,14 @@ public class ConversationManagerTest {
                     + "]   BY " + conv.getAuthor().getUsername());
             if (conv.getTitle().equals("Hello")
                     && conv.getAuthor().getUsername().equals("Maximvdw") && conv.getParticipants().size() == 1) {
-                System.out.println("Sending reply ...");
-                conv.reply(user,
-                        "This conversation has " + conv.getRepliesCount()
-                                + " replies. LEAVING NOW");
-                conv.leave(user);
+                if (conv.getParticipants().get(0).getUsername().equals("MVdWSoftware")) {
+                    Thread.sleep(12000);
+                    System.out.println("Sending reply ...");
+                    conv.reply(user,
+                            "This conversation has " + conv.getRepliesCount()
+                                    + " replies. LEAVING NOW");
+                    conv.leave(user);
+                }
             }
         }
     }
