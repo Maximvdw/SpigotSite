@@ -39,7 +39,6 @@ public class ConversationManagerTest {
                     + "]   BY " + conv.getAuthor().getUsername());
             if (conv.getTitle().equals("Hello")
                     && conv.getAuthor().getUsername().equals("Maximvdw") && conv.getParticipants().size() == 1) {
-                Thread.sleep(12000);
                 System.out.println("Sending reply ...");
                 conv.reply(user,
                         "This conversation has " + conv.getRepliesCount()
@@ -91,6 +90,28 @@ public class ConversationManagerTest {
         try {
             conversationManager.createConversation(user, recipents, "Hello",
                     "World", true, false, false);
+        } catch (SpamWarningException ex) {
+
+        }
+        SpigotUser spigotUser = (SpigotUser) user;
+        for (String cookie : spigotUser.getCookies().keySet())
+            System.out.println("Return cookie: " + cookie);
+
+        spigotUser.refresh();
+    }
+
+    @Test(timeout = 20000)
+    public void conversationSendMarkReadTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        System.out.println("Testing 'conversationSendMarkReadTest' ...");
+        User user = UserDebugging.getUser();
+        ConversationManager conversationManager = SpigotSite.getAPI()
+                .getConversationManager();
+        Set<String> recipents = new HashSet<String>();
+        recipents.add("MVdWSoftware");
+        try {
+            Conversation conversation = conversationManager.createConversation(user, recipents, "Hello",
+                    "World", true, false, false);
+            conversation.markAsUnread(user);
         } catch (SpamWarningException ex) {
 
         }

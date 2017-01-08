@@ -7,6 +7,9 @@ import java.util.*;
 import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import be.maximvdw.spigotsite.utils.TOTP;
 import org.apache.commons.codec.binary.Base32;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 import org.jsoup.nodes.Document;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
@@ -19,7 +22,6 @@ import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.utils.StringUtils;
 import org.jsoup.nodes.Element;
 
-import javax.json.*;
 
 
 public class SpigotUserManager implements UserManager {
@@ -186,11 +188,11 @@ public class SpigotUserManager implements UserManager {
 
             HTTPResponse res = Request.post(url,
                     SpigotSiteCore.getBaseCookies(), params);
-            JsonReader reader = Json.createReader(new StringReader(res.getDocument().text()));
-            JsonObject root = reader.readObject();
-            JsonObject results = root.getJsonObject("results");
-            for (JsonValue userObj : results.values()){
-                String username = ((JsonObject)userObj).getString("username");
+            JSONParser parser = new JSONParser();
+            JSONObject root = (JSONObject) parser.parse(res.getDocument().text());
+            JSONObject results = (JSONObject) root.get("results");
+            for (Object userObj : results.values()){
+                String username = (String) ((JSONObject)userObj).get("username");
                 users.add(username);
             }
         } catch (Exception ex) {

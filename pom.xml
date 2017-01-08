@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.maximvdw</groupId>
 	<artifactId>spigotsite</artifactId>
-	<version>0.0.21-SNAPSHOT</version>
+	<version>0.0.22-SNAPSHOT</version>
 	<name>SpigotSite</name>
 	<repositories>
 		<repository>
@@ -19,16 +19,9 @@
 			<version>0.0.13-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.json</groupId>
-			<artifactId>javax.json-api</artifactId>
-            <scope>provided</scope>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish</groupId>
-			<artifactId>javax.json</artifactId>
-			<version>1.0.4</version>
-			<scope>test</scope>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.jsoup</groupId>

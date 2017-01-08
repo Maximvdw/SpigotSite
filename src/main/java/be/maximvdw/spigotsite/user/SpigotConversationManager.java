@@ -8,6 +8,8 @@ import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.utils.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -73,6 +75,19 @@ public class SpigotConversationManager implements ConversationManager {
             replier.setUserId(Integer.parseInt(StringUtils.getStringBetween(username.attr("href"), "\\.(.*?)/")));
             conversation.setLastReplier(replier);
 
+            // Get participants
+            Elements participantsSpans = conversationBlock.select(".username.convess");
+            for (Element participantSpan : participantsSpans){
+                String participantUsername = participantSpan.text();
+                String participantHref = participantSpan.attr("href");
+                String participantIdStr = participantHref.substring(participantHref.lastIndexOf(".") + 1, participantHref.lastIndexOf("/"));
+                int participantId = Integer.parseInt(participantIdStr);
+                SpigotUser participant = new SpigotUser();
+                participant.setUsername(participantUsername);
+                participant.setUserId(participantId);
+                conversation.getParticipants().add(participant);
+            }
+
             Elements abbr = conversationBlock.select("div.listBlock.lastPost > dl > dd > a > abbr");
             if (abbr != null && abbr.first() != null && abbr.first().hasAttr("data-time")) {
                 String unixTime = abbr.first().attr("data-time");
@@ -137,7 +152,7 @@ public class SpigotConversationManager implements ConversationManager {
 
     public Conversation createConversation(User user, Set<String> recipents, String title, String body, boolean locked,
                                            boolean invite, boolean sticky) throws SpamWarningException {
-        Conversation conversation = new SpigotConversation();
+        SpigotConversation conversation = new SpigotConversation();
         try {
             String url = SpigotSiteCore.getBaseURL() + "conversations/insert";
             String recipentsStr = recipents.iterator().next();
@@ -164,6 +179,14 @@ public class SpigotConversationManager implements ConversationManager {
 
             if (doc.text().contains("\"error\":")) {
                 throw new SpamWarningException();
+            } else {
+                JSONParser parser = new JSONParser();
+                JSONObject jsonObject = (JSONObject) parser.parse(doc.text());
+                String redirectUrl = (String) jsonObject.get("_redirectTarget");
+                conversation.setAuthor(user);
+                conversation.setTitle(title);
+                String idStr = redirectUrl.substring(redirectUrl.lastIndexOf(".") + 1, redirectUrl.lastIndexOf("/"));
+                conversation.setConversationId(Integer.parseInt(idStr));
             }
 
             doc.select("div.titleBar");
@@ -177,23 +200,23 @@ public class SpigotConversationManager implements ConversationManager {
     }
 
     public void markConversationAsRead(User user, Conversation conversation) {
-        if (!conversation.isUnread()){
+        if (!conversation.isUnread()) {
             return;
         }
-        toggleConversationRead(user,conversation);
-        ((SpigotConversation)conversation).setRead(true);
+        toggleConversationRead(user, conversation);
+        ((SpigotConversation) conversation).setRead(true);
     }
 
     public void markConversationAsUnread(User user, Conversation conversation) {
-        if (conversation.isUnread()){
+        if (conversation.isUnread()) {
             return;
         }
-        toggleConversationRead(user,conversation);
-        ((SpigotConversation)conversation).setRead(false);
+        toggleConversationRead(user, conversation);
+        ((SpigotConversation) conversation).setRead(false);
     }
 
 
-    private void toggleConversationRead(User user, Conversation conversation){
+    private void toggleConversationRead(User user, Conversation conversation) {
         try {
             String url = SpigotSiteCore.getBaseURL() + "conversations/" + conversation.getConverationId() + "/toggle-read";
 
