@@ -98,6 +98,31 @@ public class ResourceManagerTest {
         }
     }
 
+    @Test
+    public void getResourceBuyersCount() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        User user = UserDebugging.getUser();
+        List<Resource> resources = SpigotSite.getAPI().getResourceManager()
+                .getResourcesByUser(user);
+        for (Resource res : resources) {
+            if (res instanceof PremiumResource) {
+                System.out.println("\t" + res.getResourceName());
+                try {
+                    List<User> resourceBuyers = SpigotSite
+                            .getAPI()
+                            .getResourceManager()
+                            .getPremiumResourceBuyers(
+                                    (PremiumResource) res, user);
+                    System.out.println("\t\tBuyers: " + resourceBuyers.size());
+                } catch (ConnectionFailedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return;
+                }
+            }
+        }
+    }
+
+
     @Test(timeout = 15000)
     public void getPurchasedResourcesByUserTest() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
         System.out.println("Testing 'getPurchasedResourcesByUser' ...");
@@ -142,33 +167,33 @@ public class ResourceManagerTest {
         Resource resource = resourceManager.getResourceById(13370, user);
         PremiumResource premiumResource = (SpigotPremiumResource) resource;
         List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
-        for (User b : buyers){
-            if (b.getUsername().equalsIgnoreCase("Maximvdw")){
+        for (User b : buyers) {
+            if (b.getUsername().equalsIgnoreCase("Maximvdw")) {
                 fail("User already in buyers");
             }
         }
 
-        resourceManager.addBuyer(premiumResource,user,"Maximvdw");
+        resourceManager.addBuyer(premiumResource, user, "Maximvdw");
         buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
         boolean found = false;
-        for (User b : buyers){
-            if (b.getUsername().equalsIgnoreCase("Maximvdw")){
+        for (User b : buyers) {
+            if (b.getUsername().equalsIgnoreCase("Maximvdw")) {
                 found = true;
             }
         }
-        if (!found){
+        if (!found) {
             fail("User was not added to the buyers!");
         }
 
-        resourceManager.removeBuyer(premiumResource,user,user.getUserId());
+        resourceManager.removeBuyer(premiumResource, user, user.getUserId());
         buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
         found = false;
-        for (User b : buyers){
-            if (b.getUsername().equalsIgnoreCase("Maximvdw")){
+        for (User b : buyers) {
+            if (b.getUsername().equalsIgnoreCase("Maximvdw")) {
                 found = true;
             }
         }
-        if (found){
+        if (found) {
             fail("User was not removed from the buyers!");
         }
     }

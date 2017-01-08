@@ -20,6 +20,7 @@ public class JsoupRequest {
                     .cookies(cookies)
                     .method(Method.GET)
                     .followRedirects(true)
+                    .maxBodySize(0)
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .data(params)
@@ -51,6 +52,7 @@ public class JsoupRequest {
                     .connect(url)
                     .cookies(cookies)
                     .method(Method.POST)
+                    .maxBodySize(0)
                     .data(params)
                     .ignoreContentType(true)
                     .userAgent(
