@@ -8,11 +8,16 @@ import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
+import be.maximvdw.spigotsite.user.SpigotUserManager;
 import be.maximvdw.spigotsite.utils.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.*;
 
 public class SpigotResourceManager implements ResourceManager {
@@ -28,6 +33,8 @@ public class SpigotResourceManager implements ResourceManager {
             Map<String, String> params = new HashMap<String, String>();
             HTTPResponse res = Request.get(url,
                     user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             Element categoryLink = doc.select("a.crumb").last();
             SpigotResource resource = new SpigotResource();
@@ -66,6 +73,8 @@ public class SpigotResourceManager implements ResourceManager {
             Map<String, String> params = new HashMap<String, String>();
             HTTPResponse res = Request.get(url,
                     user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             List<ResourceUpdate> updates = new ArrayList<ResourceUpdate>();
 
@@ -126,6 +135,8 @@ public class SpigotResourceManager implements ResourceManager {
             HTTPResponse res = Request.get(url,
                     loggedInUser == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) loggedInUser).getCookies(),
                     params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) loggedInUser);
             Document doc = res.getDocument();
             String username = StringUtils.getStringBetween(doc.title(),
                     "Resources from (.*?) | SpigotMC - High Performance Minecraft");
@@ -165,6 +176,8 @@ public class SpigotResourceManager implements ResourceManager {
             Map<String, String> params = new HashMap<String, String>();
 
             HTTPResponse res = Request.get(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             Elements resourceBlocks = doc.select("li.resourceListItem");
             for (Element resourceBlock : resourceBlocks) {
@@ -259,8 +272,22 @@ public class SpigotResourceManager implements ResourceManager {
         return null;
     }
 
-    public String getLastVersion(int resourceid) {
-        // TODO Auto-generated method stub
+    public String getLastVersion(int resourceId) {
+        try {
+            HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php")
+                    .openConnection();
+            con.setDoOutput(true);
+            con.setRequestMethod("POST");
+            con.getOutputStream().write(
+                    ("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=" + resourceId)
+                            .getBytes("UTF-8"));
+            String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
+            if (version.length() <= 7) {
+                return version;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         return null;
     }
 
@@ -272,6 +299,8 @@ public class SpigotResourceManager implements ResourceManager {
             String url = SpigotSiteCore.getBaseURL() + "resources/" + resource.getResourceId() + "/buyers";
             Map<String, String> params = new HashMap<String, String>();
             HTTPResponse res = Request.get(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             Elements buyersBlocks = doc.select("div.member");
             for (Element buyersBlock : buyersBlocks) {
@@ -329,6 +358,8 @@ public class SpigotResourceManager implements ResourceManager {
             params.put("redirect", "/");
 
             HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -346,6 +377,8 @@ public class SpigotResourceManager implements ResourceManager {
             params.put("redirect", "/");
 
             HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

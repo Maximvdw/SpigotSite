@@ -229,20 +229,6 @@ public class ResourceManagerTest {
         for (User buyer : buyers) {
             System.out.println("\t" + buyer.getUsername() + " [" + buyer.getUserId() + "]");
         }
-
-        List<Resource> resources = SpigotSite.getAPI().getResourceManager()
-                .getResourcesByUser(user);
-        for (Resource res : resources) {
-            if (res instanceof PremiumResource) {
-                System.out.println("\t" + res.getResourceName());
-                List<User> resourceBuyers = SpigotSite
-                        .getAPI()
-                        .getResourceManager()
-                        .getPremiumResourceBuyers(
-                                (PremiumResource) res, user);
-                System.out.println("\t\tBuyers: " + resourceBuyers.size());
-            }
-        }
     }
 
     @Test//(timeout = 15000)
@@ -262,7 +248,7 @@ public class ResourceManagerTest {
                 + updates.get(0).getArticle() + "\n");
     }
 
-    @Test(timeout = 700000)
+    @Test
     public void getTopBuyers() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
         System.out.println("Testing 'get the buyers that bought all my plugins'");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();

@@ -1,27 +1,26 @@
 package be.maximvdw.spigotsite.user;
 
-import java.io.StringReader;
-import java.security.GeneralSecurityException;
-import java.util.*;
-
-import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
-import be.maximvdw.spigotsite.utils.TOTP;
-import org.apache.commons.codec.binary.Base32;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.JSONParser;
-import org.jsoup.nodes.Document;
-
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.UserRank;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.utils.StringUtils;
+import be.maximvdw.spigotsite.utils.TOTP;
+import org.apache.commons.codec.binary.Base32;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public class SpigotUserManager implements UserManager {
@@ -38,6 +37,7 @@ public class SpigotUserManager implements UserManager {
             HTTPResponse res = Request.get(url,
                     user == null ? SpigotSiteCore.getBaseCookies()
                             : ((SpigotUser) user).getCookies(), params);
+            res = handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             SpigotUser reqUser = new SpigotUser();
             reqUser.setUsername(doc.select("h1.username").get(0).text());
@@ -56,12 +56,20 @@ public class SpigotUserManager implements UserManager {
 
     public User authenticate(String username, String password)
             throws InvalidCredentialsException, TwoFactorAuthenticationException {
-        return authenticate(username, password, null);
+        SpigotUser user = new SpigotUser(username);
+        return authenticate(username, password, user);
     }
 
     public User authenticate(String username, String password, String totpSecret)
             throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        SpigotUser user = new SpigotUser(username);
+        user.setTotpSecret(totpSecret);
+        return authenticate(username, password, user);
+    }
+
+    public User authenticate(String username, String password, User user) throws InvalidCredentialsException, TwoFactorAuthenticationException {
         try {
+            SpigotUser spigotUser = ((SpigotUser) user);
             String url = SpigotSiteCore.getBaseURL() + "login/login";
             Map<String, String> params = new HashMap<String, String>();
             // Login parameters
@@ -72,33 +80,32 @@ public class SpigotUserManager implements UserManager {
             params.put("cookie_check", "1"); // Fix error Cookies required
             params.put("_xfToken", "");
             params.put("redirect", SpigotSiteCore.getBaseURL() + "");
-            HTTPResponse res = Request.post(url,
+            HTTPResponse res = Request.post(url, spigotUser.getCookies().size() != 0 ? spigotUser.getCookies() :
                     SpigotSiteCore.getBaseCookies(), params);
             if (res.getHtml().contains("Incorrect password. Please try again.")) {
                 // Password incorrect
-
                 throw new InvalidCredentialsException();
             }
+
             Document doc = res.getDocument();
+
             Element totpField = doc.getElementById("ctrl_totp_code");
-            if (totpField != null && totpSecret == null) {
+            if (totpField != null && spigotUser.getTotpSecret() == null) {
                 throw new TwoFactorAuthenticationException();
             }
 
-            SpigotUser user = new SpigotUser(username);
-            user.setCookies(res.getCookies());
-            user.setTotpSecret(totpSecret);
+            spigotUser.setCookies(res.getCookies());
             if (totpField != null) {
-                user = totpVerification(user);
+                user = totpVerification(spigotUser);
                 if (user == null) {
                     throw new TwoFactorAuthenticationException();
                 }
             } else {
                 // Fetch data
-                user.setUsername(doc.select("a.username.NoOverlay").first().text());
-                user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+                spigotUser.setUsername(doc.select("a.username.NoOverlay").first().text());
+                spigotUser.setUserId(Integer.parseInt(StringUtils.getStringBetween(
                         res.getHtml(), "member\\?user_id=(.*?)\">")));
-                user.setToken(doc.select("input[name=_xfToken]").get(0)
+                spigotUser.setToken(doc.select("input[name=_xfToken]").get(0)
                         .attr("value"));
             }
             return user;
@@ -111,7 +118,7 @@ public class SpigotUserManager implements UserManager {
         return null;
     }
 
-    private SpigotUser totpVerification(SpigotUser user) throws GeneralSecurityException {
+    private static SpigotUser totpVerification(SpigotUser user) throws GeneralSecurityException {
         byte[] keyBytes = new Base32().decode(user.getTotpSecret());
         StringBuilder sb = new StringBuilder();
         for (byte b : keyBytes) {
@@ -148,17 +155,47 @@ public class SpigotUserManager implements UserManager {
     }
 
     public void logOff(User user) {
-        // Kill cookies
-        SpigotUser spigotUser = (SpigotUser) user;
-        spigotUser.getCookies().clear();
+        logOff(user, false);
+    }
+
+    public void logOff(User user, boolean force) {
+        if (force) {
+            // Kill cookies
+            SpigotUser spigotUser = (SpigotUser) user;
+            spigotUser.getCookies().clear();
+        } else {
+            try {
+                HTTPResponse res = Request.get(SpigotSiteCore.getBaseURL() + "/logout?_xfToken=" + ((SpigotUser) user).getToken(),
+                        ((SpigotUser) user).getCookies(), new HashMap<String, String>());
+                SpigotUser spigotUser = (SpigotUser) user;
+                spigotUser.setCookies(res.getCookies());
+                return;
+            } catch (Exception ex) {
+
+            }
+        }
     }
 
     public boolean isLoggedIn(User user) {
         try {
             HTTPResponse res = Request.get(SpigotSiteCore.getBaseURL(),
                     ((SpigotUser) user).getCookies(), new HashMap<String, String>());
+            res = handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             ((SpigotUser) user).setUsername(doc.select("a.username.NoOverlay").first().text());
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
+    }
+
+    public boolean untrustThisDevice(User user) {
+        try {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("_xfToken", ((SpigotUser) user).getToken());
+            params.put("provider", "backup");
+            HTTPResponse res = Request.post(SpigotSiteCore.getBaseURL() + "account/two-step/trusted-disable",
+                    ((SpigotUser) user).getCookies(), params);
             return true;
         } catch (Exception ex) {
             return false;
@@ -191,8 +228,8 @@ public class SpigotUserManager implements UserManager {
             JSONParser parser = new JSONParser();
             JSONObject root = (JSONObject) parser.parse(res.getDocument().text());
             JSONObject results = (JSONObject) root.get("results");
-            for (Object userObj : results.values()){
-                String username = (String) ((JSONObject)userObj).get("username");
+            for (Object userObj : results.values()) {
+                String username = (String) ((JSONObject) userObj).get("username");
                 users.add(username);
             }
         } catch (Exception ex) {
@@ -211,12 +248,12 @@ public class SpigotUserManager implements UserManager {
             SpigotUser reqUser = new SpigotUser();
             reqUser.setUsername(s);
             Element importantMessage = doc.getElementsByClass("importantMessage").first();
-            if (importantMessage != null){
+            if (importantMessage != null) {
                 return null;
             }
             Element topLinkElement = doc.getElementsByClass("topLink").first();
             String linkProfile = topLinkElement.getElementsByTag("a").first().attr("href");
-            String userIdStr = linkProfile.substring(0,linkProfile.lastIndexOf("/"));
+            String userIdStr = linkProfile.substring(0, linkProfile.lastIndexOf("/"));
             userIdStr = userIdStr.substring(userIdStr.lastIndexOf("/"));
             userIdStr = userIdStr.substring(userIdStr.indexOf(".") + 1);
             reqUser.setUserId(Integer.parseInt(userIdStr));
@@ -245,5 +282,58 @@ public class SpigotUserManager implements UserManager {
 
         }
         return users;
+    }
+
+    /**
+     * Handle two step verification
+     *
+     * @param originalResponse HTTP response that could possible be a 2FA
+     * @param user             User to use
+     * @return success
+     */
+    public static HTTPResponse handleTwoStep(HTTPResponse originalResponse, SpigotUser user) throws TwoFactorAuthenticationException {
+        if (user == null) {
+            return originalResponse; // No user so no need to handle 2fa
+        }
+        if (originalResponse.getResponseURL().toString().startsWith("https://www.spigotmc.org/login/two-step")) {
+            // Two step verification page
+            HTTPResponse res = originalResponse;
+            if (!originalResponse.getResponseURL().toString().contains("provider=totp")) {
+                // Redirect to TOTP Two step (not email or whatever ,...)
+                String url = "https://www.spigotmc.org/login/two-step?remember=1&provider=totp";
+                res = Request.get(url,
+                        user.getCookies(), new HashMap<String, String>());
+            }
+
+            Document doc = res.getDocument();
+            Element totpField = doc.getElementById("ctrl_totp_code");
+            if (totpField != null && user.getTotpSecret() == null) {
+                throw new TwoFactorAuthenticationException();
+            }
+
+            user.setCookies(res.getCookies());
+            user.setTotpSecret(user.getTotpSecret());
+            if (totpField != null) {
+                try {
+                    user = totpVerification(user);
+                } catch (GeneralSecurityException e) {
+                    e.printStackTrace();
+                }
+                if (user == null) {
+                    throw new TwoFactorAuthenticationException();
+                }
+            } else {
+                // Fetch data
+                user.setUsername(doc.select("a.username.NoOverlay").first().text());
+                user.setUserId(Integer.parseInt(StringUtils.getStringBetween(
+                        res.getHtml(), "member\\?user_id=(.*?)\">")));
+                user.setToken(doc.select("input[name=_xfToken]").get(0)
+                        .attr("value"));
+            }
+
+            return originalResponse.getOriginalRequest().execute();
+        } else {
+            return originalResponse; // No need to handle two step
+        }
     }
 }

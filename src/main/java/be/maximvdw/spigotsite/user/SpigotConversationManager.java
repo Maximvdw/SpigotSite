@@ -24,10 +24,13 @@ public class SpigotConversationManager implements ConversationManager {
             String url = SpigotSiteCore.getBaseURL() + "conversations/";
             Map<String, String> params = new HashMap<String, String>();
 
-            HTTPResponse req = Request.get(url, ((SpigotUser) user).getCookies(), params);
-            ((SpigotUser) user).getCookies().putAll(req.getCookies());
+            HTTPResponse res = Request.get(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
 
-            Document doc = req.getDocument();
+            ((SpigotUser) user).getCookies().putAll(res.getCookies());
+
+            Document doc = res.getDocument();
             Element pagesElement = doc.getElementsByClass("contentSummary").first();
             String[] data = pagesElement.text().split(" ");
             String numberStr = data[data.length - 1].replace(",", "");
@@ -41,9 +44,9 @@ public class SpigotConversationManager implements ConversationManager {
             conversations.addAll(loadConversationsOnPage(doc));
             for (int i = 2; i <= pages; i++) {
                 url = SpigotSiteCore.getBaseURL() + "conversations/?page=" + i;
-                req = Request.get(url, ((SpigotUser) user).getCookies(), params);
+                res = Request.get(url, ((SpigotUser) user).getCookies(), params);
 
-                doc = req.getDocument();
+                doc = res.getDocument();
                 conversations.addAll(loadConversationsOnPage(doc));
             }
 
@@ -77,7 +80,7 @@ public class SpigotConversationManager implements ConversationManager {
 
             // Get participants
             Elements participantsSpans = conversationBlock.select(".username.convess");
-            for (Element participantSpan : participantsSpans){
+            for (Element participantSpan : participantsSpans) {
                 String participantUsername = participantSpan.text();
                 String participantHref = participantSpan.attr("href");
                 String participantIdStr = participantHref.substring(participantHref.lastIndexOf(".") + 1, participantHref.lastIndexOf("/"));
@@ -119,10 +122,12 @@ public class SpigotConversationManager implements ConversationManager {
             params.put("_xfNoRedirect", "1");
             params.put("_xfResponseType", "json");
 
-            HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
-            ((SpigotUser) user).getCookies().putAll(req.getCookies());
+            HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
+            ((SpigotUser) user).getCookies().putAll(res.getCookies());
 
-            Document doc = req.getDocument();
+            Document doc = res.getDocument();
             if (doc.text().contains("\"error\":")) {
                 throw new SpamWarningException();
             }
@@ -142,8 +147,10 @@ public class SpigotConversationManager implements ConversationManager {
             params.put("deletetype", "delete");
             params.put("_xfConfirm", "1");
             params.put("_xfToken", ((SpigotUser) user).getToken());
-            HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
-            ((SpigotUser) user).getCookies().putAll(req.getCookies());
+            HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
+            ((SpigotUser) user).getCookies().putAll(res.getCookies());
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -172,10 +179,12 @@ public class SpigotConversationManager implements ConversationManager {
             params.put("conversation_sticky", sticky ? "1" : "0");
             params.put("open_invite", invite ? "1" : "0");
 
-            HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
-            ((SpigotUser) user).getCookies().putAll(req.getCookies());
+            HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
+            ((SpigotUser) user).getCookies().putAll(res.getCookies());
 
-            Document doc = req.getDocument();
+            Document doc = res.getDocument();
 
             if (doc.text().contains("\"error\":")) {
                 throw new SpamWarningException();
@@ -198,6 +207,21 @@ public class SpigotConversationManager implements ConversationManager {
 
         return conversation;
     }
+
+
+    public Conversation createConversation(User user, String recipient, String title, String body, boolean locked,
+                                           boolean invite) throws SpamWarningException {
+        return createConversation(user,recipient,title,body,locked,invite,false);
+    }
+
+
+    public Conversation createConversation(User user, String recipient, String title, String body, boolean locked,
+                                           boolean invite, boolean sticky) throws SpamWarningException {
+        Set<String> recipients = new HashSet<String>();
+        recipients.add(recipient);
+        return createConversation(user,recipients,title,body,locked,invite,sticky);
+    }
+
 
     public void markConversationAsRead(User user, Conversation conversation) {
         if (!conversation.isUnread()) {
@@ -226,8 +250,10 @@ public class SpigotConversationManager implements ConversationManager {
             Map<String, String> params = new HashMap<String, String>();
             params.put("_xfConfirm", "1");
             params.put("_xfToken", ((SpigotUser) user).getToken());
-            HTTPResponse req = Request.post(url, ((SpigotUser) user).getCookies(), params);
-            ((SpigotUser) user).getCookies().putAll(req.getCookies());
+            HTTPResponse res = Request.post(url, ((SpigotUser) user).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
+            ((SpigotUser) user).getCookies().putAll(res.getCookies());
 
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -14,6 +14,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class UserManagerTest {
 
@@ -33,6 +34,14 @@ public class UserManagerTest {
 		}
 	}
 
+	@Test
+	public void logOutTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+        User user = UserDebugging.getUser();
+        SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
+        userManager.logOff(user);
+        user = userManager.authenticate(UserDebugging.username,UserDebugging.password,user);
+        assertTrue(userManager.isLoggedIn(user));
+    }
 
 	@Test(timeout = 15000)
 	public void getUserByNameTest() {
@@ -67,6 +76,14 @@ public class UserManagerTest {
 		System.out.println("Username: " + user.getUsername());
 		System.out.println("User Id: " + user.getUserId());
 		System.out.println("Activity: " + user.getLastActivity());
+	}
+
+	@Test
+	public void untrustTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+		User user = UserDebugging.getUser();
+		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
+		userManager.untrustThisDevice(user);
+		assertTrue(userManager.isLoggedIn(user));
 	}
 
 	public void getUsersByRankTest() {

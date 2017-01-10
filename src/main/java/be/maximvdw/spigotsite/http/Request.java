@@ -11,7 +11,7 @@ public abstract class Request {
 		if (isDdosBypass()) {
 			return HTTPUnitRequest.get(url, cookies, params);
 		} else {
-			HTTPResponse response = JsoupRequest.get(url, cookies, params);
+			HTTPResponse response = JsoupRequest.get(new HTTPRequest(url, cookies, params));
 			if (response == null && isDdosBypass()){
                 return get(url,cookies,params);
 			}
@@ -24,7 +24,7 @@ public abstract class Request {
 		if (isDdosBypass()) {
 			return HTTPUnitRequest.post(url, cookies, params);
 		} else {
-			HTTPResponse response = JsoupRequest.post(url, cookies, params);
+			HTTPResponse response = JsoupRequest.post(new HTTPRequest(url, cookies, params));
 			if (response == null && isDdosBypass()){
 				return post(url,cookies,params);
 			}
