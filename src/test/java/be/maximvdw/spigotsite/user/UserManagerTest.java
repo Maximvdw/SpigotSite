@@ -12,9 +12,7 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class UserManagerTest {
 
@@ -36,9 +34,12 @@ public class UserManagerTest {
 
 	@Test
 	public void logOutTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
-        User user = UserDebugging.getUser();
+        System.out.println("Testing 'Logout' ...");
         SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
+        User user = UserDebugging.getUser();
+        assertTrue(userManager.isLoggedIn(user));
         userManager.logOff(user);
+        assertFalse(userManager.isLoggedIn(user));
         user = userManager.authenticate(UserDebugging.username,UserDebugging.password,user);
         assertTrue(userManager.isLoggedIn(user));
     }

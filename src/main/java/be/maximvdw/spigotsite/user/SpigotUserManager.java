@@ -87,28 +87,43 @@ public class SpigotUserManager implements UserManager {
                 throw new InvalidCredentialsException();
             }
 
-            Document doc = res.getDocument();
+            if (res.getResponseURL().toString().startsWith("https://www.spigotmc.org/login/two-step")) {
+                // Two step verification page
+                HTTPResponse totpResponse = res;
+                Document doc = res.getDocument();
+                Element providerInput = doc.select("input[name=provider").first();
+                if (providerInput == null || !providerInput.val().equalsIgnoreCase("totp")) {
+                    // Redirect to TOTP Two step (not email or whatever ,...)
+                    totpResponse = Request.get("https://www.spigotmc.org/login/two-step?remember=1&provider=totp",
+                            spigotUser.getCookies(), new HashMap<String, String>());
+                }
 
-            Element totpField = doc.getElementById("ctrl_totp_code");
-            if (totpField != null && spigotUser.getTotpSecret() == null) {
-                throw new TwoFactorAuthenticationException();
-            }
+                doc = totpResponse.getDocument();
 
-            spigotUser.setCookies(res.getCookies());
-            if (totpField != null) {
-                user = totpVerification(spigotUser);
-                if (user == null) {
+                Element totpField = doc.getElementById("ctrl_totp_code");
+                if (totpField != null && spigotUser.getTotpSecret() == null) {
                     throw new TwoFactorAuthenticationException();
+                }
+
+                spigotUser.setCookies(totpResponse.getCookies());
+                if (totpField != null) {
+                    spigotUser = totpVerification(spigotUser);
+                    if (spigotUser == null) {
+                        throw new TwoFactorAuthenticationException();
+                    }
                 }
             } else {
                 // Fetch data
+                Document doc = res.getDocument();
+
                 spigotUser.setUsername(doc.select("a.username.NoOverlay").first().text());
                 spigotUser.setUserId(Integer.parseInt(StringUtils.getStringBetween(
                         res.getHtml(), "member\\?user_id=(.*?)\">")));
                 spigotUser.setToken(doc.select("input[name=_xfToken]").get(0)
                         .attr("value"));
+                spigotUser.setCookies(res.getCookies());
             }
-            return user;
+            return spigotUser;
         } catch (TwoFactorAuthenticationException ex) {
             throw ex;
         } catch (Exception ex) {
@@ -298,14 +313,15 @@ public class SpigotUserManager implements UserManager {
         if (originalResponse.getResponseURL().toString().startsWith("https://www.spigotmc.org/login/two-step")) {
             // Two step verification page
             HTTPResponse res = originalResponse;
-            if (!originalResponse.getResponseURL().toString().contains("provider=totp")) {
+            Document doc = res.getDocument();
+            Element providerInput = doc.select("input[name=provider").first();
+            if (providerInput == null || !providerInput.val().equalsIgnoreCase("totp")) {
                 // Redirect to TOTP Two step (not email or whatever ,...)
-                String url = "https://www.spigotmc.org/login/two-step?remember=1&provider=totp";
-                res = Request.get(url,
+                res = Request.get("https://www.spigotmc.org/login/two-step?remember=1&provider=totp",
                         user.getCookies(), new HashMap<String, String>());
             }
 
-            Document doc = res.getDocument();
+            doc = res.getDocument();
             Element totpField = doc.getElementById("ctrl_totp_code");
             if (totpField != null && user.getTotpSecret() == null) {
                 throw new TwoFactorAuthenticationException();
