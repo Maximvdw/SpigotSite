@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>be.maximvdw</groupId>
 	<artifactId>spigotsite</artifactId>
-	<version>0.0.24-SNAPSHOT</version>
+	<version>0.1.0-SNAPSHOT</version>
 	<name>SpigotSite</name>
 	<repositories>
 		<repository>
@@ -16,7 +16,7 @@
 		<dependency>
 			<groupId>be.maximvdw</groupId>
 			<artifactId>spigotsite-api</artifactId>
-			<version>0.0.14-SNAPSHOT</version>
+			<version>0.1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>

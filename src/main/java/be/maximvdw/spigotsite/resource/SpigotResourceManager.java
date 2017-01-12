@@ -15,10 +15,14 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SpigotResourceManager implements ResourceManager {
     private List<ResourceCategory> resourceCategories = new ArrayList<ResourceCategory>();
@@ -291,8 +295,8 @@ public class SpigotResourceManager implements ResourceManager {
         return null;
     }
 
-    public List<User> getPremiumResourceBuyers(PremiumResource resource, User user) throws ConnectionFailedException {
-        List<User> buyers = new ArrayList<User>();
+    public List<Buyer> getPremiumResourceBuyers(PremiumResource resource, User user) throws ConnectionFailedException {
+        List<Buyer> buyers = new ArrayList<Buyer>();
 
         SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
         try {
@@ -302,16 +306,49 @@ public class SpigotResourceManager implements ResourceManager {
             // Handle two step
             res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
-            Elements buyersBlocks = doc.select("div.member");
+            Elements buyersBlocks = doc.select(".memberListItem");
             for (Element buyersBlock : buyersBlocks) {
-                SpigotUser buyer = new SpigotUser();
-                Elements userNameElements = buyersBlock.select("a.username");
+                Element memberNameBlock = buyersBlock.select("div.member").first();
+                SpigotBuyer buyer = new SpigotBuyer();
+                Element purchaseElement = buyersBlock.select("div.muted").first();
+                if (purchaseElement != null) {
+                    String purchaseString = purchaseElement.text();
+                    if (purchaseString.contains("Purchased")) {
+                        String regexPattern = "Purchased For: (.*?) ([a-zA-Z][a-zA-Z][a-zA-Z])";
+                        Pattern p = Pattern.compile(regexPattern);
+                        Matcher m = p.matcher(purchaseString);
+                        if (m.find()) {
+                            double price = Double.parseDouble(m.group(1));
+                            String currency = m.group(2);
+                            buyer.setPurchaseCurrency(currency);
+                            buyer.setPurchasePrice(price);
+                        }
+                    }
+                }
+                try {
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' hh:mm a");
+                    Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
+                    if (purchaseDateElement != null) {
+                        if (purchaseDateElement.hasAttr("data-time")){
+                            Date date = new Date(Long.parseLong(purchaseDateElement.attr("data-time")) * 1000);
+                            buyer.setPurchaseDate(date);
+                        }else {
+                            String title = purchaseDateElement.attr("title");
+                            Date date = sdf.parse(title);
+                            buyer.setPurchaseDate(date);
+                        }
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+                Elements userNameElements = memberNameBlock.select("a.username");
                 if (userNameElements.size() == 0) {
                     continue;
                 }
                 Element userElement = userNameElements.get(0);
                 buyer.setUsername(userElement.text());
                 buyer.setUserId(Integer.parseInt(StringUtils.getStringBetween(userElement.attr("href"), "\\.(.*?)/")));
+
                 buyers.add(buyer);
             }
         } catch (Exception ex) {
@@ -321,27 +358,27 @@ public class SpigotResourceManager implements ResourceManager {
         return buyers;
     }
 
-    public void addBuyer(PremiumResource resource, User user, User buyer) {
+    public void addBuyer(PremiumResource resource, User user, User buyer) throws ConnectionFailedException {
         addBuyer(resource, user, buyer.getUsername());
     }
 
-    public void addBuyer(PremiumResource resource, User user, int userid) {
+    public void addBuyer(PremiumResource resource, User user, int userid) throws ConnectionFailedException {
         User buyer = SpigotSite.getAPI().getUserManager().getUserById(userid);
         addBuyer(resource, user, buyer);
     }
 
-    public void addBuyer(PremiumResource resource, User user, String username) {
+    public void addBuyer(PremiumResource resource, User user, String username) throws ConnectionFailedException {
         addBuyers(resource, user, new String[]{username});
     }
 
-    public void addBuyers(PremiumResource resource, User user, List<User> buyers) {
+    public void addBuyers(PremiumResource resource, User user, List<User> buyers) throws ConnectionFailedException {
         String[] usernames = new String[buyers.size()];
         for (int i = 0; i < buyers.size(); i++)
             usernames[i] = buyers.get(i).getUsername();
         addBuyers(resource, user, usernames);
     }
 
-    public void addBuyers(PremiumResource resource, User user, String[] usernames) {
+    public void addBuyers(PremiumResource resource, User user, String[] usernames) throws ConnectionFailedException {
         try {
             String url = SpigotSiteCore.getBaseURL() + "resources/" + resource.getResourceId() + "/add-buyer";
             Map<String, String> params = new HashMap<String, String>();
@@ -365,7 +402,7 @@ public class SpigotResourceManager implements ResourceManager {
         }
     }
 
-    public void removeBuyer(PremiumResource premiumResource, User user, int buyer) {
+    public void removeBuyer(PremiumResource premiumResource, User user, int buyer) throws ConnectionFailedException {
         try {
             String url = SpigotSiteCore.getBaseURL() + "resources/" + premiumResource.getResourceId() + "/delete-buyer";
             Map<String, String> params = new HashMap<String, String>();

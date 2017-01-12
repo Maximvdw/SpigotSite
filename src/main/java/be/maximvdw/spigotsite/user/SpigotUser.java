@@ -18,149 +18,149 @@ import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserStatistics;
 
 public class SpigotUser implements User {
-	private int id = 0;
-	private String username = "";
-	private Map<String, String> cookies = new HashMap<String, String>();
-	private String totpSecret = null;
-	private boolean authenticated = false;
-	private UserStatistics statistics = null;
-	private String token = "";
-	private long loginDate = new Date().getTime();
-	private String lastActivity = "";
+    private int id = 0;
+    private String username = "";
+    private Map<String, String> cookies = new HashMap<String, String>();
+    private String totpSecret = null;
+    private boolean authenticated = false;
+    private UserStatistics statistics = null;
+    private String token = "";
+    private long loginDate = new Date().getTime();
+    private String lastActivity = "";
 
-	public SpigotUser() {
+    public SpigotUser() {
 
-	}
+    }
 
-	public SpigotUser(String username) {
-		setUsername(username);
-	}
+    public SpigotUser(String username) {
+        setUsername(username);
+    }
 
-	public int getUserId() {
-		return id;
-	}
+    public int getUserId() {
+        return id;
+    }
 
-	public void setUserId(int id) {
-		this.id = id;
-	}
+    public void setUserId(int id) {
+        this.id = id;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-	public Map<String, String> getCookies() {
-		return cookies;
-	}
+    public Map<String, String> getCookies() {
+        return cookies;
+    }
 
-	public void setCookies(Map<String, String> cookies) {
-		this.cookies = cookies;
-		this.authenticated = true;
-	}
+    public void setCookies(Map<String, String> cookies) {
+        this.cookies = cookies;
+        this.authenticated = true;
+    }
 
-	public List<Resource> getPurchasedResources()
-			throws ConnectionFailedException {
-		return SpigotSite.getAPI().getResourceManager()
-				.getPurchasedResources(this);
-	}
+    public List<Resource> getPurchasedResources()
+            throws ConnectionFailedException {
+        return SpigotSite.getAPI().getResourceManager()
+                .getPurchasedResources(this);
+    }
 
-	public List<Resource> getCreatedResources() {
-		return SpigotSite.getAPI().getResourceManager()
-				.getResourcesByUser(this);
-	}
+    public List<Resource> getCreatedResources() throws ConnectionFailedException {
+        return SpigotSite.getAPI().getResourceManager()
+                .getResourcesByUser(this);
+    }
 
-	public UserStatistics getUserStatistics() {
-		return statistics;
-	}
+    public UserStatistics getUserStatistics() {
+        return statistics;
+    }
 
-	public void setUserStatistics(UserStatistics statistics) {
-		this.statistics = statistics;
-	}
+    public void setUserStatistics(UserStatistics statistics) {
+        this.statistics = statistics;
+    }
 
-	public boolean isAuthenticated() {
-		return authenticated;
-	}
+    public boolean isAuthenticated() {
+        return authenticated;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof SpigotUser)) {
-			return false;
-		}
-		User user = (User) obj;
-		if (user.getUserId() != getUserId()
-				&& (!user.getUsername().equals(getUsername())))
-			return false;
-		return true;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof SpigotUser)) {
+            return false;
+        }
+        User user = (User) obj;
+        if (user.getUserId() != getUserId()
+                && (!user.getUsername().equals(getUsername())))
+            return false;
+        return true;
+    }
 
-	public String getToken() {
-		return token;
-	}
+    public String getToken() {
+        return token;
+    }
 
-	public void setToken(String token) {
-		this.token = token;
-	}
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-	public List<Conversation> getConversations() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public List<Conversation> getConversations() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public long getCurrentDate() {
-		return new Date().getTime();
-	}
+    public long getCurrentDate() {
+        return new Date().getTime();
+    }
 
-	public boolean requiresRefresh() {
-		long cur = new Date().getTime();
-		if (cur > (getLoginDate() + (24 * 60 * 60 * 1000))) {
-			return true;
-		}
-		return false;
-	}
+    public boolean requiresRefresh() {
+        long cur = new Date().getTime();
+        if (cur > (getLoginDate() + (24 * 60 * 60 * 1000))) {
+            return true;
+        }
+        return false;
+    }
 
-	public void refresh() {
-		try {
-			String url = "http://www.spigotmc.org/";
-			Map<String, String> params = new HashMap<String, String>();
+    public void refresh() {
+        try {
+            String url = "http://www.spigotmc.org/";
+            Map<String, String> params = new HashMap<String, String>();
 
-			Connection.Response res = Jsoup
-					.connect(url)
-					.cookies(getCookies())
-					.method(Method.GET)
-					.data(params)
-					.userAgent(
-							"Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
-					.execute();
-			Document doc = res.parse();
-			setToken(doc.select("input[name=_xfToken]").get(0).attr("value"));
-			setLoginDate(new Date().getTime());
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		}
-	}
+            Connection.Response res = Jsoup
+                    .connect(url)
+                    .cookies(getCookies())
+                    .method(Method.GET)
+                    .data(params)
+                    .userAgent(
+                            "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:33.0) Gecko/20100101 Firefox/33.0")
+                    .execute();
+            Document doc = res.parse();
+            setToken(doc.select("input[name=_xfToken]").get(0).attr("value"));
+            setLoginDate(new Date().getTime());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	public long getLoginDate() {
-		return loginDate;
-	}
+    public long getLoginDate() {
+        return loginDate;
+    }
 
-	public void setLoginDate(long loginDate) {
-		this.loginDate = loginDate;
-	}
+    public void setLoginDate(long loginDate) {
+        this.loginDate = loginDate;
+    }
 
-	public String getLastActivity() {
-		return lastActivity;
-	}
+    public String getLastActivity() {
+        return lastActivity;
+    }
 
-	public boolean hasTwoFactorAuthentication() {
-		return totpSecret != null;
-	}
+    public boolean hasTwoFactorAuthentication() {
+        return totpSecret != null;
+    }
 
-	public void setLastActivity(String lastActivity) {
-		this.lastActivity = lastActivity;
-	}
+    public void setLastActivity(String lastActivity) {
+        this.lastActivity = lastActivity;
+    }
 
     public String getTotpSecret() {
         return totpSecret;

@@ -1,6 +1,7 @@
 package be.maximvdw.spigotsite;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
@@ -48,7 +49,7 @@ public class UserDebugging {
         }
     }
 
-    public static User getUser() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+    public static User getUser() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         if (user != null)
             return user;
         UserManager userManager = SpigotSite.getAPI().getUserManager();

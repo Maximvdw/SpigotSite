@@ -3,6 +3,7 @@ package be.maximvdw.spigotsite.user;
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.UserDebugging;
 import be.maximvdw.spigotsite.api.SpigotSite;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
@@ -22,7 +23,7 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getUsernamesByNameTest() {
+	public void getUsernamesByNameTest() throws ConnectionFailedException {
 		System.out.println("Testing 'getUsernamesByName' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		List<String> users = userManager.getUsernamesByName("Max");
@@ -33,7 +34,7 @@ public class UserManagerTest {
 	}
 
 	@Test
-	public void logOutTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+	public void logOutTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         System.out.println("Testing 'Logout' ...");
         SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
         User user = UserDebugging.getUser();
@@ -45,7 +46,7 @@ public class UserManagerTest {
     }
 
 	@Test(timeout = 15000)
-	public void getUserByNameTest() {
+	public void getUserByNameTest() throws ConnectionFailedException {
 		System.out.println("Testing 'getUserByName' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User u1 = userManager.getUserByName("JamesJ");
@@ -59,7 +60,7 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getUserByIdTest() {
+	public void getUserByIdTest() throws ConnectionFailedException {
 		System.out.println("Testing 'getUserById 1' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.getUserById(1);
@@ -70,7 +71,7 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getUserActivityTest() {
+	public void getUserActivityTest() throws ConnectionFailedException {
 		System.out.println("Testing 'getUserActivityTest' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.getUserById(6687);
@@ -80,7 +81,7 @@ public class UserManagerTest {
 	}
 
 	@Test
-	public void untrustTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+	public void untrustTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
 		User user = UserDebugging.getUser();
 		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
 		userManager.untrustThisDevice(user);
@@ -96,7 +97,7 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 60000)
-	public void logInUserTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+	public void logInUserTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
 		System.out.println("Testing 'authenticate' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);

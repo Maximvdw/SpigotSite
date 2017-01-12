@@ -69,7 +69,7 @@ public class ConversationManagerTest {
 
     @Test(timeout = 30000, expected = SpamWarningException.class)
     public void spamConversationTest() throws InvalidCredentialsException,
-            InterruptedException, TwoFactorAuthenticationException {
+            InterruptedException, TwoFactorAuthenticationException, ConnectionFailedException {
         System.out.println("Testing 'Spam detection' ...");
         User user = UserDebugging.getUser();
         ConversationManager conversationManager = SpigotSite.getAPI()
@@ -83,7 +83,7 @@ public class ConversationManagerTest {
     }
 
     @Test(timeout = 20000)
-    public void conversationSendTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+    public void conversationSendTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         System.out.println("Testing 'createConversation' ...");
         User user = UserDebugging.getUser();
         ConversationManager conversationManager = SpigotSite.getAPI()
@@ -104,7 +104,7 @@ public class ConversationManagerTest {
     }
 
     @Test(timeout = 20000)
-    public void conversationSendMarkReadTest() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+    public void conversationSendMarkReadTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         System.out.println("Testing 'conversationSendMarkReadTest' ...");
         User user = UserDebugging.getUser();
         ConversationManager conversationManager = SpigotSite.getAPI()

@@ -14,6 +14,8 @@ import org.junit.Test;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +30,7 @@ public class ResourceManagerTest {
     }
 
     @Test(timeout = 15000)
-    public void getResourceByIdTest() {
+    public void getResourceByIdTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourceById 578' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         // Test Tab plugin
@@ -48,7 +50,7 @@ public class ResourceManagerTest {
     }
 
     @Test(timeout = 15000)
-    public void getResourceCategoriesTest() {
+    public void getResourceCategoriesTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourceCategories' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         List<ResourceCategory> categories = resourceManager.getResourceCategories();
@@ -60,7 +62,7 @@ public class ResourceManagerTest {
     }
 
     @Test(timeout = 15000)
-    public void getResourceCategoryByIdTest() {
+    public void getResourceCategoryByIdTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourceCategoryById 2' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         ResourceCategory category = resourceManager.getResourceCategoryById(2);
@@ -68,7 +70,7 @@ public class ResourceManagerTest {
     }
 
     @Test
-    public void getResourcesByCategoryTest() {
+    public void getResourcesByCategoryTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourcesByCategory 2' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         ResourceCategory category = resourceManager.getResourceCategoryById(2);
@@ -85,7 +87,7 @@ public class ResourceManagerTest {
     }
 
     @Test(timeout = 15000)
-    public void getResourcesByUserTest() {
+    public void getResourcesByUserTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourcesByUser 6687' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         List<Resource> resources = resourceManager.getResourcesByUser(6687);
@@ -99,7 +101,7 @@ public class ResourceManagerTest {
     }
 
     @Test
-    public void getResourceBuyersCount() throws InvalidCredentialsException, TwoFactorAuthenticationException {
+    public void getResourceBuyersCount() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         User user = UserDebugging.getUser();
         List<Resource> resources = SpigotSite.getAPI().getResourceManager()
                 .getResourcesByUser(user);
@@ -107,7 +109,7 @@ public class ResourceManagerTest {
             if (res instanceof PremiumResource) {
                 System.out.println("\t" + res.getResourceName());
                 try {
-                    List<User> resourceBuyers = SpigotSite
+                    List<Buyer> resourceBuyers = SpigotSite
                             .getAPI()
                             .getResourceManager()
                             .getPremiumResourceBuyers(
@@ -139,7 +141,7 @@ public class ResourceManagerTest {
     }
 
     @Test
-    public void downloadResource() throws IOException {
+    public void downloadResource() throws IOException, ConnectionFailedException {
         System.out.println("Testing 'downloadResource 578' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         Resource res = resourceManager.getResourceById(578);
@@ -149,7 +151,7 @@ public class ResourceManagerTest {
     }
 
     @Test
-    public void downloadPremiumResource() throws InvalidCredentialsException, IOException, TwoFactorAuthenticationException {
+    public void downloadPremiumResource() throws InvalidCredentialsException, IOException, TwoFactorAuthenticationException, ConnectionFailedException {
         System.out.println("Testing 'downloadPremiumResource 1458' ...");
         User user = UserDebugging.getUser();
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
@@ -166,8 +168,8 @@ public class ResourceManagerTest {
         User user = UserDebugging.getUser();
         Resource resource = resourceManager.getResourceById(13370, user);
         PremiumResource premiumResource = (SpigotPremiumResource) resource;
-        List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
-        for (User b : buyers) {
+        List<Buyer> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        for (Buyer b : buyers) {
             if (b.getUsername().equalsIgnoreCase("Maximvdw")) {
                 fail("User already in buyers");
             }
@@ -176,7 +178,7 @@ public class ResourceManagerTest {
         resourceManager.addBuyer(premiumResource, user, "Maximvdw");
         buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
         boolean found = false;
-        for (User b : buyers) {
+        for (Buyer b : buyers) {
             if (b.getUsername().equalsIgnoreCase("Maximvdw")) {
                 found = true;
             }
@@ -188,7 +190,7 @@ public class ResourceManagerTest {
         resourceManager.removeBuyer(premiumResource, user, user.getUserId());
         buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
         found = false;
-        for (User b : buyers) {
+        for (Buyer b : buyers) {
             if (b.getUsername().equalsIgnoreCase("Maximvdw")) {
                 found = true;
             }
@@ -205,14 +207,14 @@ public class ResourceManagerTest {
         User user = UserDebugging.getUser();
         Resource resource = resourceManager.getResourceById(2691, user);
         PremiumResource premiumResource = (SpigotPremiumResource) resource;
-        List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
-        List<User> buyers2 = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        List<Buyer> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        List<Buyer> buyers2 = resourceManager.getPremiumResourceBuyers(premiumResource, user);
 
         if (!buyers.isEmpty())
             assertEquals(buyers.get(0), buyers2.get(0));
 
         System.out.println("Buyers of " + resource.getResourceName() + ":");
-        for (User buyer : buyers) {
+        for (Buyer buyer : buyers) {
             System.out.println("\t" + buyer.getUsername() + " [" + buyer.getUserId() + "]");
         }
 
@@ -254,7 +256,7 @@ public class ResourceManagerTest {
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         User user = UserDebugging.getUser();
 
-        List<User> favoriteBuyers = new ArrayList<User>();
+        List<Buyer> favoriteBuyers = new ArrayList<Buyer>();
 
         // Get your resources
         for (Resource resource : resourceManager.getResourcesByUser(user)) {
@@ -262,14 +264,100 @@ public class ResourceManagerTest {
             if (resource instanceof PremiumResource) {
                 PremiumResource premiumResource = (PremiumResource) resource;
                 // Get the people who bought that plugin
-                List<User> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+                List<Buyer> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+                double price = 0;
+                String currency = "";
+                for (Buyer b : buyers) {
+                    if (b.getPurchasePrice() != -1) {
+                        price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                        currency = b.getPurchaseCurrency();
+                    }
+                }
+                price = (Math.round(price * 100) / 100.);
                 System.out.println(
-                        "The plugin " + premiumResource.getResourceName() + " got " + buyers.size() + " buyers.");
+                        "The plugin " + premiumResource.getResourceName() + " got " + buyers.size() + " buyers.  [" + currency + " " + price + "]");
+                price = 0;
+                for (Buyer b : buyers) {
+                    if (b.getPurchasePrice() != -1) {
+                        if (b.getPurchaseDateTime() == null){
+                            continue;
+                        }
+                        Calendar startDate = Calendar.getInstance();
+                        startDate.clear();
+                        startDate.set(Calendar.YEAR,2014);
+                        Calendar endDate = Calendar.getInstance();
+                        endDate.clear();
+                        endDate.set(Calendar.YEAR,2015);
+                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
+                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                        }
+                    }
+                }
+                price = (Math.round(price * 100) / 100.);
+                System.out.println("\tEarnings in 2014 = " + currency + " " + price);
+                price = 0;
+                for (Buyer b : buyers) {
+                    if (b.getPurchasePrice() != -1) {
+                        if (b.getPurchaseDateTime() == null){
+                            continue;
+                        }
+                        Calendar startDate = Calendar.getInstance();
+                        startDate.clear();
+                        startDate.set(Calendar.YEAR,2015);
+                        Calendar endDate = Calendar.getInstance();
+                        endDate.clear();
+                        endDate.set(Calendar.YEAR,2016);
+                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
+                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                        }
+                    }
+                }
+                price = (Math.round(price * 100) / 100.);
+                System.out.println("\tEarnings in 2015 = " + currency + " " + price);
+                price = 0;
+                for (Buyer b : buyers) {
+                    if (b.getPurchasePrice() != -1) {
+                        if (b.getPurchaseDateTime() == null){
+                            continue;
+                        }
+                        Calendar startDate = Calendar.getInstance();
+                        startDate.clear();
+                        startDate.set(Calendar.YEAR,2016);
+                        Calendar endDate = Calendar.getInstance();
+                        endDate.clear();
+                        endDate.set(Calendar.YEAR,2017);
+                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
+                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                        }
+                    }
+                }
+                price = (Math.round(price * 100) / 100.);
+                System.out.println("\tEarnings in 2016 = " + currency + " " + price);
+                price = 0;
+                for (Buyer b : buyers) {
+                    if (b.getPurchasePrice() != -1) {
+                        if (b.getPurchaseDateTime() == null){
+                            continue;
+                        }
+                        Calendar startDate = Calendar.getInstance();
+                        startDate.clear();
+                        startDate.set(Calendar.YEAR,2017);
+                        Calendar endDate = Calendar.getInstance();
+                        endDate.clear();
+                        endDate.set(Calendar.YEAR,2018);
+                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
+                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                        }
+                    }
+                }
+                price = (Math.round(price * 100) / 100.);
+                System.out.println("\tEarnings in 2017 = " + currency + " " + price);
+
                 if (favoriteBuyers.size() == 0)
                     favoriteBuyers = buyers;
                 else {
-                    List<User> newFavorites = new ArrayList<User>();
-                    for (User buyer : buyers) {
+                    List<Buyer> newFavorites = new ArrayList<Buyer>();
+                    for (Buyer buyer : buyers) {
                         if (favoriteBuyers.contains(buyer))
                             newFavorites.add(buyer);
                     }
