@@ -297,7 +297,7 @@ public class SpigotResourceManager implements ResourceManager {
 
     public List<Buyer> getPremiumResourceBuyers(PremiumResource resource, User user) throws ConnectionFailedException {
         List<Buyer> buyers = new ArrayList<Buyer>();
-
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' hh:mm a");
         SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
         try {
             String url = SpigotSiteCore.getBaseURL() + "resources/" + resource.getResourceId() + "/buyers";
@@ -326,7 +326,6 @@ public class SpigotResourceManager implements ResourceManager {
                     }
                 }
                 try {
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' hh:mm a");
                     Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
                     if (purchaseDateElement != null) {
                         if (purchaseDateElement.hasAttr("data-time")){
