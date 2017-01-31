@@ -86,6 +86,20 @@ public class ResourceManagerTest {
         }
     }
 
+    @Test
+    public void getNewResourcesTest() throws ConnectionFailedException {
+        System.out.println("Testing 'getNewResourcesTest' ...");
+        ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+        List<Resource> resources = resourceManager.getNewResources(35000);
+        assertNotNull(resources);
+        for (Resource resource : resources) {
+            System.out.println(resource.getResourceName() + " [" + resource.getResourceId() + "]" + " "
+                    + resource.getLastVersion() + "\n\tBy " + resource.getAuthor().getUsername() + " ["
+                    + resource.getAuthor().getUserId() + "]");
+            assertNotNull(resource.getAuthor());
+        }
+    }
+
     @Test(timeout = 15000)
     public void getResourcesByUserTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourcesByUser 6687' ...");
@@ -231,6 +245,22 @@ public class ResourceManagerTest {
         for (User buyer : buyers) {
             System.out.println("\t" + buyer.getUsername() + " [" + buyer.getUserId() + "]");
         }
+
+        System.out.println("Testing 'getBuyers 33640' ...");
+        resource = resourceManager.getResourceById(33640, user);
+        premiumResource = (SpigotPremiumResource) resource;
+        buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+        buyers2 = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+
+        if (!buyers.isEmpty())
+            assertEquals(buyers.get(0), buyers2.get(0));
+
+        System.out.println("Buyers of " + resource.getResourceName() + ":");
+        System.out.println("String[] data = {");
+        for (User buyer : buyers) {
+            System.out.print("\"" + buyer.getUserId() + "\",");
+        }
+        System.out.println("}");
     }
 
     @Test//(timeout = 15000)
@@ -279,15 +309,15 @@ public class ResourceManagerTest {
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null){
+                        if (b.getPurchaseDateTime() == null) {
                             continue;
                         }
                         Calendar startDate = Calendar.getInstance();
                         startDate.clear();
-                        startDate.set(Calendar.YEAR,2014);
+                        startDate.set(Calendar.YEAR, 2014);
                         Calendar endDate = Calendar.getInstance();
                         endDate.clear();
-                        endDate.set(Calendar.YEAR,2015);
+                        endDate.set(Calendar.YEAR, 2015);
                         if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
                             price += (Math.round(b.getPurchasePrice() * 100) / 100.);
                         }
@@ -298,15 +328,15 @@ public class ResourceManagerTest {
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null){
+                        if (b.getPurchaseDateTime() == null) {
                             continue;
                         }
                         Calendar startDate = Calendar.getInstance();
                         startDate.clear();
-                        startDate.set(Calendar.YEAR,2015);
+                        startDate.set(Calendar.YEAR, 2015);
                         Calendar endDate = Calendar.getInstance();
                         endDate.clear();
-                        endDate.set(Calendar.YEAR,2016);
+                        endDate.set(Calendar.YEAR, 2016);
                         if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
                             price += (Math.round(b.getPurchasePrice() * 100) / 100.);
                         }
@@ -317,15 +347,15 @@ public class ResourceManagerTest {
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null){
+                        if (b.getPurchaseDateTime() == null) {
                             continue;
                         }
                         Calendar startDate = Calendar.getInstance();
                         startDate.clear();
-                        startDate.set(Calendar.YEAR,2016);
+                        startDate.set(Calendar.YEAR, 2016);
                         Calendar endDate = Calendar.getInstance();
                         endDate.clear();
-                        endDate.set(Calendar.YEAR,2017);
+                        endDate.set(Calendar.YEAR, 2017);
                         if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
                             price += (Math.round(b.getPurchasePrice() * 100) / 100.);
                         }
@@ -333,18 +363,19 @@ public class ResourceManagerTest {
                 }
                 price = (Math.round(price * 100) / 100.);
                 System.out.println("\tEarnings in 2016 = " + currency + " " + price);
+
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null){
+                        if (b.getPurchaseDateTime() == null) {
                             continue;
                         }
                         Calendar startDate = Calendar.getInstance();
                         startDate.clear();
-                        startDate.set(Calendar.YEAR,2017);
+                        startDate.set(Calendar.YEAR, 2017);
                         Calendar endDate = Calendar.getInstance();
                         endDate.clear();
-                        endDate.set(Calendar.YEAR,2018);
+                        endDate.set(Calendar.YEAR, 2018);
                         if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
                             price += (Math.round(b.getPurchasePrice() * 100) / 100.);
                         }

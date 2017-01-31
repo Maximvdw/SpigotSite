@@ -15,7 +15,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -83,22 +82,34 @@ public class SpigotResourceManager implements ResourceManager {
             List<ResourceUpdate> updates = new ArrayList<ResourceUpdate>();
 
             Elements pages = doc.select("div.PageNav nav a");
-            pages.remove(pages.size() - 1);
-            for (Element page : pages) {
-                String newUrl = SpigotSiteCore.getBaseURL() + page.attr("href");
-                HTTPResponse newRes = Request.get(newUrl,
-                        user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
-                Document newDoc = newRes.getDocument();
+            if (pages.size() != 0) {
+                pages.remove(pages.size() - 1);
+                for (Element page : pages) {
+                    String newUrl = SpigotSiteCore.getBaseURL() + page.attr("href");
+                    HTTPResponse newRes = Request.get(newUrl,
+                            user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+                    Document newDoc = newRes.getDocument();
 
-                Elements resourceBlocks = newDoc.select("li.primaryContent");
+                    Elements resourceBlocks = newDoc.select("li.primaryContent");
+                    for (Element resourceBlock : resourceBlocks) {
+                        ResourceUpdate resourceUpdate = new SpigotResourceUpdate();
+                        resourceUpdate.setUpdateID(resourceBlock.attr("id"));
+                        resourceUpdate.setUpdateLink(url + resourceBlock.select("h2.textHeading a").first().attr("href"));
+                        resourceUpdate.setTextHeading(resourceBlock.select("h2.textHeading a").first().text());
+                        resourceUpdate.setArticle(resourceBlock.select("article blockquote").first().text());
+                        //resourceUpdate.setMessageMeta(resourceBlock.select("div.messageMeta span.item a span").first().attr("title"));
+
+                        updates.add(resourceUpdate);
+                    }
+                }
+            } else {
+                Elements resourceBlocks = doc.select("li.primaryContent");
                 for (Element resourceBlock : resourceBlocks) {
                     ResourceUpdate resourceUpdate = new SpigotResourceUpdate();
                     resourceUpdate.setUpdateID(resourceBlock.attr("id"));
                     resourceUpdate.setUpdateLink(url + resourceBlock.select("h2.textHeading a").first().attr("href"));
                     resourceUpdate.setTextHeading(resourceBlock.select("h2.textHeading a").first().text());
                     resourceUpdate.setArticle(resourceBlock.select("article blockquote").first().text());
-                    //resourceUpdate.setMessageMeta(resourceBlock.select("div.messageMeta span.item a span").first().attr("title"));
-
                     updates.add(resourceUpdate);
                 }
             }
@@ -121,6 +132,52 @@ public class SpigotResourceManager implements ResourceManager {
             }
             return resources;
         }
+    }
+
+    public List<Resource> getNewResources(int i) throws ConnectionFailedException {
+        List<Resource> resources = new ArrayList<Resource>();
+        try {
+            // TODO: This is a no no - just for debugging
+            int page = 1;
+            while (true) {
+                String url = SpigotSiteCore.getBaseURL() + "resources/?order=resource_date"
+                        + "&page=" + page;
+                Map<String, String> params = new HashMap<String, String>();
+
+                HTTPResponse res = Request.get(url, SpigotSiteCore.getBaseCookies(), params);
+                Document doc = res.getDocument();
+                Elements resourceBlocks = doc.select("li.resourceListItem");
+                if (resourceBlocks.size() == 0) {
+                    break;
+                }
+                for (Element resourceBlock : resourceBlocks) {
+                    int id = Integer.parseInt(resourceBlock.id().replace("resource-", ""));
+                    Element resourceLink = resourceBlock.select("h3.title").get(0).getElementsByTag("a").get(0);
+                    SpigotResource resource = new SpigotResource(resourceLink.text());
+                    resource.setResourceId(id);
+                    Element username = resourceBlock.select("a.username").first();
+                    Element version = resourceBlock.select("span.version").first();
+                    resource.setLastVersion(version.text());
+                    SpigotUser user = new SpigotUser();
+                    user.setUsername(username.text());
+                    user.setUserId(Integer.parseInt(StringUtils.getStringBetween(username.attr("href"), "\\.(.*?)/")));
+                    resource.setAuthor(user);
+
+                    if (id < i) {
+                        resources.add(resource);
+                        return resources;
+                    }else if (id == i){
+                        return resources;
+                    }else{
+                        resources.add(resource);
+                    }
+                }
+                page++;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return resources;
     }
 
     public List<Resource> getResourcesByUser(User user, User loggedInUser) {
@@ -328,16 +385,16 @@ public class SpigotResourceManager implements ResourceManager {
                 try {
                     Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
                     if (purchaseDateElement != null) {
-                        if (purchaseDateElement.hasAttr("data-time")){
+                        if (purchaseDateElement.hasAttr("data-time")) {
                             Date date = new Date(Long.parseLong(purchaseDateElement.attr("data-time")) * 1000);
                             buyer.setPurchaseDate(date);
-                        }else {
+                        } else {
                             String title = purchaseDateElement.attr("title");
                             Date date = sdf.parse(title);
                             buyer.setPurchaseDate(date);
                         }
                     }
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
                 Elements userNameElements = memberNameBlock.select("a.username");
