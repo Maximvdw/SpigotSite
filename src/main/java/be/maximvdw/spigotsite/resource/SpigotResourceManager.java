@@ -365,47 +365,54 @@ public class SpigotResourceManager implements ResourceManager {
             Document doc = res.getDocument();
             Elements buyersBlocks = doc.select(".memberListItem");
             for (Element buyersBlock : buyersBlocks) {
-                Element memberNameBlock = buyersBlock.select("div.member").first();
-                SpigotBuyer buyer = new SpigotBuyer();
-                Element purchaseElement = buyersBlock.select("div.muted").first();
-                if (purchaseElement != null) {
-                    String purchaseString = purchaseElement.text();
-                    if (purchaseString.contains("Purchased")) {
-                        String regexPattern = "Purchased For: (.*?) ([a-zA-Z][a-zA-Z][a-zA-Z])";
-                        Pattern p = Pattern.compile(regexPattern);
-                        Matcher m = p.matcher(purchaseString);
-                        if (m.find()) {
-                            double price = Double.parseDouble(m.group(1));
-                            String currency = m.group(2);
-                            buyer.setPurchaseCurrency(currency);
-                            buyer.setPurchasePrice(price);
-                        }
-                    }
-                }
                 try {
-                    Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
-                    if (purchaseDateElement != null) {
-                        if (purchaseDateElement.hasAttr("data-time")) {
-                            Date date = new Date(Long.parseLong(purchaseDateElement.attr("data-time")) * 1000);
-                            buyer.setPurchaseDate(date);
-                        } else {
-                            String title = purchaseDateElement.attr("title");
-                            Date date = sdf.parse(title);
-                            buyer.setPurchaseDate(date);
+                    Element memberNameBlock = buyersBlock.select("div.member").first();
+                    SpigotBuyer buyer = new SpigotBuyer();
+                    Element purchaseElement = buyersBlock.select("div.muted").first();
+                    if (purchaseElement != null) {
+                        String purchaseString = purchaseElement.text();
+                        if (purchaseString.contains("Purchased")) {
+                            String regexPattern = "Purchased For: (.*?) ([a-zA-Z][a-zA-Z][a-zA-Z])";
+                            Pattern p = Pattern.compile(regexPattern);
+                            Matcher m = p.matcher(purchaseString);
+                            if (m.find()) {
+                                double price = Double.parseDouble(m.group(1));
+                                String currency = m.group(2);
+                                buyer.setPurchaseCurrency(currency);
+                                buyer.setPurchasePrice(price);
+                            }
                         }
                     }
-                } catch (Exception ex) {
+                    try {
+                        Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
+                        if (purchaseDateElement != null) {
+                            if (purchaseDateElement.hasAttr("data-time")) {
+                                Date date = new Date(Long.parseLong(purchaseDateElement.attr("data-time")) * 1000);
+                                buyer.setPurchaseDate(date);
+                            } else {
+                                String title = purchaseDateElement.attr("title");
+                                Date date = sdf.parse(title);
+                                buyer.setPurchaseDate(date);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    Elements userNameElements = memberNameBlock.select("a.username");
+                    if (userNameElements.size() == 0) {
+                        continue;
+                    }
+                    Element userElement = userNameElements.get(0);
+                    buyer.setUsername(userElement.text());
+                    String userIdStr = StringUtils.getStringBetween(userElement.attr("href"), "\\.(.*?)/");
+                    if (userIdStr.equals("")){
+                        userIdStr = StringUtils.getStringBetween(userElement.attr("href"), "/(.*?)/");
+                    }
+                    buyer.setUserId(Integer.parseInt(userIdStr));
+                    buyers.add(buyer);
+                }catch (Exception ex){
                     ex.printStackTrace();
                 }
-                Elements userNameElements = memberNameBlock.select("a.username");
-                if (userNameElements.size() == 0) {
-                    continue;
-                }
-                Element userElement = userNameElements.get(0);
-                buyer.setUsername(userElement.text());
-                buyer.setUserId(Integer.parseInt(StringUtils.getStringBetween(userElement.attr("href"), "\\.(.*?)/")));
-
-                buyers.add(buyer);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
