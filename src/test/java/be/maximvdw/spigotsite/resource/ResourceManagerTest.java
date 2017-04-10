@@ -175,7 +175,7 @@ public class ResourceManagerTest {
         tmpFile.delete();
     }
 
-    @Test
+    //@Test
     public void addAndRemoveFromBuyers() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
         System.out.println("Testing 'addAndRemoveFromBuyers 13370' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
