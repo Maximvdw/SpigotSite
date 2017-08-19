@@ -466,6 +466,7 @@ public class SpigotResourceManager implements ResourceManager {
     }
 
     public void removeBuyer(PremiumResource premiumResource, User user, int buyer) throws ConnectionFailedException {
+        // Removed by Spigot
         try {
             String url = SpigotSiteCore.getBaseURL() + "resources/" + premiumResource.getResourceId() + "/delete-buyer";
             Map<String, String> params = new HashMap<String, String>();

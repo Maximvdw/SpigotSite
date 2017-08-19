@@ -39,7 +39,8 @@ public class HTTPUnitRequest {
             InputStream stream = null;
             Page page = webClient.getPage(wr);
             if (page instanceof HtmlPage)
-                if (((HtmlPage) page).asXml().contains("DDoS protection by CloudFlare")) {
+                System.out.println(((HtmlPage) page).asXml());
+                if (((HtmlPage) page).asXml().contains("DDoS protection by Cloudflare")) {
                     // DDOS protection
                     try {
                         Thread.sleep(9000);
@@ -73,7 +74,7 @@ public class HTTPUnitRequest {
             wr.setRequestParameters(paramsPair);
             Page page = webClient.getPage(wr);
             if (page instanceof HtmlPage)
-                if (((HtmlPage) page).asXml().contains("DDoS protection by CloudFlare")) {
+                if (((HtmlPage) page).asXml().contains("DDoS protection by Cloudflare")) {
                     // DDOS protection
                     try {
                         Thread.sleep(9000);
@@ -131,7 +132,7 @@ public class HTTPUnitRequest {
             wr.setRequestParameters(paramsPair);
             Page page = webClient.getPage(wr);
             if (page instanceof HtmlPage)
-                if (((HtmlPage) page).asXml().contains("DDoS protection by CloudFlare")) {
+                if (((HtmlPage) page).asXml().contains("DDoS protection by Cloudflare")) {
                     // DDOS protection
                     try {
                         Thread.sleep(9000);

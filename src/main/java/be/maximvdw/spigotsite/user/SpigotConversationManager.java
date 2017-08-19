@@ -69,7 +69,12 @@ public class SpigotConversationManager implements ConversationManager {
             Element username = conversationBlock.select("a.username").first();
             SpigotUser author = new SpigotUser();
             author.setUsername(username.text());
-            author.setUserId(Integer.parseInt(StringUtils.getStringBetween(username.attr("href"), "\\.(.*?)/")));
+            String userIdStr = StringUtils.getStringBetween(username.attr("href"), "\\.(.*?)/");
+            if (userIdStr.equals("")) {
+                // some strange name
+                userIdStr = StringUtils.getStringBetween(username.attr("href"), "members/(.*?)/");
+            }
+            author.setUserId(Integer.parseInt(userIdStr));
             conversation.setAuthor(author);
 
             username = conversationBlock.select("div.listBlock.lastPost > dl > dt > span > a").first();
@@ -84,6 +89,7 @@ public class SpigotConversationManager implements ConversationManager {
                 String participantUsername = participantSpan.text();
                 String participantHref = participantSpan.attr("href");
                 String participantIdStr = participantHref.substring(participantHref.lastIndexOf(".") + 1, participantHref.lastIndexOf("/"));
+                participantIdStr =participantIdStr.replace("members","").replace("/","");
                 int participantId = Integer.parseInt(participantIdStr);
                 SpigotUser participant = new SpigotUser();
                 participant.setUsername(participantUsername);
@@ -211,7 +217,7 @@ public class SpigotConversationManager implements ConversationManager {
 
     public Conversation createConversation(User user, String recipient, String title, String body, boolean locked,
                                            boolean invite) throws SpamWarningException {
-        return createConversation(user,recipient,title,body,locked,invite,false);
+        return createConversation(user, recipient, title, body, locked, invite, false);
     }
 
 
@@ -219,7 +225,7 @@ public class SpigotConversationManager implements ConversationManager {
                                            boolean invite, boolean sticky) throws SpamWarningException {
         Set<String> recipients = new HashSet<String>();
         recipients.add(recipient);
-        return createConversation(user,recipients,title,body,locked,invite,sticky);
+        return createConversation(user, recipients, title, body, locked, invite, sticky);
     }
 
 

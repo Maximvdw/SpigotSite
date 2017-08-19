@@ -30,7 +30,7 @@ public class SpigotSiteCore implements SpigotSiteAPI {
 	private static Map<String, String> baseCookies = new HashMap<String, String>();
 	private static boolean firstStart = true;
 	private static String baseURL = "https://www.spigotmc.org/";
-	private static int rateLimitTimeout = 2000;
+	private static int rateLimitTimeout = 0;
 
 	public SpigotSiteCore(Map<String,String> baseCookies) {
         // Set managers

@@ -62,7 +62,7 @@ public class ConversationManagerTest {
         for (Conversation conv : conversations) {
             if (conv.isUnread()) {
                 System.out.println("Unread conversation: " + conv.getTitle() + " by " + conv.getAuthor().getUsername());
-               // conv.markAsRead(user);
+                //conv.markAsRead(user);
             }
         }
     }

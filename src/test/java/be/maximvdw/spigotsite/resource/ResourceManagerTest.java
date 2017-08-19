@@ -155,12 +155,16 @@ public class ResourceManagerTest {
     }
 
     @Test
-    public void downloadResource() throws IOException, ConnectionFailedException {
+    public void downloadResource() throws Exception {
         System.out.println("Testing 'downloadResource 578' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
         Resource res = resourceManager.getResourceById(578);
         File tmpFile = File.createTempFile("resource-", ".jar");
         res.downloadResource(null, tmpFile);
+        System.out.println(tmpFile.length());
+        if (tmpFile.length() < 5000){
+            throw new Exception("File size is wrong!");
+        }
         tmpFile.delete();
     }
 
