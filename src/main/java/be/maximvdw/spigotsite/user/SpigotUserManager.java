@@ -126,6 +126,8 @@ public class SpigotUserManager implements UserManager {
             return spigotUser;
         } catch (TwoFactorAuthenticationException ex) {
             throw ex;
+        } catch (InvalidCredentialsException ex) {
+            throw ex;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
