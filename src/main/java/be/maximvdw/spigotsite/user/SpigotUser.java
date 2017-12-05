@@ -36,6 +36,10 @@ public class SpigotUser implements User {
         setUsername(username);
     }
 
+    public SpigotUser(int id) {
+        setUserId(id);
+    }
+
     public int getUserId() {
         return id;
     }
@@ -90,14 +94,21 @@ public class SpigotUser implements User {
             return false;
         }
         User user = (User) obj;
-        if (user.getUserId() != 0) {
-            if (user.getUserId() == getUserId()
-                    && user.getUsername().equalsIgnoreCase(getUsername()))
+        if (user.getUserId() != 0 && getUserId() != 0) {
+            if (user.getUserId() == getUserId()) {
                 return true;
+            }
         } else if (user.getUsername().equalsIgnoreCase(getUsername())) {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (username != null ? username.hashCode() : 0);
+        return result;
     }
 
     public String getToken() {

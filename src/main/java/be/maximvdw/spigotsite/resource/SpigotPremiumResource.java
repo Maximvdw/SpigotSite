@@ -6,14 +6,14 @@ import be.maximvdw.spigotsite.api.resource.Buyer;
 import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.user.User;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 public class SpigotPremiumResource extends SpigotResource implements
         PremiumResource {
     private double price = 0.0;
-    private Set<Buyer> buyers = new HashSet<Buyer>();
+    private List<Buyer> buyers = new ArrayList<Buyer>();
 
     public double getPrice() {
         return price;
@@ -33,11 +33,11 @@ public class SpigotPremiumResource extends SpigotResource implements
 
     }
 
-    public Set<Buyer> getBuyers() {
+    public List<Buyer> getBuyers() {
         return buyers;
     }
 
-    public void setBuyers(Set<Buyer> users) {
+    public void setBuyers(List<Buyer> users) {
         this.buyers = users;
     }
 
@@ -68,7 +68,27 @@ public class SpigotPremiumResource extends SpigotResource implements
     }
 
     public boolean isBuyer(User user) {
-        return buyers.contains(user);
+        for (Buyer buyer : buyers) {
+            if (buyer.equals(user))
+                return true;
+        }
+        return false;
+    }
+
+    public Buyer getBuyerByName(String s) {
+        for (Buyer buyer : buyers) {
+            if (buyer.getUsername().equalsIgnoreCase(s))
+                return buyer;
+        }
+        return null;
+    }
+
+    public Buyer getBuyerByUserId(int i) {
+        for (Buyer buyer : buyers) {
+            if (buyer.getUserId() == i)
+                return buyer;
+        }
+        return null;
     }
 
 }

@@ -352,8 +352,8 @@ public class SpigotResourceManager implements ResourceManager {
         return null;
     }
 
-    public Set<Buyer> getPremiumResourceBuyers(PremiumResource resource, User user) throws ConnectionFailedException {
-        Set<Buyer> buyers = new HashSet<Buyer>();
+    public List<Buyer> getPremiumResourceBuyers(PremiumResource resource, User user) throws ConnectionFailedException {
+        List<Buyer> buyers = new ArrayList<Buyer>();
         SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' hh:mm a",Locale.ENGLISH);
         SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
         try {
