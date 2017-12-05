@@ -90,7 +90,7 @@ public class ResourceManagerTest {
     public void getNewResourcesTest() throws ConnectionFailedException {
         System.out.println("Testing 'getNewResourcesTest' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
-        List<Resource> resources = resourceManager.getNewResources(35000);
+        List<Resource> resources = resourceManager.getNewResources(50000);
         assertNotNull(resources);
         for (Resource resource : resources) {
             System.out.println(resource.getResourceName() + " [" + resource.getResourceId() + "]" + " "

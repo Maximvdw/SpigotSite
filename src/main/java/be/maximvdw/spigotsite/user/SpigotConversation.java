@@ -1,5 +1,6 @@
 package be.maximvdw.spigotsite.user;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,7 +11,7 @@ import be.maximvdw.spigotsite.api.exceptions.SpamWarningException;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 
-public class SpigotConversation implements Conversation {
+public class SpigotConversation implements Conversation, Serializable {
     private User author = null;
     private List<User> participants = new ArrayList<User>();
     private String title = "";

@@ -13,16 +13,13 @@ import be.maximvdw.spigotsite.user.SpigotUser;
 import org.jsoup.Connection.Response;
 import org.jsoup.Jsoup;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.List;
 
-public class SpigotResource implements Resource {
+public class SpigotResource implements Resource, Serializable {
     private int id = 0;
     private String name = "";
     private String version = "";

@@ -1,5 +1,6 @@
 package be.maximvdw.spigotsite.user;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,7 @@ import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserStatistics;
 
-public class SpigotUser implements User {
+public class SpigotUser implements User, Serializable {
     private int id = 0;
     private String username = "";
     private Map<String, String> cookies = new HashMap<String, String>();
