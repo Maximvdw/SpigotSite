@@ -90,10 +90,14 @@ public class SpigotUser implements User {
             return false;
         }
         User user = (User) obj;
-        if (user.getUserId() != getUserId()
-                && (!user.getUsername().equals(getUsername())))
-            return false;
-        return true;
+        if (user.getUserId() != 0) {
+            if (user.getUserId() == getUserId()
+                    && user.getUsername().equalsIgnoreCase(getUsername()))
+                return true;
+        } else if (user.getUsername().equalsIgnoreCase(getUsername())) {
+            return true;
+        }
+        return false;
     }
 
     public String getToken() {

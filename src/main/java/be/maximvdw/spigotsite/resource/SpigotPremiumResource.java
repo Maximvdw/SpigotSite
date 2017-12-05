@@ -1,18 +1,19 @@
 package be.maximvdw.spigotsite.resource;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.resource.Buyer;
 import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.user.User;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class SpigotPremiumResource extends SpigotResource implements
         PremiumResource {
     private double price = 0.0;
-    private List<Buyer> buyers = new ArrayList<Buyer>();
+    private Set<Buyer> buyers = new HashSet<Buyer>();
 
     public double getPrice() {
         return price;
@@ -32,11 +33,11 @@ public class SpigotPremiumResource extends SpigotResource implements
 
     }
 
-    public List<Buyer> getBuyers() {
+    public Set<Buyer> getBuyers() {
         return buyers;
     }
 
-    public void setBuyers(List<Buyer> users) {
+    public void setBuyers(Set<Buyer> users) {
         this.buyers = users;
     }
 
@@ -64,6 +65,10 @@ public class SpigotPremiumResource extends SpigotResource implements
 
     public void addBuyers(User user, String[] usernames) throws ConnectionFailedException {
         addBuyers(this, user, usernames);
+    }
+
+    public boolean isBuyer(User user) {
+        return buyers.contains(user);
     }
 
 }
