@@ -162,7 +162,7 @@ public class ResourceManagerTest {
         File tmpFile = File.createTempFile("resource-", ".jar");
         res.downloadResource(null, tmpFile);
         System.out.println(tmpFile.length());
-        if (tmpFile.length() < 5000){
+        if (tmpFile.length() < 5000) {
             throw new Exception("File size is wrong!");
         }
         tmpFile.delete();
@@ -285,6 +285,28 @@ public class ResourceManagerTest {
     }
 
     @Test
+    public void getDuplicateBuyers() throws TwoFactorAuthenticationException, ConnectionFailedException, InvalidCredentialsException {
+        ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
+        User user = UserDebugging.getUser();
+        // Get your resources
+        for (Resource resource : resourceManager.getResourcesByUser(user)) {
+            // Check if the resource is premium
+            if (resource instanceof PremiumResource) {
+                PremiumResource premiumResource = (PremiumResource) resource;
+                // Get the people who bought that plugin
+                List<Buyer> buyers = resourceManager.getPremiumResourceBuyers(premiumResource, user);
+                List<Buyer> checked = new ArrayList<Buyer>();
+                for (Buyer b : buyers) {
+                    if (checked.contains(b)) {
+                        System.out.println("Duplicate buyer: " + b.getUsername() + " in " + resource.getResourceName());
+                    }
+                    checked.add(b);
+                }
+            }
+        }
+    }
+
+    @Test
     public void getTopBuyers() throws InvalidCredentialsException, ConnectionFailedException, TwoFactorAuthenticationException {
         System.out.println("Testing 'get the buyers that bought all my plugins'");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
@@ -293,6 +315,8 @@ public class ResourceManagerTest {
         List<Buyer> favoriteBuyers = new ArrayList<Buyer>();
 
         // Get your resources
+
+        double totalPrice = 0;
         for (Resource resource : resourceManager.getResourcesByUser(user)) {
             // Check if the resource is premium
             if (resource instanceof PremiumResource) {
@@ -329,6 +353,7 @@ public class ResourceManagerTest {
                 }
                 price = (Math.round(price * 100) / 100.);
                 System.out.println("\tEarnings in 2014 = " + currency + " " + price);
+                totalPrice += price;
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
@@ -348,6 +373,7 @@ public class ResourceManagerTest {
                 }
                 price = (Math.round(price * 100) / 100.);
                 System.out.println("\tEarnings in 2015 = " + currency + " " + price);
+                totalPrice += price;
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
@@ -367,7 +393,7 @@ public class ResourceManagerTest {
                 }
                 price = (Math.round(price * 100) / 100.);
                 System.out.println("\tEarnings in 2016 = " + currency + " " + price);
-
+                totalPrice += price;
                 price = 0;
                 for (Buyer b : buyers) {
                     if (b.getPurchasePrice() != -1) {
@@ -387,7 +413,27 @@ public class ResourceManagerTest {
                 }
                 price = (Math.round(price * 100) / 100.);
                 System.out.println("\tEarnings in 2017 = " + currency + " " + price);
-
+                totalPrice += price;
+                price = 0;
+                for (Buyer b : buyers) {
+                    if (b.getPurchasePrice() != -1) {
+                        if (b.getPurchaseDateTime() == null) {
+                            continue;
+                        }
+                        Calendar startDate = Calendar.getInstance();
+                        startDate.clear();
+                        startDate.set(Calendar.YEAR, 2018);
+                        Calendar endDate = Calendar.getInstance();
+                        endDate.clear();
+                        endDate.set(Calendar.YEAR, 2019);
+                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
+                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                        }
+                    }
+                }
+                price = (Math.round(price * 100) / 100.);
+                System.out.println("\tEarnings in 2018 = " + currency + " " + price);
+                totalPrice += price;
                 if (favoriteBuyers.size() == 0)
                     favoriteBuyers = buyers;
                 else {
@@ -400,6 +446,9 @@ public class ResourceManagerTest {
                 }
             }
         }
+
+
+        System.out.println("Total earnings: USD " + (Math.round(totalPrice * 100) / 100.));
 
         // Your favorite buyers
         System.out.println("People who bought all your plugins:");

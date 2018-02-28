@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import be.maximvdw.spigotsite.api.SpigotSiteAPI;
+import be.maximvdw.spigotsite.api.forum.ProfilePost;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
@@ -172,6 +174,10 @@ public class SpigotUser implements User, Serializable {
 
     public boolean hasTwoFactorAuthentication() {
         return totpSecret != null;
+    }
+
+    public List<ProfilePost> getProfilePosts(User user, int i) throws ConnectionFailedException {
+        return SpigotSite.getAPI().getUserManager().getProfilePosts(user,this,i);
     }
 
     public void setLastActivity(String lastActivity) {

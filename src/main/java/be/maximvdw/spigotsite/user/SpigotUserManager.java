@@ -1,11 +1,15 @@
 package be.maximvdw.spigotsite.user;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
+import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.forum.ProfilePost;
+import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.UserRank;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
 import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
+import be.maximvdw.spigotsite.forum.SpigotProfilePost;
 import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.utils.StringUtils;
@@ -15,6 +19,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
@@ -297,6 +302,62 @@ public class SpigotUserManager implements UserManager {
 
         }
         return users;
+    }
+
+    public List<ProfilePost> getProfilePosts(User authenticatedUser, User profile, int count) throws ConnectionFailedException {
+        List<ProfilePost> profilePosts = new ArrayList<ProfilePost>();
+        try {
+            String url = SpigotSiteCore.getBaseURL() + "members/" + profile.getUserId();
+            Map<String, String> params = new HashMap<String, String>();
+
+            HTTPResponse res = Request.get(url, ((SpigotUser) authenticatedUser).getCookies(), params);
+            // Handle two step
+            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) authenticatedUser);
+
+            ((SpigotUser) authenticatedUser).getCookies().putAll(res.getCookies());
+
+            Document doc = res.getDocument();
+            int pages = (int) Math.ceil(count / 20.);
+
+            profilePosts.addAll(loadProfilePostsOnPage(doc));
+            for (int i = 2; i <= pages; i++) {
+                url = SpigotSiteCore.getBaseURL() + "members/" + profile.getUserId() + "?page=" + i;
+                res = Request.get(url, ((SpigotUser) authenticatedUser).getCookies(), params);
+
+                doc = res.getDocument();
+                profilePosts.addAll(loadProfilePostsOnPage(doc));
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return profilePosts;
+    }
+
+
+    private List<ProfilePost> loadProfilePostsOnPage(Document doc) {
+        List<ProfilePost> profilePosts = new ArrayList<ProfilePost>();
+        Elements profilePostBlocks = doc.select("li.messageSimple");
+        for (Element profilePostBlock : profilePostBlocks) {
+            SpigotProfilePost profilePost = new SpigotProfilePost();
+            int id = Integer.parseInt(profilePostBlock.id().replace("profile-post-", ""));
+
+            Element username = profilePostBlock.select("a.username").first();
+            SpigotUser author = new SpigotUser();
+            author.setUsername(username.text());
+            String userIdStr = StringUtils.getStringBetween(username.attr("href"), "\\.(.*?)/");
+            if (userIdStr.equals("")) {
+                // some strange name
+                userIdStr = StringUtils.getStringBetween(username.attr("href"), "members/(.*?)/");
+            }
+            author.setUserId(Integer.parseInt(userIdStr));
+            profilePost.setAuthor(author);
+
+            profilePost.setMessage(profilePostBlock.select("blockquote").html());
+
+            profilePosts.add(profilePost);
+        }
+        return profilePosts;
     }
 
     /**

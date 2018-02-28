@@ -4,6 +4,7 @@ import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.UserDebugging;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.forum.ProfilePost;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
 import be.maximvdw.spigotsite.api.user.exceptions.InvalidCredentialsException;
@@ -94,6 +95,16 @@ public class UserManagerTest {
 
 	public void getUserRanksTest() {
 
+	}
+
+	@Test
+	public void getProfilePostsTest() throws TwoFactorAuthenticationException, ConnectionFailedException, InvalidCredentialsException {
+		User user = UserDebugging.getUser();
+		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
+		List<ProfilePost> posts = userManager.getProfilePosts(user,user,10);
+		for (ProfilePost post : posts){
+			System.out.println(post.getAuthor().getUsername() + ": " + post.getMessage());
+		}
 	}
 
 	@Test(timeout = 60000)
