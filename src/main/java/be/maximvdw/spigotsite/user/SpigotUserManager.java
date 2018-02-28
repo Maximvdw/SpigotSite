@@ -353,7 +353,7 @@ public class SpigotUserManager implements UserManager {
             author.setUserId(Integer.parseInt(userIdStr));
             profilePost.setAuthor(author);
 
-            profilePost.setMessage(profilePostBlock.select("blockquote").html());
+            profilePost.setMessage(profilePostBlock.select("blockquote").first().html());
 
             profilePosts.add(profilePost);
         }
