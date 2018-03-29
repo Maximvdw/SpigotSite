@@ -103,7 +103,7 @@ public class HTTPUnitRequest {
                 resultCookies.put(cookie.getName(), cookie.getValue());
             }
             response.setCookies(resultCookies);
-            webClient.closeAllWindows();
+            webClient.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -173,7 +173,7 @@ public class HTTPUnitRequest {
                 resultCookies.put(cookie.getName(), cookie.getValue());
             }
             response.setCookies(resultCookies);
-            webClient.closeAllWindows();
+            webClient.close();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
