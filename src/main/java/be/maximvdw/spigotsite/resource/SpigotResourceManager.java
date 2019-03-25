@@ -194,6 +194,7 @@ public class SpigotResourceManager implements ResourceManager {
             int page = 0;
             while (true) {
                 String url = SpigotSiteCore.getBaseURL() + "resources/authors/" + userid + (page > 0 ? "?page=" + (page + 1) : "");
+                page++;
                 Map<String, String> params = new HashMap<String, String>();
                 HTTPResponse res = Request.get(url,
                         loggedInUser == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) loggedInUser).getCookies(),
