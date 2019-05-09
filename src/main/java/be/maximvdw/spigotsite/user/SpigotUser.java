@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import be.maximvdw.spigotsite.api.SpigotSiteAPI;
+import be.maximvdw.spigotsite.api.exceptions.PermissionException;
 import be.maximvdw.spigotsite.api.forum.ProfilePost;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
@@ -176,7 +177,7 @@ public class SpigotUser implements User, Serializable {
         return totpSecret != null;
     }
 
-    public List<ProfilePost> getProfilePosts(User user, int i) throws ConnectionFailedException {
+    public List<ProfilePost> getProfilePosts(User user, int i) throws ConnectionFailedException, PermissionException {
         return SpigotSite.getAPI().getUserManager().getProfilePosts(user,this,i);
     }
 

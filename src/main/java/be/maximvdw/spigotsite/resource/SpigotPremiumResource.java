@@ -2,6 +2,7 @@ package be.maximvdw.spigotsite.resource;
 
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.exceptions.PermissionException;
 import be.maximvdw.spigotsite.api.resource.Buyer;
 import be.maximvdw.spigotsite.api.resource.PremiumResource;
 import be.maximvdw.spigotsite.api.user.User;
@@ -45,7 +46,7 @@ public class SpigotPremiumResource extends SpigotResource implements
         SpigotSite.getAPI().getResourceManager().addBuyer(this, user, buyer);
     }
 
-    public void addBuyer(User user, int userid) throws ConnectionFailedException {
+    public void addBuyer(User user, int userid) throws ConnectionFailedException,PermissionException {
         SpigotSite.getAPI().getResourceManager().addBuyer(this, user, userid);
     }
 

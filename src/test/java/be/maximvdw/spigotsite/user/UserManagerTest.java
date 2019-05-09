@@ -4,6 +4,7 @@ import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.UserDebugging;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.exceptions.PermissionException;
 import be.maximvdw.spigotsite.api.forum.ProfilePost;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.api.user.UserManager;
@@ -61,7 +62,7 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getUserByIdTest() throws ConnectionFailedException {
+	public void getUserByIdTest() throws ConnectionFailedException, PermissionException {
 		System.out.println("Testing 'getUserById 1' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.getUserById(1);
@@ -72,7 +73,7 @@ public class UserManagerTest {
 	}
 
 	@Test(timeout = 15000)
-	public void getUserActivityTest() throws ConnectionFailedException {
+	public void getUserActivityTest() throws ConnectionFailedException, PermissionException {
 		System.out.println("Testing 'getUserActivityTest' ...");
 		UserManager userManager = SpigotSite.getAPI().getUserManager();
 		User user = userManager.getUserById(6687);
@@ -102,6 +103,17 @@ public class UserManagerTest {
 		User user = UserDebugging.getUser();
 		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
 		List<ProfilePost> posts = userManager.getProfilePosts(user,user,10);
+		for (ProfilePost post : posts){
+			System.out.println(post.getAuthor().getUsername() + ": " + post.getMessage());
+		}
+	}
+
+	@Test(expected = PermissionException.class)
+	public void getProfilePostsErrorTest() throws TwoFactorAuthenticationException, ConnectionFailedException, InvalidCredentialsException, PermissionException {
+		User user = UserDebugging.getUser();
+		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
+		User testUser = userManager.getUserByName("Thinkofdead");
+		List<ProfilePost> posts = userManager.getProfilePosts(user,testUser,10);
 		for (ProfilePost post : posts){
 			System.out.println(post.getAuthor().getUsername() + ": " + post.getMessage());
 		}

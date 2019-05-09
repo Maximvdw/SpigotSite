@@ -2,6 +2,7 @@ package be.maximvdw.spigotsite.user;
 
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.exceptions.PermissionException;
 import be.maximvdw.spigotsite.api.forum.ProfilePost;
 import be.maximvdw.spigotsite.api.user.Conversation;
 import be.maximvdw.spigotsite.api.user.User;
@@ -30,11 +31,11 @@ import java.util.Map;
 
 public class SpigotUserManager implements UserManager {
 
-    public User getUserById(int userid) {
+    public User getUserById(int userid) throws PermissionException{
         return getUserById(userid, null);
     }
 
-    public User getUserById(int userid, User user) {
+    public User getUserById(int userid, User user) throws PermissionException {
         try {
             String url = SpigotSiteCore.getBaseURL() + "members/" + userid;
             Map<String, String> params = new HashMap<String, String>();
@@ -45,6 +46,9 @@ public class SpigotUserManager implements UserManager {
             res = handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
             SpigotUser reqUser = new SpigotUser();
+            if (doc.getElementsByTag("title").first().text().startsWith("Error")) {
+                throw new PermissionException();
+            }
             reqUser.setUsername(doc.select("h1.username").get(0).text());
             reqUser.setUserId(userid);
             if (doc.select("dl.lastActivity").size() != 0)
@@ -52,6 +56,8 @@ public class SpigotUserManager implements UserManager {
                     reqUser.setLastActivity(doc.select("dl.lastActivity")
                             .get(0).select("dd").get(0).text());
             return reqUser;
+        } catch (PermissionException ex) {
+            throw ex;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -317,6 +323,9 @@ public class SpigotUserManager implements UserManager {
             ((SpigotUser) authenticatedUser).getCookies().putAll(res.getCookies());
 
             Document doc = res.getDocument();
+            if (doc.getElementsByTag("title").first().text().startsWith("Error")) {
+                throw new PermissionException();
+            }
             int pages = (int) Math.ceil(count / 20.);
 
             profilePosts.addAll(loadProfilePostsOnPage(doc));

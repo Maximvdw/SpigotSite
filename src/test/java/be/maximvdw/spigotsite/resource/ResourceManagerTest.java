@@ -334,106 +334,29 @@ public class ResourceManagerTest {
                 price = (Math.round(price * 100) / 100.);
                 System.out.println(
                         "The plugin " + premiumResource.getResourceName() + " got " + buyers.size() + " buyers.  [" + currency + " " + price + "]");
-                price = 0;
-                for (Buyer b : buyers) {
-                    if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null) {
-                            continue;
-                        }
-                        Calendar startDate = Calendar.getInstance();
-                        startDate.clear();
-                        startDate.set(Calendar.YEAR, 2014);
-                        Calendar endDate = Calendar.getInstance();
-                        endDate.clear();
-                        endDate.set(Calendar.YEAR, 2015);
-                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
-                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
-                        }
-                    }
-                }
-                price = (Math.round(price * 100) / 100.);
-                System.out.println("\tEarnings in 2014 = " + currency + " " + price);
-                totalPrice += price;
-                price = 0;
-                for (Buyer b : buyers) {
-                    if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null) {
-                            continue;
-                        }
-                        Calendar startDate = Calendar.getInstance();
-                        startDate.clear();
-                        startDate.set(Calendar.YEAR, 2015);
-                        Calendar endDate = Calendar.getInstance();
-                        endDate.clear();
-                        endDate.set(Calendar.YEAR, 2016);
-                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
-                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                for (int year = 2014 ; year < 2020 ; year++){
+                    price = 0;
+                    for (Buyer b : buyers) {
+                        if (b.getPurchasePrice() != -1) {
+                            if (b.getPurchaseDateTime() == null) {
+                                continue;
+                            }
+                            Calendar startDate = Calendar.getInstance();
+                            startDate.clear();
+                            startDate.set(Calendar.YEAR, year);
+                            Calendar endDate = Calendar.getInstance();
+                            endDate.clear();
+                            endDate.set(Calendar.YEAR, year+1);
+                            if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
+                                price += (Math.round(b.getPurchasePrice() * 100) / 100.);
+                            }
                         }
                     }
+                    price = (Math.round(price * 100) / 100.);
+                    System.out.println("\tEarnings in " + year + " = " + currency + " " + price);
+                    totalPrice += price;
                 }
-                price = (Math.round(price * 100) / 100.);
-                System.out.println("\tEarnings in 2015 = " + currency + " " + price);
-                totalPrice += price;
-                price = 0;
-                for (Buyer b : buyers) {
-                    if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null) {
-                            continue;
-                        }
-                        Calendar startDate = Calendar.getInstance();
-                        startDate.clear();
-                        startDate.set(Calendar.YEAR, 2016);
-                        Calendar endDate = Calendar.getInstance();
-                        endDate.clear();
-                        endDate.set(Calendar.YEAR, 2017);
-                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
-                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
-                        }
-                    }
-                }
-                price = (Math.round(price * 100) / 100.);
-                System.out.println("\tEarnings in 2016 = " + currency + " " + price);
-                totalPrice += price;
-                price = 0;
-                for (Buyer b : buyers) {
-                    if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null) {
-                            continue;
-                        }
-                        Calendar startDate = Calendar.getInstance();
-                        startDate.clear();
-                        startDate.set(Calendar.YEAR, 2017);
-                        Calendar endDate = Calendar.getInstance();
-                        endDate.clear();
-                        endDate.set(Calendar.YEAR, 2018);
-                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
-                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
-                        }
-                    }
-                }
-                price = (Math.round(price * 100) / 100.);
-                System.out.println("\tEarnings in 2017 = " + currency + " " + price);
-                totalPrice += price;
-                price = 0;
-                for (Buyer b : buyers) {
-                    if (b.getPurchasePrice() != -1) {
-                        if (b.getPurchaseDateTime() == null) {
-                            continue;
-                        }
-                        Calendar startDate = Calendar.getInstance();
-                        startDate.clear();
-                        startDate.set(Calendar.YEAR, 2018);
-                        Calendar endDate = Calendar.getInstance();
-                        endDate.clear();
-                        endDate.set(Calendar.YEAR, 2019);
-                        if (b.getPurchaseDateTime().after(startDate.getTime()) && b.getPurchaseDateTime().before(endDate.getTime())) {
-                            price += (Math.round(b.getPurchasePrice() * 100) / 100.);
-                        }
-                    }
-                }
-                price = (Math.round(price * 100) / 100.);
-                System.out.println("\tEarnings in 2018 = " + currency + " " + price);
-                totalPrice += price;
+
                 if (favoriteBuyers.size() == 0)
                     favoriteBuyers = buyers;
                 else {

@@ -3,6 +3,7 @@ package be.maximvdw.spigotsite.resource;
 import be.maximvdw.spigotsite.SpigotSiteCore;
 import be.maximvdw.spigotsite.api.SpigotSite;
 import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
+import be.maximvdw.spigotsite.api.exceptions.PermissionException;
 import be.maximvdw.spigotsite.api.resource.*;
 import be.maximvdw.spigotsite.api.user.User;
 import be.maximvdw.spigotsite.http.HTTPResponse;
@@ -166,9 +167,9 @@ public class SpigotResourceManager implements ResourceManager {
                     if (id < i) {
                         resources.add(resource);
                         return resources;
-                    }else if (id == i){
+                    } else if (id == i) {
                         return resources;
-                    }else{
+                    } else {
                         resources.add(resource);
                     }
                 }
@@ -354,7 +355,6 @@ public class SpigotResourceManager implements ResourceManager {
 
     public List<Buyer> getPremiumResourceBuyers(PremiumResource resource, User user) throws ConnectionFailedException {
         List<Buyer> buyers = new ArrayList<Buyer>();
-        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' hh:mm a",Locale.ENGLISH);
         SpigotPremiumResource spigotResource = (SpigotPremiumResource) resource;
         try {
             String url = SpigotSiteCore.getBaseURL() + "resources/" + resource.getResourceId() + "/buyers";
@@ -363,56 +363,20 @@ public class SpigotResourceManager implements ResourceManager {
             // Handle two step
             res = SpigotUserManager.handleTwoStep(res, (SpigotUser) user);
             Document doc = res.getDocument();
-            Elements buyersBlocks = doc.select(".memberListItem");
-            for (Element buyersBlock : buyersBlocks) {
-                try {
-                    Element memberNameBlock = buyersBlock.select("div.member").first();
-                    SpigotBuyer buyer = new SpigotBuyer();
-                    Element purchaseElement = buyersBlock.select("div.muted").first();
-                    if (purchaseElement != null) {
-                        String purchaseString = purchaseElement.text();
-                        if (purchaseString.contains("Purchased")) {
-                            String regexPattern = "Purchased For: (.*?) ([a-zA-Z][a-zA-Z][a-zA-Z])";
-                            Pattern p = Pattern.compile(regexPattern);
-                            Matcher m = p.matcher(purchaseString);
-                            if (m.find()) {
-                                double price = Double.parseDouble(m.group(1));
-                                String currency = m.group(2);
-                                buyer.setPurchaseCurrency(currency);
-                                buyer.setPurchasePrice(price);
-                            }
-                        }
-                    }
-                    try {
-                        Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
-                        if (purchaseDateElement != null) {
-                            if (purchaseDateElement.hasAttr("data-time")) {
-                                Date date = new Date(Long.parseLong(purchaseDateElement.attr("data-time")) * 1000);
-                                buyer.setPurchaseDate(date);
-                            } else {
-                                String title = purchaseDateElement.attr("title");
-                                Date date = sdf.parse(title);
-                                buyer.setPurchaseDate(date);
-                            }
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    Elements userNameElements = memberNameBlock.select("a.username");
-                    if (userNameElements.size() == 0) {
-                        continue;
-                    }
-                    Element userElement = userNameElements.get(0);
-                    buyer.setUsername(userElement.text());
-                    String userIdStr = StringUtils.getStringBetween(userElement.attr("href"), "\\.(.*?)/");
-                    if (userIdStr.equals("")){
-                        userIdStr = StringUtils.getStringBetween(userElement.attr("href"), "/(.*?)/");
-                    }
-                    buyer.setUserId(Integer.parseInt(userIdStr));
-                    buyers.add(buyer);
-                }catch (Exception ex){
-                    ex.printStackTrace();
+
+            // Get all available buyer pages
+            Elements pages = doc.select("div.PageNav nav a");
+            if (pages.size() != 0) {
+                pages.remove(pages.size() - 1);
+                for (Element page : pages) {
+                    String newUrl = SpigotSiteCore.getBaseURL() + page.attr("href");
+                    HTTPResponse newRes = Request.get(newUrl,
+                            user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+                    Document newDoc = newRes.getDocument();
+                    buyers.addAll(parseBuyerPage(newDoc));
                 }
+            } else {
+                buyers.addAll(parseBuyerPage(doc));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -421,11 +385,68 @@ public class SpigotResourceManager implements ResourceManager {
         return buyers;
     }
 
+    private List<Buyer> parseBuyerPage(Document doc) {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM d, yyyy 'at' hh:mm a", Locale.ENGLISH);
+        List<Buyer> buyers = new ArrayList<Buyer>();
+        Elements buyersBlocks = doc.select(".memberListItem");
+        for (Element buyersBlock : buyersBlocks) {
+            try {
+                Element memberNameBlock = buyersBlock.select("div.member").first();
+                SpigotBuyer buyer = new SpigotBuyer();
+                Element purchaseElement = buyersBlock.select("div.muted").first();
+                if (purchaseElement != null) {
+                    String purchaseString = purchaseElement.text();
+                    if (purchaseString.contains("Purchased")) {
+                        String regexPattern = "Purchased For: (.*?) ([a-zA-Z][a-zA-Z][a-zA-Z])";
+                        Pattern p = Pattern.compile(regexPattern);
+                        Matcher m = p.matcher(purchaseString);
+                        if (m.find()) {
+                            double price = Double.parseDouble(m.group(1));
+                            String currency = m.group(2);
+                            buyer.setPurchaseCurrency(currency);
+                            buyer.setPurchasePrice(price);
+                        }
+                    }
+                }
+                try {
+                    Element purchaseDateElement = buyersBlock.select(".DateTime.muted").first();
+                    if (purchaseDateElement != null) {
+                        if (purchaseDateElement.hasAttr("data-time")) {
+                            Date date = new Date(Long.parseLong(purchaseDateElement.attr("data-time")) * 1000);
+                            buyer.setPurchaseDate(date);
+                        } else {
+                            String title = purchaseDateElement.attr("title");
+                            Date date = sdf.parse(title);
+                            buyer.setPurchaseDate(date);
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                Elements userNameElements = memberNameBlock.select("a.username");
+                if (userNameElements.size() == 0) {
+                    continue;
+                }
+                Element userElement = userNameElements.get(0);
+                buyer.setUsername(userElement.text());
+                String userIdStr = StringUtils.getStringBetween(userElement.attr("href"), "\\.(.*?)/");
+                if (userIdStr.equals("")) {
+                    userIdStr = StringUtils.getStringBetween(userElement.attr("href"), "/(.*?)/");
+                }
+                buyer.setUserId(Integer.parseInt(userIdStr));
+                buyers.add(buyer);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return buyers;
+    }
+
     public void addBuyer(PremiumResource resource, User user, User buyer) throws ConnectionFailedException {
         addBuyer(resource, user, buyer.getUsername());
     }
 
-    public void addBuyer(PremiumResource resource, User user, int userid) throws ConnectionFailedException {
+    public void addBuyer(PremiumResource resource, User user, int userid) throws ConnectionFailedException, PermissionException {
         User buyer = SpigotSite.getAPI().getUserManager().getUserById(userid);
         addBuyer(resource, user, buyer);
     }
