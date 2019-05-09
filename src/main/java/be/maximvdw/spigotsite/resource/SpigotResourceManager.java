@@ -207,7 +207,7 @@ public class SpigotResourceManager implements ResourceManager {
                         "Resources from (.*?) | SpigotMC - High Performance Minecraft");
                 SpigotUser user = new SpigotUser(username);
                 user.setUserId(userid);
-    
+
                 Elements resourceBlocks = doc.select("li.resourceListItem");
                 if (resourceBlocks.size() < 1) {
                     break;
@@ -215,12 +215,12 @@ public class SpigotResourceManager implements ResourceManager {
                 for (Element resourceBlock : resourceBlocks) {
                     int id = Integer.parseInt(resourceBlock.id().replace("resource-", ""));
                     Element resourceLink = resourceBlock.select("h3.title").get(0).getElementsByTag("a").get(0);
-        
+
                     Element categoryLink = resourceBlock.select("div.resourceDetails").select("a").last();
                     SpigotResource resource = new SpigotResource();
                     if (categoryLink.text().toLowerCase().contains("premium"))
                         resource = new SpigotPremiumResource();
-        
+
                     resource.setResourceName(resourceLink.text());
                     resource.setAuthor(user);
                     resource.setResourceId(id);
@@ -372,18 +372,17 @@ public class SpigotResourceManager implements ResourceManager {
             Document doc = res.getDocument();
 
             // Get all available buyer pages
-            Elements pages = doc.select("div.PageNav nav a");
-            if (pages.size() != 0) {
-                pages.remove(pages.size() - 1);
-                for (Element page : pages) {
-                    String newUrl = SpigotSiteCore.getBaseURL() + page.attr("href");
-                    HTTPResponse newRes = Request.get(newUrl,
-                            user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
-                    Document newDoc = newRes.getDocument();
-                    buyers.addAll(parseBuyerPage(newDoc));
-                }
-            } else {
-                buyers.addAll(parseBuyerPage(doc));
+            Elements pageNav = doc.select("div.PageNav");
+            int pages = 1;
+            if (pageNav.size() != 0){
+               pages = Integer.parseInt(pageNav.attr("data-last"));
+            }
+            for (int i = 1; i <= pages; i++) {
+                String newUrl = url + "?page=" + i;
+                HTTPResponse newRes = Request.get(newUrl,
+                        user == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) user).getCookies(), params);
+                Document newDoc = newRes.getDocument();
+                buyers.addAll(parseBuyerPage(newDoc));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
