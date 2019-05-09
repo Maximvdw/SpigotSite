@@ -192,33 +192,40 @@ public class SpigotResourceManager implements ResourceManager {
     public List<Resource> getResourcesByUser(int userid, User loggedInUser) {
         List<Resource> createdResources = new ArrayList<Resource>();
         try {
-            String url = SpigotSiteCore.getBaseURL() + "resources/authors/" + userid;
-            Map<String, String> params = new HashMap<String, String>();
-            HTTPResponse res = Request.get(url,
-                    loggedInUser == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) loggedInUser).getCookies(),
-                    params);
-            // Handle two step
-            res = SpigotUserManager.handleTwoStep(res, (SpigotUser) loggedInUser);
-            Document doc = res.getDocument();
-            String username = StringUtils.getStringBetween(doc.title(),
-                    "Resources from (.*?) | SpigotMC - High Performance Minecraft");
-            SpigotUser user = new SpigotUser(username);
-            user.setUserId(userid);
-
-            Elements resourceBlocks = doc.select("li.resourceListItem");
-            for (Element resourceBlock : resourceBlocks) {
-                int id = Integer.parseInt(resourceBlock.id().replace("resource-", ""));
-                Element resourceLink = resourceBlock.select("h3.title").get(0).getElementsByTag("a").get(0);
-
-                Element categoryLink = resourceBlock.select("div.resourceDetails").select("a").last();
-                SpigotResource resource = new SpigotResource();
-                if (categoryLink.text().toLowerCase().contains("premium"))
-                    resource = new SpigotPremiumResource();
-
-                resource.setResourceName(resourceLink.text());
-                resource.setAuthor(user);
-                resource.setResourceId(id);
-                createdResources.add(resource);
+            int page = 0;
+            while (true) {
+                String url = SpigotSiteCore.getBaseURL() + "resources/authors/" + userid + (page > 0 ? "?page=" + (page + 1) : "");
+                page++;
+                Map<String, String> params = new HashMap<String, String>();
+                HTTPResponse res = Request.get(url,
+                        loggedInUser == null ? SpigotSiteCore.getBaseCookies() : ((SpigotUser) loggedInUser).getCookies(),
+                        params);
+                // Handle two step
+                res = SpigotUserManager.handleTwoStep(res, (SpigotUser) loggedInUser);
+                Document doc = res.getDocument();
+                String username = StringUtils.getStringBetween(doc.title(),
+                        "Resources from (.*?) | SpigotMC - High Performance Minecraft");
+                SpigotUser user = new SpigotUser(username);
+                user.setUserId(userid);
+    
+                Elements resourceBlocks = doc.select("li.resourceListItem");
+                if (resourceBlocks.size() < 1) {
+                    break;
+                }
+                for (Element resourceBlock : resourceBlocks) {
+                    int id = Integer.parseInt(resourceBlock.id().replace("resource-", ""));
+                    Element resourceLink = resourceBlock.select("h3.title").get(0).getElementsByTag("a").get(0);
+        
+                    Element categoryLink = resourceBlock.select("div.resourceDetails").select("a").last();
+                    SpigotResource resource = new SpigotResource();
+                    if (categoryLink.text().toLowerCase().contains("premium"))
+                        resource = new SpigotPremiumResource();
+        
+                    resource.setResourceName(resourceLink.text());
+                    resource.setAuthor(user);
+                    resource.setResourceId(id);
+                    createdResources.add(resource);
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();
