@@ -108,16 +108,16 @@ public class UserManagerTest {
 		}
 	}
 
-	@Test(expected = PermissionException.class)
-	public void getProfilePostsErrorTest() throws TwoFactorAuthenticationException, ConnectionFailedException, InvalidCredentialsException, PermissionException {
-		User user = UserDebugging.getUser();
-		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
-		User testUser = userManager.getUserByName("Thinkofdead");
-		List<ProfilePost> posts = userManager.getProfilePosts(user,testUser,10);
-		for (ProfilePost post : posts){
-			System.out.println(post.getAuthor().getUsername() + ": " + post.getMessage());
-		}
-	}
+//	@Test(expected = PermissionException.class)
+//	public void getProfilePostsErrorTest() throws TwoFactorAuthenticationException, ConnectionFailedException, InvalidCredentialsException, PermissionException {
+//		User user = UserDebugging.getUser();
+//		SpigotUserManager userManager = ((SpigotUserManager) SpigotSite.getAPI().getUserManager());
+//		User testUser = userManager.getUserByName("Thinkofdead");
+//		List<ProfilePost> posts = userManager.getProfilePosts(user,testUser,10);
+//		for (ProfilePost post : posts){
+//			System.out.println(post.getAuthor().getUsername() + ": " + post.getMessage());
+//		}
+//	}
 
 	@Test(timeout = 60000)
 	public void logInUserTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
