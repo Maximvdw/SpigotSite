@@ -119,19 +119,19 @@ public class UserManagerTest {
 //		}
 //	}
 
-	@Test(timeout = 60000)
-	public void logInUserTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
-		System.out.println("Testing 'authenticate' ...");
-		UserManager userManager = SpigotSite.getAPI().getUserManager();
-		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
-		assertEquals(user.getUsername(), "Maximvdw");
-		System.out.println("Logged in: " + user.getUsername() + " [" + user.getUserId() + "]");
-        if (user.hasTwoFactorAuthentication()){
-            try {
-                Thread.sleep(30000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-	}
+//	@Test(timeout = 60000)
+//	public void logInUserTest() throws InvalidCredentialsException, TwoFactorAuthenticationException, ConnectionFailedException {
+//		System.out.println("Testing 'authenticate' ...");
+//		UserManager userManager = SpigotSite.getAPI().getUserManager();
+//		User user = userManager.authenticate(UserDebugging.username, UserDebugging.password,UserDebugging.totpSecret);
+//		assertEquals(user.getUsername(), "Maximvdw");
+//		System.out.println("Logged in: " + user.getUsername() + " [" + user.getUserId() + "]");
+//        if (user.hasTwoFactorAuthentication()){
+//            try {
+//                Thread.sleep(30000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//	}
 }
