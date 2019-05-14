@@ -95,7 +95,7 @@ public class SpigotResourceManager implements ResourceManager {
                     for (Element resourceBlock : resourceBlocks) {
                         ResourceUpdate resourceUpdate = new SpigotResourceUpdate();
                         resourceUpdate.setUpdateID(resourceBlock.attr("id"));
-                        resourceUpdate.setUpdateLink(url + resourceBlock.select("h2.textHeading a").first().attr("href"));
+                        resourceUpdate.setUpdateLink(SpigotSiteCore.getBaseURL() + resourceBlock.select("h2.textHeading a").first().attr("href"));
                         resourceUpdate.setTextHeading(resourceBlock.select("h2.textHeading a").first().text());
                         resourceUpdate.setArticle(resourceBlock.select("article blockquote").first().text());
                         //resourceUpdate.setMessageMeta(resourceBlock.select("div.messageMeta span.item a span").first().attr("title"));
