@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.gargoylesoftware.htmlunit.BrowserVersion;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
@@ -23,8 +24,7 @@ public class JsoupRequest {
                     .ignoreContentType(true)
                     .ignoreHttpErrors(true)
                     .data(request.getParams())
-                    .userAgent(
-                            "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
+                    .userAgent(BrowserVersion.CHROME.getUserAgent())
                     .execute();
             Document doc = res.parse();
             if (doc.html().contains("DDoS protection by CloudFlare")) {
@@ -55,8 +55,7 @@ public class JsoupRequest {
                     .maxBodySize(0)
                     .data(request.getParams())
                     .ignoreContentType(true)
-                    .userAgent(
-                            "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/44.0.2403.107 Safari/537.36")
+                    .userAgent(BrowserVersion.CHROME.getUserAgent())
                     .execute();
             Document doc = res.parse();
             if (doc.html().contains("DDoS protection by CloudFlare")) {

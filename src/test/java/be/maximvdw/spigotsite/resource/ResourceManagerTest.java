@@ -61,7 +61,7 @@ public class ResourceManagerTest {
         assertNotNull(categories);
     }
 
-    @Test(timeout = 15000)
+    @Test
     public void getResourceCategoryByIdTest() throws ConnectionFailedException {
         System.out.println("Testing 'getResourceCategoryById 2' ...");
         ResourceManager resourceManager = SpigotSite.getAPI().getResourceManager();
