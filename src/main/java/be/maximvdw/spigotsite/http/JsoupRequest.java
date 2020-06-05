@@ -8,7 +8,6 @@ import com.gargoylesoftware.htmlunit.BrowserVersion;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.Connection.Method;
-import org.jsoup.UnsupportedMimeTypeException;
 import org.jsoup.nodes.Document;
 
 public class JsoupRequest {
@@ -27,7 +26,7 @@ public class JsoupRequest {
                     .userAgent(BrowserVersion.CHROME.getUserAgent())
                     .execute();
             Document doc = res.parse();
-            if (doc.html().contains("DDoS protection by CloudFlare")) {
+            if (doc.html().contains("DDoS protection by ")) {
                 Request.setDdosBypass(true);
                 return null;
             }
@@ -58,7 +57,7 @@ public class JsoupRequest {
                     .userAgent(BrowserVersion.CHROME.getUserAgent())
                     .execute();
             Document doc = res.parse();
-            if (doc.html().contains("DDoS protection by CloudFlare")) {
+            if (doc.html().contains("DDoS protection by ")) {
                 Request.setDdosBypass(true);
                 return null;
             }
