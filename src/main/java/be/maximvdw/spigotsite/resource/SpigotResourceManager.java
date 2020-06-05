@@ -6,6 +6,7 @@ import be.maximvdw.spigotsite.api.exceptions.ConnectionFailedException;
 import be.maximvdw.spigotsite.api.exceptions.PermissionException;
 import be.maximvdw.spigotsite.api.resource.*;
 import be.maximvdw.spigotsite.api.user.User;
+import be.maximvdw.spigotsite.api.user.exceptions.TwoFactorAuthenticationException;
 import be.maximvdw.spigotsite.http.HTTPResponse;
 import be.maximvdw.spigotsite.http.Request;
 import be.maximvdw.spigotsite.user.SpigotUser;
@@ -50,21 +51,23 @@ public class SpigotResourceManager implements ResourceManager {
             resource.setResourceName(resourceName);
             resource.setResourceId(resourceid);
 
-            Element resourceInfo = doc.select("div.resourceInfo").get(0);
-            resource.setLastVersion(resourceInfo.select("span.muted").get(0).text());
+            if(doc.select("div.resourceInfo").size() > 0 && doc.select("label.downloadButton").size() > 0 && doc.select("label.downloadButton").select("a.inner").size() > 0) {
+                Element resourceInfo = doc.select("div.resourceInfo").get(0);
+                resource.setLastVersion(resourceInfo.select("span.muted").get(0).text());
 
-            Element downloadLink = doc.select("label.downloadButton").get(0).select("a.inner").get(0);
-            resource.setDownloadURL(SpigotSiteCore.getBaseURL() + downloadLink.attr("href"));
+                Element downloadLink = doc.select("label.downloadButton").get(0).select("a.inner").get(0);
+                resource.setDownloadURL(SpigotSiteCore.getBaseURL() + downloadLink.attr("href"));
 
-            Element author = doc.select("dl.author").first();
-            SpigotUser authorUser = new SpigotUser();
-            authorUser.setUsername(author.select("a").first().text());
-            authorUser.setUserId(Integer
-                    .parseInt(StringUtils.getStringBetween(author.select("a").first().attr("href"), "\\.(.*?)/")));
-            resource.setAuthor(authorUser);
-            resource.setResourceUpdates(getResourceUpdates(resourceid, user));
-            return resource;
-        } catch (Exception ex) {
+                Element author = doc.select("dl.author").first();
+                SpigotUser authorUser = new SpigotUser();
+                authorUser.setUsername(author.select("a").first().text());
+                authorUser.setUserId(Integer
+                                             .parseInt(StringUtils.getStringBetween(author.select("a").first().attr("href"), "\\.(.*?)/")));
+                resource.setAuthor(authorUser);
+                resource.setResourceUpdates(getResourceUpdates(resourceid, user));
+                return resource;
+            }
+        } catch (TwoFactorAuthenticationException ex) {
             ex.printStackTrace();
         }
 
@@ -95,7 +98,7 @@ public class SpigotResourceManager implements ResourceManager {
                     for (Element resourceBlock : resourceBlocks) {
                         ResourceUpdate resourceUpdate = new SpigotResourceUpdate();
                         resourceUpdate.setUpdateID(resourceBlock.attr("id"));
-                        resourceUpdate.setUpdateLink(url + resourceBlock.select("h2.textHeading a").first().attr("href"));
+                        resourceUpdate.setUpdateLink(SpigotSiteCore.getBaseURL() + resourceBlock.select("h2.textHeading a").first().attr("href"));
                         resourceUpdate.setTextHeading(resourceBlock.select("h2.textHeading a").first().text());
                         resourceUpdate.setArticle(resourceBlock.select("article blockquote").first().text());
                         //resourceUpdate.setMessageMeta(resourceBlock.select("div.messageMeta span.item a span").first().attr("title"));
